@@ -1,6 +1,11 @@
 import { Button, Flex, Heading, TextField } from "@radix-ui/themes";
+import { useNavigate } from "react-router";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const handleRegister = () => {
+    navigate("/register");
+  };
   return (
     <Flex direction="column" align="center" justify="center" gap="4" m="9">
       <Heading as="h1" size="9" color="teal">
@@ -23,7 +28,13 @@ const Login = () => {
       <Button size="3" style={{ width: "300px" }} color="teal">
         Entrar
       </Button>
-      <Button variant="ghost" color="teal" size="3" style={{ width: "275px" }}>
+      <Button
+        variant="ghost"
+        color="teal"
+        size="3"
+        style={{ width: "275px" }}
+        onClick={handleRegister}
+      >
         Registre-se
       </Button>
     </Flex>
