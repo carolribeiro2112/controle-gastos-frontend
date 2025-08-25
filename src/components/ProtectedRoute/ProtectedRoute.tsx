@@ -12,10 +12,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
   useEffect(() => {
     const checkAuth = () => {
-      // Initialize auth headers if token exists
       LoginService.initializeAuth();
 
-      // Check if user is authenticated
       const authenticated = LoginService.isAuthenticated();
       setIsAuthenticated(authenticated);
       setIsLoading(false);
@@ -24,7 +22,6 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     checkAuth();
   }, []);
 
-  // Show loading while checking authentication
   if (isLoading) {
     return (
       <div
@@ -41,12 +38,10 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     );
   }
 
-  // Redirect to login if not authenticated
   if (!isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
-  // Render protected content if authenticated
   return <>{children}</>;
 };
 

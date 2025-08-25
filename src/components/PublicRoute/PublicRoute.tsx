@@ -10,13 +10,11 @@ const PublicRoute = ({ children }: PublicRouteProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // If user is already authenticated, redirect to dashboard
     if (LoginService.isAuthenticated()) {
       navigate("/dashboard");
     }
   }, [navigate]);
 
-  // Show the public content (login/register) if not authenticated
   return <>{children}</>;
 };
 
