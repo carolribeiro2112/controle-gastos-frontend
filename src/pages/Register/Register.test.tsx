@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { BrowserRouter } from "react-router";
 import Register from "./Register";
@@ -285,5 +285,139 @@ describe("Register Component", () => {
     expect(screen.getByPlaceholderText("Enter your age")).toBeDisabled();
     expect(screen.getByPlaceholderText("Enter your password")).toBeDisabled();
     expect(screen.getByPlaceholderText("Confirm your password")).toBeDisabled();
+  });
+
+  it("should handle Enter key press to submit form", async () => {
+    const user = userEvent.setup();
+    vi.mocked(registerUser).mockResolvedValueOnce(undefined);
+
+    renderRegister();
+
+    await user.type(
+      screen.getByPlaceholderText("Enter your username"),
+      "testuser"
+    );
+    await user.type(screen.getByPlaceholderText("Enter your age"), "20");
+    await user.type(
+      screen.getByPlaceholderText("Enter your password"),
+      "password123"
+    );
+    await user.type(
+      screen.getByPlaceholderText("Confirm your password"),
+      "password123"
+    );
+
+    // Focus on password field and press Enter
+    const passwordField = screen.getByPlaceholderText("Confirm your password");
+    passwordField.focus();
+    await user.keyboard("{Enter}");
+
+    await waitFor(() => {
+      expect(registerUser).toHaveBeenCalledWith({
+        login: "testuser",
+        role: "ADMIN",
+        password: "password123",
+      });
+    });
+  });
+
+  it("should not submit form on Enter when loading", async () => {
+    const user = userEvent.setup();
+    let resolveRegister: () => void;
+    const registerPromise = new Promise<void>((resolve) => {
+      resolveRegister = resolve;
+    });
+    vi.mocked(registerUser).mockReturnValueOnce(registerPromise);
+
+    renderRegister();
+
+    await user.type(
+      screen.getByPlaceholderText("Enter your username"),
+      "testuser"
+    );
+    await user.type(screen.getByPlaceholderText("Enter your age"), "20");
+    await user.type(
+      screen.getByPlaceholderText("Enter your password"),
+      "password123"
+    );
+    await user.type(
+      screen.getByPlaceholderText("Confirm your password"),
+      "password123"
+    );
+
+    // Start registration
+    await user.click(screen.getByRole("button", { name: "Registrar" }));
+
+    // Verify button is in loading state
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: "Cadastrando..." })
+      ).toBeInTheDocument();
+    });
+
+    // Try to press Enter while loading
+    const confirmPasswordInput = screen.getByPlaceholderText(
+      "Confirm your password"
+    );
+    fireEvent.keyDown(confirmPasswordInput, { key: "Enter", code: "Enter" });
+
+    // Should still only have been called once
+    expect(registerUser).toHaveBeenCalledTimes(1);
+
+    // Resolve the promise to complete the test
+    resolveRegister!();
+
+    // Wait for success toast to appear
+    await waitFor(() => {
+      expect(screen.getByTestId("toast")).toBeInTheDocument();
+    });
+  });
+  it("should handle navigation timeout after successful registration", async () => {
+    const user = userEvent.setup();
+    vi.mocked(registerUser).mockResolvedValueOnce(undefined);
+
+    // Spy on setTimeout and only mock the 2000ms call (our navigation timeout)
+    const originalSetTimeout = globalThis.setTimeout;
+    const setTimeoutSpy = vi
+      .spyOn(globalThis, "setTimeout")
+      .mockImplementation((callback, delay) => {
+        if (delay === 2000 && typeof callback === "function") {
+          // Immediately execute our navigation timeout
+          callback();
+          return 123 as unknown as ReturnType<typeof setTimeout>;
+        }
+        // For all other setTimeout calls, use the original implementation
+        return originalSetTimeout(callback, delay);
+      });
+
+    renderRegister();
+
+    await user.type(
+      screen.getByPlaceholderText("Enter your username"),
+      "testuser"
+    );
+    await user.type(screen.getByPlaceholderText("Enter your age"), "20");
+    await user.type(
+      screen.getByPlaceholderText("Enter your password"),
+      "password123"
+    );
+    await user.type(
+      screen.getByPlaceholderText("Confirm your password"),
+      "password123"
+    );
+    await user.click(screen.getByRole("button", { name: "Registrar" }));
+
+    // Wait for the success toast to appear (which is mocked)
+    await waitFor(() => {
+      expect(screen.getByTestId("toast")).toBeInTheDocument();
+    });
+
+    // Navigation should happen immediately due to our setTimeout mock
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith("/");
+    });
+
+    // Restore setTimeout
+    setTimeoutSpy.mockRestore();
   });
 });

@@ -76,6 +76,17 @@ describe('LoginService', () => {
       // For now, just check that an error is thrown since the mocking is complex
       await expect(LoginService.login(credentials)).rejects.toThrow()
     })
+
+    it('should throw unexpected error for non-axios errors', async () => {
+      const mockApi = await import('../Api/Api')
+      // Create a generic error that's not an axios error
+      const genericError = new Error('Generic error')
+      vi.mocked(mockApi.default.post).mockRejectedValue(genericError)
+
+      const credentials = { login: 'testuser', password: 'password123' }
+      
+      await expect(LoginService.login(credentials)).rejects.toThrow('Erro inesperado durante o login.')
+    })
   })
 
   describe('logout', () => {
