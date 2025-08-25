@@ -1,7 +1,7 @@
 import { CheckCircledIcon, CrossCircledIcon } from "@radix-ui/react-icons";
 import Styled from "./Toast.styles";
 
-interface ToastProps {
+export interface ToastProps {
   type: "success" | "error";
   message: string;
 }
