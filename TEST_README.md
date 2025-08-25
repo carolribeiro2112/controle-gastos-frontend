@@ -134,18 +134,17 @@ yarn test LoginService.test.ts
 ```
 src/
 ├── components/           # Reusable components
-│   ├── ProtectedRoute/  # Route protection wrapper
-│   ├── PublicRoute/     # Public route wrapper
+│   ├── ProtectedRoute/  # Route protection wrapper (with co-located tests)
+│   ├── PublicRoute/     # Public route wrapper (with co-located tests)
 │   └── Toast/           # Success notifications
 ├── pages/               # Page components
-│   ├── Login/          # Login form
-│   ├── Register/       # Registration form
-│   └── Dashboard/      # Protected dashboard
+│   ├── Login/          # Login form (with co-located tests)
+│   ├── Register/       # Registration form (with co-located tests)
+│   └── Dashboard/      # Protected dashboard (with co-located tests)
 ├── services/           # API services
-│   ├── LoginService.ts # Authentication service
-│   └── RegisterService.ts # Registration service
+│   ├── LoginService.ts # Authentication service (with co-located tests)
+│   └── RegisterService.ts # Registration service (with co-located tests)
 ├── Api/                # Axios configuration
-├── test/               # Unit tests
 └── types/              # TypeScript type definitions
 ```
 

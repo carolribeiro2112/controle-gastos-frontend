@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { registerUser } from '../services/RegisterService'
+import { registerUser } from './RegisterService'
 
 // Mock Api module
 vi.mock('../Api/Api', () => {

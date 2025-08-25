@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { BrowserRouter } from "react-router";
-import Login from "../pages/Login/Login";
-import LoginService from "../services/LoginService";
+import Login from "./Login";
+import LoginService from "../../services/LoginService";
 
 // Mock LoginService
-vi.mock("../services/LoginService", () => ({
+vi.mock("../../services/LoginService", () => ({
   default: {
     login: vi.fn(),
   },

@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { BrowserRouter } from "react-router";
-import Register from "../pages/Register/Register";
-import { registerUser } from "../services/RegisterService";
+import Register from "./Register";
+import { registerUser } from "../../services/RegisterService";
 
 // Mock RegisterService
-vi.mock("../services/RegisterService", () => ({
+vi.mock("../../services/RegisterService", () => ({
   registerUser: vi.fn(),
 }));
 
@@ -21,7 +21,7 @@ vi.mock("react-router", async () => {
 });
 
 // Mock Toast component
-vi.mock("../components/Toast/Toast", () => ({
+vi.mock("../../components/Toast/Toast", () => ({
   default: () => <div data-testid="toast">Success Toast</div>,
 }));
 

@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { BrowserRouter } from "react-router";
-import ProtectedRoute from "../components/ProtectedRoute/ProtectedRoute";
-import LoginService from "../services/LoginService";
+import ProtectedRoute from "./ProtectedRoute";
+import LoginService from "../../services/LoginService";
 
 // Mock LoginService
-vi.mock("../services/LoginService", () => ({
+vi.mock("../../services/LoginService", () => ({
   default: {
     initializeAuth: vi.fn(),
     isAuthenticated: vi.fn(),
