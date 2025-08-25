@@ -1,25 +1,20 @@
-import * as React from "react";
-const Toast = () => {
-  const timerRef = React.useRef(0);
+import { CheckCircledIcon, CrossCircledIcon } from "@radix-ui/react-icons";
+import Styled from "./Toast.styles";
 
-  React.useEffect(() => {
-    return () => clearTimeout(timerRef.current);
-  }, []);
-
+interface ToastProps {
+  type: "success" | "error";
+  message: string;
+}
+const Toast = ({ type, message }: ToastProps) => {
   return (
-    <div
-      data-testid="card"
-      style={{
-        backgroundColor: "rgba(14, 55, 38, 0.7)",
-        color: "white",
-        // color: #27b08b,
-        padding: "16px",
-        borderRadius: "8px",
-      }}
-      role="alert"
-    >
-      <p style={{ margin: 0 }}>Cadastro realizado com sucesso!</p>
-    </div>
+    <Styled.ToastContainer data-testid="card" role="alert" color={type}>
+      {type === "success" ? (
+        <CheckCircledIcon height={20} width={20} />
+      ) : (
+        <CrossCircledIcon height={20} width={20} />
+      )}
+      <p style={{ margin: 0 }}>{message}</p>
+    </Styled.ToastContainer>
   );
 };
 

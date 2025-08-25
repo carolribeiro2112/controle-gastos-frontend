@@ -7,32 +7,29 @@ import Toast from "../../components/Toast/Toast";
 const Register = () => {
   const navigate = useNavigate();
 
-  // Form state
   const [formData, setFormData] = useState({
     login: "",
-    role: "",
+    age: "",
     password: "",
     confirmPassword: "",
   });
 
-  // Loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Toast state
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
-  // Handle input changes
+  const getRoleFromAge = (age: number): string => {
+    return age >= 16 ? "ADMIN" : "USER";
+  };
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-    // Clear error when user starts typing
     if (error) setError(null);
   };
 
-  // Form validation
   const validateForm = (): string | null => {
     if (!formData.login.trim()) {
       return "Por favor, insira um nome de usuário";
@@ -42,8 +39,13 @@ const Register = () => {
       return "O nome de usuário deve ter pelo menos 3 caracteres";
     }
 
-    if (!formData.role.trim()) {
-      return "Por favor, insira um cargo";
+    if (!formData.age.trim()) {
+      return "Por favor, insira sua idade";
+    }
+
+    const age = parseInt(formData.age.trim());
+    if (isNaN(age) || age < 1 || age > 120) {
+      return "Por favor, insira uma idade válida (1-120 anos)";
     }
 
     if (!formData.password.trim()) {
@@ -61,7 +63,6 @@ const Register = () => {
     return null;
   };
 
-  // Handle form submission
   const handleRegister = async () => {
     const validationError = validateForm();
     if (validationError) {
@@ -73,16 +74,17 @@ const Register = () => {
     setError(null);
 
     try {
+      const age = parseInt(formData.age.trim());
+      const role = getRoleFromAge(age);
+
       await registerUser({
         login: formData.login.trim(),
-        role: formData.role,
+        role: role,
         password: formData.password,
       });
 
-      // Show success toast
       setShowSuccessToast(true);
 
-      // Navigate after a short delay to let user see the toast
       setTimeout(() => {
         navigate("/");
       }, 2000);
@@ -96,12 +98,10 @@ const Register = () => {
     }
   };
 
-  // Handle login navigation
   const handleGoToLogin = () => {
     navigate("/");
   };
 
-  // Handle Enter key press
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && !isLoading) {
       handleRegister();
@@ -111,7 +111,9 @@ const Register = () => {
   return (
     <div style={{ position: "relative" }}>
       <Flex direction="column" align="center" justify="center" gap="4" m="9">
-        {showSuccessToast && <Toast />}
+        {showSuccessToast && (
+          <Toast type="success" message="Cadastro realizado com sucesso!" />
+        )}
         <Heading as="h1" size="9" color="jade">
           Controle de gastos
         </Heading>
@@ -140,12 +142,12 @@ const Register = () => {
         />
 
         <TextField.Root
-          placeholder="Enter your role"
-          type="text"
+          placeholder="Enter your age"
+          type="number"
           size="3"
           style={{ width: "300px" }}
-          value={formData.role}
-          onChange={(e) => handleInputChange("role", e.target.value)}
+          value={formData.age}
+          onChange={(e) => handleInputChange("age", e.target.value)}
           onKeyPress={handleKeyPress}
           disabled={isLoading}
         />

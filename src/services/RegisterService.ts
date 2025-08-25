@@ -1,12 +1,5 @@
 import Api from "../Api/Api";
 import type { AuthResponse } from "./LoginService";
-import type { AxiosError } from "axios";
-
-// Define the ApiErrorResponse type
-type ApiErrorResponse = {
-  message?: string;
-  [key: string]: unknown;
-};
 
 // Define the RegisterRequest type
 export type RegisterRequest = {
@@ -16,34 +9,65 @@ export type RegisterRequest = {
 };
 
 // Register new user
-export const registerUser = async (userData: RegisterRequest): Promise<AuthResponse> => {
+export const registerUser = async (userData: RegisterRequest): Promise<AuthResponse | void> => {
   try {
-    console.log('Attempting registration for user:', { username: userData.login, role: userData.role });
-
-    const response = await Api.post<AuthResponse>('/auth/register', userData);
-    
-    // Store token and user data in localStorage
-    if (response.data.token) {
-      localStorage.setItem('authToken', response.data.token);
-      
-      // Add token to default headers for future requests
-      Api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
-    }
-    
-    return response.data;
-  } catch (error) {
-    console.error('Registration error:', error);
-    
-    if (error instanceof Error && 'response' in error) {
-      const axiosError = error as AxiosError<ApiErrorResponse>;
-      if (axiosError.response) {
-        const message = axiosError.response.data?.message || 'Erro no cadastro';
-        throw new Error(message);
-      } else if (axiosError.request) {
-        throw new Error('Erro de conexão. Verifique se o servidor está rodando.');
+    const response = await Api.post('/auth/register', userData, {
+      headers: {
+        'Content-Type': 'application/json',
+        // Remove any potential auth headers that might be interfering
+        'Authorization': undefined,
+      },
+      withCredentials: false, // Don't send cookies/credentials
+      validateStatus: function (status) {
+        // Accept all status codes so we can handle them manually
+        return status >= 200 && status < 600;
       }
+    });
+    
+    if (response.status === 201) {
+      return;
     }
     
-    throw new Error('Erro inesperado durante o cadastro.');
+    // Handle error responses
+    console.error(`❌ Registration failed with status ${response.status}`);
+    if (response.status === 400) {
+      throw new Error('Nome de usuário já existe ou dados inválidos. Tente outro nome de usuário.');
+    }
+    if (response.status === 500) {
+      throw new Error(`Erro interno do servidor (500). Dados da resposta: ${JSON.stringify(response.data)}`);
+    }
+    
+    throw new Error(`Erro do servidor: ${response.status} - ${response.statusText}`);
+    
+  } catch (error: unknown) {
+    console.error('❌ Registration error caught:');
+    
+    // Type guard for axios error
+    const isAxiosError = (err: unknown): err is { response?: { status?: number; data?: unknown; headers?: unknown }; message?: string; code?: string } => {
+      return typeof err === 'object' && err !== null && 'response' in err;
+    };
+    
+    // Check if it's a network error (CORS, connection failed, etc.)
+    if (!isAxiosError(error)) {
+      console.error('🌐 Network Error - possibly CORS or connection issue');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      console.error('Error message:', errorMessage);
+      
+      if (errorMessage?.includes('Network Error')) {
+        throw new Error('Erro de conexão com o servidor. Verifique se o backend está rodando e se há problemas de CORS.');
+      }
+      
+      throw new Error(`Erro de rede: ${errorMessage}`);
+    }
+    
+    if (error.response?.status === 400) {
+      throw new Error('Nome de usuário já existe ou dados inválidos. Tente outro nome de usuário.');
+    }
+    
+    if (error.response?.status === 500) {
+      throw new Error(`Erro interno do servidor (500). Detalhes: ${JSON.stringify(error.response?.data)}`);
+    }
+    
+    throw new Error(`Erro do servidor: ${error.response?.status || 'Desconhecido'}`);
   }
 };
