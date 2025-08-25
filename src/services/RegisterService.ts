@@ -1,25 +1,21 @@
 import Api from "../Api/Api";
 import type { AuthResponse } from "./LoginService";
 
-// Define the RegisterRequest type
 export type RegisterRequest = {
   login: string;
   password: string;
   role: string;
 };
 
-// Register new user
 export const registerUser = async (userData: RegisterRequest): Promise<AuthResponse | void> => {
   try {
     const response = await Api.post('/auth/register', userData, {
       headers: {
         'Content-Type': 'application/json',
-        // Remove any potential auth headers that might be interfering
         'Authorization': undefined,
       },
-      withCredentials: false, // Don't send cookies/credentials
+      withCredentials: false,
       validateStatus: function (status) {
-        // Accept all status codes so we can handle them manually
         return status >= 200 && status < 600;
       }
     });
@@ -28,7 +24,6 @@ export const registerUser = async (userData: RegisterRequest): Promise<AuthRespo
       return;
     }
     
-    // Handle error responses
     console.error(`❌ Registration failed with status ${response.status}`);
     if (response.status === 400) {
       throw new Error('Nome de usuário já existe ou dados inválidos. Tente outro nome de usuário.');
@@ -42,12 +37,10 @@ export const registerUser = async (userData: RegisterRequest): Promise<AuthRespo
   } catch (error: unknown) {
     console.error('❌ Registration error caught:');
     
-    // Type guard for axios error
     const isAxiosError = (err: unknown): err is { response?: { status?: number; data?: unknown; headers?: unknown }; message?: string; code?: string } => {
       return typeof err === 'object' && err !== null && 'response' in err;
     };
-    
-    // Check if it's a network error (CORS, connection failed, etc.)
+
     if (!isAxiosError(error)) {
       console.error('🌐 Network Error - possibly CORS or connection issue');
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';

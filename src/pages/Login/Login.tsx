@@ -6,23 +6,19 @@ import LoginService from "../../services/LoginService";
 const Login = () => {
   const navigate = useNavigate();
 
-  // Form state
   const [formData, setFormData] = useState({
     login: "",
     password: "",
   });
 
-  // Loading and error states
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Handle input changes
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
-    // Clear error when user starts typing
     if (error) setError(null);
   };
 
@@ -43,15 +39,12 @@ const Login = () => {
     setError(null);
 
     try {
-      const response = await LoginService.login({
+      await LoginService.login({
         login: formData.login.trim(),
         password: formData.password,
       });
 
-      console.log("Login successful:", response);
-
-      // Navigate to dashboard or home page after successful login
-      navigate("/dashboard"); // Change this route as needed
+      navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
       setError(error instanceof Error ? error.message : "Erro durante o login");
@@ -60,12 +53,10 @@ const Login = () => {
     }
   };
 
-  // Handle register navigation
   const handleRegister = () => {
     navigate("/register");
   };
 
-  // Handle Enter key press
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === "Enter" && !isLoading) {
       handleLogin();
@@ -81,7 +72,6 @@ const Login = () => {
         Login to your account
       </Heading>
 
-      {/* Error message */}
       {error && (
         <Text
           color="red"
