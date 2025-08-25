@@ -74,10 +74,10 @@ const Login = () => {
 
   return (
     <Flex direction="column" align="center" justify="center" gap="4" m="9">
-      <Heading as="h1" size="9" color="teal">
+      <Heading as="h1" size="9" color="jade">
         Controle de gastos
       </Heading>
-      <Heading as="h1" size="8" color="teal">
+      <Heading as="h1" size="8" color="jade">
         Login to your account
       </Heading>
 
@@ -116,7 +116,7 @@ const Login = () => {
       <Button
         size="3"
         style={{ width: "300px" }}
-        color="teal"
+        color="jade"
         onClick={handleLogin}
         disabled={isLoading}
       >
@@ -125,7 +125,7 @@ const Login = () => {
 
       <Button
         variant="ghost"
-        color="teal"
+        color="jade"
         size="3"
         style={{ width: "275px" }}
         onClick={handleRegister}
