@@ -84,6 +84,7 @@ describe("Register Component", () => {
       expect(registerUser).toHaveBeenCalledWith({
         login: "adminuser",
         role: "ADMIN", // Age 18 = ADMIN
+        age: "18",
         password: "password123",
       });
     });
@@ -114,6 +115,7 @@ describe("Register Component", () => {
       expect(registerUser).toHaveBeenCalledWith({
         login: "testuser",
         role: "ADMIN", // Age 20 = ADMIN
+        age: "20",
         password: "password123",
       });
     });
@@ -252,6 +254,7 @@ describe("Register Component", () => {
       expect(registerUser).toHaveBeenCalledWith({
         login: "younguser",
         role: "USER", // Age 15 = USER
+        age: "15",
         password: "password123",
       });
     });
@@ -316,6 +319,7 @@ describe("Register Component", () => {
       expect(registerUser).toHaveBeenCalledWith({
         login: "testuser",
         role: "ADMIN",
+        age: "20",
         password: "password123",
       });
     });
