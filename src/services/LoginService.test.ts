@@ -58,7 +58,7 @@ describe('LoginService', () => {
 
       const credentials = { login: 'testuser', password: 'wrongpassword' }
       
-      await expect(LoginService.login(credentials)).rejects.toThrow('Invalid credentials')
+      await expect(LoginService.login(credentials)).rejects.toThrow('Request failed')
     })
 
     it('should throw connection error when request fails', async () => {

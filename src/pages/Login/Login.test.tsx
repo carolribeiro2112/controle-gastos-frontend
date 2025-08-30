@@ -179,4 +179,42 @@ describe("Login Component", () => {
     expect(screen.getByPlaceholderText("Enter your username")).toBeDisabled();
     expect(screen.getByPlaceholderText("Enter your password")).toBeDisabled();
   });
+
+  it("should show Toast when login fails with 403 error", async () => {
+    const user = userEvent.setup();
+
+    // Create a mock AxiosError with 403 status
+    const mockAxiosError = {
+      response: {
+        status: 403,
+        data: { message: "Forbidden" },
+      },
+      message: "Request failed with status code 403",
+    };
+
+    vi.mocked(LoginService.login).mockRejectedValue(mockAxiosError);
+
+    renderLogin();
+
+    await user.type(
+      screen.getByPlaceholderText("Enter your username"),
+      "testuser"
+    );
+    await user.type(
+      screen.getByPlaceholderText("Enter your password"),
+      "wrongpassword"
+    );
+    await user.click(screen.getByRole("button", { name: "Entrar" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Credenciais inválidas tente novamente ou cadastre-se")
+      ).toBeInTheDocument();
+    });
+
+    // Verify that no error message is shown (only Toast)
+    expect(
+      screen.queryByText("Request failed with status code 403")
+    ).not.toBeInTheDocument();
+  });
 });
