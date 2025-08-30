@@ -11,7 +11,7 @@ LoginService.initializeAuth();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Theme appearance="dark" accentColor="teal">
+    <Theme appearance="dark" accentColor="jade">
       <App />
     </Theme>
   </StrictMode>
