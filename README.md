@@ -62,17 +62,17 @@ yarn test:coverage # Executa testes com relatório de cobertura
 
 yarn lint # Verifica estilo de código
 
-# 🧪 Testes
+## 🧪 Testes
 
 Este projeto inclui testes unitários abrangentes para:
 
-# Serviços
+### Serviços
 
 LoginService: Autenticação, gerenciamento de token, tratamento de erros
 
 RegisterService: Registro de usuário, validações, cenários de erro
 
-# Componentes
+### Componentes
 
 Login: Validação de formulário, fluxo de autenticação, navegação
 
@@ -84,7 +84,7 @@ ProtectedRoute: Proteção de rotas, redirecionamento de autenticação
 
 PublicRoute: Redirecionamento de usuários autenticados
 
-# Cobertura de Testes
+### Cobertura de Testes
 
 ✅ 42 testes com excelente cobertura
 
@@ -102,23 +102,23 @@ PublicRoute: Redirecionamento de usuários autenticados
 
 Executando os Testes
 
-# Executar todos os testes
+### Executar todos os testes
 
 yarn test:run
 
-# Executar testes com cobertura
+### Executar testes com cobertura
 
 yarn test:coverage
 
-# Executar testes com interface gráfica
+### Executar testes com interface gráfica
 
 yarn test:ui
 
-# Executar arquivo de teste específico
+### Executar arquivo de teste específico
 
 yarn test LoginService.test.ts
 
-# 🔐 Sistema de Autenticação
+## 🔐 Sistema de Autenticação
 
 Fluxo de Login
 Usuário insere credenciais
@@ -147,8 +147,9 @@ Rotas públicas (/, /register): redirecionam usuários autenticados para o dashb
 
 Rotas protegidas (/dashboard): redirecionam usuários não autenticados para o login
 
-# 🗂️ Estrutura do Projeto
+## 🗂️ Estrutura do Projeto
 
+```
 src/
 ├── components/ # Componentes reutilizáveis
 │ ├── ProtectedRoute/ # Wrapper de rotas protegidas (com testes)
@@ -163,8 +164,9 @@ src/
 │ └── RegisterService.ts# Serviço de registro (com testes)
 ├── Api/ # Configuração do Axios
 └── types/ # Definições de tipos TypeScript
+```
 
-# 🌐 Integração com API
+## 🌐 Integração com API
 
 O frontend se comunica com um backend em Spring Boot:
 
@@ -174,7 +176,7 @@ POST /auth/register – Registro de usuário
 
 Todas as chamadas incluem tratamento de erros e estados de carregamento.
 
-# 🛠️ Notas de Desenvolvimento
+## 🛠️ Notas de Desenvolvimento
 
 Gerenciamento de Estado
 Estado local com hooks (useState, useEffect)
