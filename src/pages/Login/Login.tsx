@@ -1,8 +1,14 @@
-import { Button, Flex, Heading, TextField } from "@radix-ui/themes";
+import { Button, Flex, Heading, TextField, Text } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import LoginService from "../../services/LoginService";
 import Toast from "../../components/Toast/Toast";
+import { AxiosError } from "axios";
+
+interface ApiErrorResponse {
+  message?: string;
+  error?: string;
+}
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +20,7 @@ const Login = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -21,6 +28,7 @@ const Login = () => {
       [field]: value,
     }));
     if (error) setError(null);
+    if (showToast) setShowToast(false);
   };
 
   const handleLogin = async () => {
@@ -36,6 +44,7 @@ const Login = () => {
 
     setIsLoading(true);
     setError(null);
+    setShowToast(false);
 
     try {
       await LoginService.login({
@@ -46,7 +55,23 @@ const Login = () => {
       navigate("/dashboard");
     } catch (error) {
       console.error("Login failed:", error);
-      setError(error instanceof Error ? error.message : "Erro durante o login");
+
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as AxiosError<ApiErrorResponse>;
+        if (axiosError.response?.status === 403) {
+          setShowToast(true);
+        } else {
+          const errorMessage =
+            axiosError.response?.data?.message ||
+            axiosError.message ||
+            "Erro durante o login";
+          setError(errorMessage);
+        }
+      } else {
+        setError(
+          error instanceof Error ? error.message : "Erro durante o login"
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -71,12 +96,22 @@ const Login = () => {
         Login to your account
       </Heading>
 
-      {error && (
+      {showToast && (
         <Toast
           type="error"
           message="Credenciais inválidas tente novamente ou cadastre-se"
           duration={2000}
         />
+      )}
+
+      {error && !showToast && (
+        <Text
+          color="red"
+          size="2"
+          style={{ textAlign: "center", maxWidth: "300px" }}
+        >
+          {error}
+        </Text>
       )}
 
       <TextField.Root

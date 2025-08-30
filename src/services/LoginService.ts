@@ -39,8 +39,8 @@ const LoginService = {
       if (error instanceof Error && 'response' in error) {
         const axiosError = error as AxiosError<ApiErrorResponse>;
         if (axiosError.response) {
-          const message = axiosError.response.data?.message || 'Erro na autenticação';
-          throw new Error(message);
+          // Para preservar o status code, relançar o erro original do axios
+          throw error;
         } else if (axiosError.request) {
           throw new Error('Erro de conexão. Verifique se o servidor está rodando.');
         }
