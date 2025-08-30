@@ -113,7 +113,11 @@ const Register = () => {
     <div style={{ position: "relative" }}>
       <Flex direction="column" align="center" justify="center" gap="4" m="9">
         {showSuccessToast && (
-          <Toast type="success" message="Cadastro realizado com sucesso!" />
+          <Toast
+            type="success"
+            message="Cadastro realizado com sucesso!"
+            duration={2000}
+          />
         )}
         <Heading as="h1" size="9" color="jade">
           Controle de gastos

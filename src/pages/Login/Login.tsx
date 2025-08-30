@@ -1,7 +1,8 @@
-import { Button, Flex, Heading, TextField, Text } from "@radix-ui/themes";
+import { Button, Flex, Heading, TextField } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import { useState } from "react";
 import LoginService from "../../services/LoginService";
+import Toast from "../../components/Toast/Toast";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,9 +23,7 @@ const Login = () => {
     if (error) setError(null);
   };
 
-  // Handle form submission
   const handleLogin = async () => {
-    // Basic validation
     if (!formData.login.trim()) {
       setError("Por favor, insira seu nome de usuário");
       return;
@@ -73,13 +72,11 @@ const Login = () => {
       </Heading>
 
       {error && (
-        <Text
-          color="red"
-          size="2"
-          style={{ textAlign: "center", maxWidth: "300px" }}
-        >
-          {error}
-        </Text>
+        <Toast
+          type="error"
+          message="Credenciais inválidas tente novamente ou cadastre-se"
+          duration={2000}
+        />
       )}
 
       <TextField.Root
