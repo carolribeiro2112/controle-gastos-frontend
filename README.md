@@ -1,69 +1,198 @@
-# React + TypeScript + Vite
+# Controle de Gastos - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação de controle de despesas baseada em React, com autenticação via JWT e cobertura abrangente de testes.
 
-Currently, two official plugins are available:
+## ✨ Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- 🔐 **Autenticação JWT** – Sistema seguro de login e registro
+- 👥 **Acesso baseado em papéis** – Papéis atribuídos com base na idade (16+ = Admin, <16 = Usuário)
+- 🛡️ **Rotas protegidas** – Acesso ao dashboard restrito a usuários autenticados
+- 🧪 **Testes abrangentes** – Testes unitários para todos os componentes e serviços
+- 🎨 **Interface moderna** – Construída com Radix UI e TypeScript
 
-## Expanding the ESLint configuration
+## 🧰 Tecnologias Utilizadas
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend:** React 19, TypeScript, Vite
+- **Componentes de UI:** Radix UI
+- **Cliente HTTP:** Axios
+- **Roteamento:** React Router
+- **Testes:** Vitest, Testing Library
+- **Gerenciamento de estado:** Hooks do React (`useState`, `useEffect`)
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🚀 Primeiros Passos
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### 📋 Pré-requisitos
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js (recomendado 18+)
+- Yarn ou npm
+- API Backend rodando em `http://localhost:8080`
+
+### 🔧 Instalação
+
+```bash
+# Clonar o repositório
+git clone <url-do-repositório>
+cd controle-gastos-frontend
+
+# Instalar dependências
+yarn install
+
+# Iniciar servidor de desenvolvimento
+yarn dev
+
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+# Desenvolvimento
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+yarn dev # Inicia o servidor de desenvolvimento
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+# Build
+
+yarn build # Gera build para produção
+yarn preview # Visualiza build de produção
+
+# Testes
+
+yarn test # Executa testes em modo watch
+yarn test:run # Executa testes uma vez
+yarn test:ui # Executa testes com interface gráfica
+yarn test:coverage # Executa testes com relatório de cobertura
+
+# Lint
+
+yarn lint # Verifica estilo de código
+
+# 🧪 Testes
+
+Este projeto inclui testes unitários abrangentes para:
+
+# Serviços
+
+LoginService: Autenticação, gerenciamento de token, tratamento de erros
+
+RegisterService: Registro de usuário, validações, cenários de erro
+
+# Componentes
+
+Login: Validação de formulário, fluxo de autenticação, navegação
+
+Register: Atribuição de papel por idade, validação, tratamento de erros
+
+Dashboard: Verificação de autenticação, funcionalidade de logout
+
+ProtectedRoute: Proteção de rotas, redirecionamento de autenticação
+
+PublicRoute: Redirecionamento de usuários autenticados
+
+# Cobertura de Testes
+
+✅ 42 testes com excelente cobertura
+
+✅ Renderização de componentes e interações do usuário
+
+✅ Validação de formulários e estados de erro
+
+✅ Fluxos de autenticação e gerenciamento de tokens
+
+✅ Proteção de rotas e navegação
+
+✅ Tratamento de erros de rede e API
+
+✅ Estados de carregamento e operações assíncronas
+
+Executando os Testes
+
+# Executar todos os testes
+
+yarn test:run
+
+# Executar testes com cobertura
+
+yarn test:coverage
+
+# Executar testes com interface gráfica
+
+yarn test:ui
+
+# Executar arquivo de teste específico
+
+yarn test LoginService.test.ts
+
+# 🔐 Sistema de Autenticação
+
+Fluxo de Login
+Usuário insere credenciais
+
+Token JWT é recebido e armazenado no localStorage
+
+Token é adicionado aos headers do Axios
+
+Usuário é redirecionado para o dashboard
+
+Fluxo de Registro
+Usuário insere nome de usuário, idade e senha
+
+Papel é atribuído automaticamente com base na idade:
+
+Idade ≥ 16: papel ADMIN
+
+Idade < 16: papel USER
+
+Conta é criada e notificação de sucesso exibida
+
+Usuário é redirecionado para a página de login
+
+Proteção de Rotas
+Rotas públicas (/, /register): redirecionam usuários autenticados para o dashboard
+
+Rotas protegidas (/dashboard): redirecionam usuários não autenticados para o login
+
+# 🗂️ Estrutura do Projeto
+
+src/
+├── components/ # Componentes reutilizáveis
+│ ├── ProtectedRoute/ # Wrapper de rotas protegidas (com testes)
+│ ├── PublicRoute/ # Wrapper de rotas públicas (com testes)
+│ └── Toast/ # Notificações de sucesso
+├── pages/ # Páginas
+│ ├── Login/ # Formulário de login (com testes)
+│ ├── Register/ # Formulário de registro (com testes)
+│ └── Dashboard/ # Dashboard protegido (com testes)
+├── services/ # Serviços de API
+│ ├── LoginService.ts # Serviço de autenticação (com testes)
+│ └── RegisterService.ts# Serviço de registro (com testes)
+├── Api/ # Configuração do Axios
+└── types/ # Definições de tipos TypeScript
+
+# 🌐 Integração com API
+
+O frontend se comunica com um backend em Spring Boot:
+
+POST /auth/login – Autenticação de usuário
+
+POST /auth/register – Registro de usuário
+
+Todas as chamadas incluem tratamento de erros e estados de carregamento.
+
+# 🛠️ Notas de Desenvolvimento
+
+Gerenciamento de Estado
+Estado local com hooks (useState, useEffect)
+
+Persistência do token JWT no localStorage
+
+Configuração global do Axios com headers de autenticação
+
+Tratamento de Erros
+Boundaries de erro abrangentes
+
+Mensagens amigáveis para o usuário
+
+Detecção e tratamento de erros de rede
+
+Tipagem
+Cobertura completa com TypeScript
+
+Verificação estrita de tipos
+
+Interfaces para todas as respostas da API
