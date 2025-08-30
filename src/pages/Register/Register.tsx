@@ -80,6 +80,7 @@ const Register = () => {
       await registerUser({
         login: formData.login.trim(),
         role: role,
+        age: formData.age.trim(),
         password: formData.password,
       });
 
@@ -143,7 +144,7 @@ const Register = () => {
 
         <TextField.Root
           placeholder="Enter your age"
-          type="number"
+          type="text"
           size="3"
           style={{ width: "300px" }}
           value={formData.age}

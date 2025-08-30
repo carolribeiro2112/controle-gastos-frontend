@@ -4,6 +4,7 @@ import type { AuthResponse } from "./LoginService";
 export type RegisterRequest = {
   login: string;
   password: string;
+  age: string;
   role: string;
 };
 
