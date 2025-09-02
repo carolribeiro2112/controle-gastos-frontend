@@ -2,10 +2,42 @@ import { Button, Flex, Heading, Text } from "@radix-ui/themes";
 import LoginService from "../../services/LoginService";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
+import CustomTable from "../../components/CustomTable/Table";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const columns = [
+    { id: "name", label: "Full name" },
+    { id: "email", label: "Email" },
+    { id: "group", label: "Group" },
+    { id: "actions", label: "Actions" },
+  ];
+
+  const data = [
+    {
+      id: 1,
+      name: "Danilo Sousa",
+      email: "danilo@example.com",
+      group: "Developer",
+      actions: "Edit/Delete",
+    },
+    {
+      id: 2,
+      name: "Zahra Ambessa",
+      email: "zahra@example.com",
+      group: "Admin",
+      actions: "Edit/Delete",
+    },
+    {
+      id: 3,
+      name: "Jasper Eriksson",
+      email: "jasper@example.com",
+      group: "Developer",
+      actions: "Edit/Delete",
+    },
+  ];
 
   useEffect(() => {
     // Double-check authentication when component mounts
@@ -57,6 +89,7 @@ const Dashboard = () => {
       >
         Logout
       </Button>
+      <CustomTable columns={columns} data={data} />
     </Flex>
   );
 };
