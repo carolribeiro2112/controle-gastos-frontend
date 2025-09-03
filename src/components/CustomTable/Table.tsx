@@ -2,7 +2,11 @@
 import { Table } from "@radix-ui/themes";
 
 interface CustomTableProps {
-  columns: { id: string; label: string }[];
+  columns: {
+    id: string;
+    label: string;
+    justify: "center" | "start" | "end";
+  }[];
   data: { id: number; [key: string]: any }[];
 }
 const CustomTable = ({ columns, data }: CustomTableProps) => {
@@ -25,7 +29,7 @@ const CustomTable = ({ columns, data }: CustomTableProps) => {
               const CellComponent =
                 index === 0 ? Table.RowHeaderCell : Table.Cell;
               return (
-                <CellComponent key={column.id}>
+                <CellComponent key={column.id} justify={column.justify}>
                   {item[column.id as keyof typeof item]}
                 </CellComponent>
               );

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import CustomTable from "../../components/CustomTable/Table";
 import { getUserIdFromToken } from "../../utils/getUserData";
 import { Trash2 } from "lucide-react";
+import CreateTransactionModal from "../../components/CreateTransactionModal/CreateTransactionModal";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -20,12 +21,16 @@ const Dashboard = () => {
     null
   );
 
-  const columns = [
-    { id: "description", label: "Description" },
-    { id: "value", label: "Value" },
-    { id: "type", label: "Type" },
-    { id: "transactionDate", label: "Date" },
-    { id: "actions", label: "Actions" },
+  const columns: {
+    id: string;
+    label: string;
+    justify: "center" | "start" | "end";
+  }[] = [
+    { id: "description", label: "Description", justify: "start" },
+    { id: "value", label: "Value", justify: "start" },
+    { id: "type", label: "Type", justify: "start" },
+    { id: "transactionDate", label: "Date", justify: "start" },
+    { id: "actions", label: "Actions", justify: "center" },
   ];
 
   const handleDeleteClick = (transactionId: string) => {
@@ -160,6 +165,8 @@ const Dashboard = () => {
         <Heading as="h2" size="6" color="jade">
           Your Transactions
         </Heading>
+
+        <CreateTransactionModal />
 
         {loading && <Text>Loading transactions...</Text>}
 
