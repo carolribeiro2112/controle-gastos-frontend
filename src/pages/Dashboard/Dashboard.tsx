@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Text } from "@radix-ui/themes";
+import { AlertDialog, Button, Flex, Heading, Text } from "@radix-ui/themes";
 import LoginService from "../../services/LoginService/LoginService";
 import TransactionService, {
   type TransactionResponse,
@@ -15,6 +15,10 @@ const Dashboard = () => {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
+    null
+  );
 
   const columns = [
     { id: "description", label: "Description" },
@@ -24,20 +28,22 @@ const Dashboard = () => {
     { id: "actions", label: "Actions" },
   ];
 
-  const handleDeleteTransaction = async (transactionId: string) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this transaction?"
-    );
-    if (!confirmed) return;
+  const handleDeleteClick = (transactionId: string) => {
+    setTransactionToDelete(transactionId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!transactionToDelete) return;
 
     try {
       setError(null);
 
-      await TransactionService.deleteTransaction(transactionId);
+      await TransactionService.deleteTransaction(transactionToDelete);
 
       setTransactions((prevTransactions) =>
         prevTransactions.filter(
-          (transaction) => transaction.id !== transactionId
+          (transaction) => transaction.id !== transactionToDelete
         )
       );
 
@@ -45,7 +51,15 @@ const Dashboard = () => {
     } catch (err) {
       console.error("Error deleting transaction:", err);
       setError("Failed to delete transaction");
+    } finally {
+      setDeleteDialogOpen(false);
+      setTransactionToDelete(null);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setTransactionToDelete(null);
   };
 
   const transformedData = transactions.map((transaction, index) => ({
@@ -59,7 +73,7 @@ const Dashboard = () => {
       <Trash2
         size={16}
         style={{ cursor: "pointer", color: "#ef4444" }}
-        onClick={() => handleDeleteTransaction(transaction.id)}
+        onClick={() => handleDeleteClick(transaction.id)}
       />
     ),
   }));
@@ -143,7 +157,7 @@ const Dashboard = () => {
         gap="3"
         style={{ width: "100%", maxWidth: "800px" }}
       >
-        <Heading as="h2" size="6" color="blue">
+        <Heading as="h2" size="6" color="jade">
           Your Transactions
         </Heading>
 
@@ -158,6 +172,40 @@ const Dashboard = () => {
         {!loading && !error && transactions.length > 0 && (
           <CustomTable columns={columns} data={transformedData} />
         )}
+
+        <AlertDialog.Root
+          open={deleteDialogOpen}
+          onOpenChange={setDeleteDialogOpen}
+        >
+          <AlertDialog.Content maxWidth="450px">
+            <AlertDialog.Title>Delete transaction</AlertDialog.Title>
+            <AlertDialog.Description size="2">
+              Are you sure you want to delete this transaction? This action
+              cannot be undone.
+            </AlertDialog.Description>
+
+            <Flex gap="3" mt="4" justify="end">
+              <AlertDialog.Cancel>
+                <Button
+                  variant="soft"
+                  color="gray"
+                  onClick={handleDeleteCancel}
+                >
+                  Cancel
+                </Button>
+              </AlertDialog.Cancel>
+              <AlertDialog.Action>
+                <Button
+                  variant="solid"
+                  color="red"
+                  onClick={handleDeleteConfirm}
+                >
+                  Delete
+                </Button>
+              </AlertDialog.Action>
+            </Flex>
+          </AlertDialog.Content>
+        </AlertDialog.Root>
       </Flex>
     </Flex>
   );
