@@ -1,7 +1,7 @@
 import { Button, Flex, Heading, TextField, Text } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import LoginService from "../../services/LoginService";
+import LoginService from "../../services/LoginService/LoginService";
 import Toast from "../../components/Toast/Toast";
 import { AxiosError } from "axios";
 

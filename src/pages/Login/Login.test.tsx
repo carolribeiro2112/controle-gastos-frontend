@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { BrowserRouter } from "react-router";
 import Login from "./Login";
-import LoginService from "../../services/LoginService";
+import LoginService from "../../services/LoginService/LoginService";
 
 // Mock LoginService
 vi.mock("../../services/LoginService", () => ({
