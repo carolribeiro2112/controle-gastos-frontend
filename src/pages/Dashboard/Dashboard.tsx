@@ -1,5 +1,5 @@
 import { Button, Flex, Heading, Text } from "@radix-ui/themes";
-import LoginService from "../../services/LoginService";
+import LoginService from "../../services/LoginService/LoginService";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import CustomTable from "../../components/CustomTable/Table";

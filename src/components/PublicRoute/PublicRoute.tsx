@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router";
-import LoginService from "../../services/LoginService";
+import LoginService from "../../services/LoginService/LoginService";
 
 interface PublicRouteProps {
   children: React.ReactNode;

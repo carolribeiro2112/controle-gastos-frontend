@@ -1,5 +1,5 @@
-import Api from "../Api/Api";
-import type { AuthResponse } from "./LoginService";
+import Api from "../../Api/Api";
+import type { AuthResponse } from "../LoginService/LoginService";
 
 export type RegisterRequest = {
   login: string;

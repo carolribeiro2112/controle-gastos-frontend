@@ -1,7 +1,7 @@
 import { Button, Flex, Heading, TextField, Text } from "@radix-ui/themes";
 import { useNavigate } from "react-router";
 import { useState } from "react";
-import { registerUser } from "../../services/RegisterService";
+import { registerUser } from "../../services/RegisterService/RegisterService";
 import Toast from "../../components/Toast/Toast";
 
 const Register = () => {

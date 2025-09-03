@@ -4,7 +4,7 @@ import "@radix-ui/themes/styles.css";
 import { Theme } from "@radix-ui/themes";
 import App from "./App.tsx";
 import "./index.css";
-import LoginService from "./services/LoginService";
+import LoginService from "./services/LoginService/LoginService";
 
 // Initialize auth state on app startup
 LoginService.initializeAuth();

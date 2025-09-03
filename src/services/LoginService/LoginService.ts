@@ -1,4 +1,4 @@
-import Api from "../Api/Api";
+import Api from "../../Api/Api";
 import { AxiosError } from "axios";
 
 export interface LoginRequest {
