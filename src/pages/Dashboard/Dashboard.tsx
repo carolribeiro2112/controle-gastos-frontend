@@ -4,7 +4,7 @@ import TransactionService, {
   type TransactionResponse,
 } from "../../services/TransactionService/TransactionService";
 import { useNavigate } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import CustomTable from "../../components/CustomTable/Table";
 import { getUserIdFromToken } from "../../utils/getUserData";
 import { Trash2 } from "lucide-react";
@@ -83,6 +83,25 @@ const Dashboard = () => {
     ),
   }));
 
+  const fetchTransactions = useCallback(async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      const userId = getUserIdFromToken();
+
+      const data = await TransactionService.getTransactions(userId);
+      setTransactions(data);
+    } catch (err) {
+      console.error("Error fetching transactions:", err);
+      setError("Failed to load transactions");
+    } finally {
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
   useEffect(() => {
     const checkAuth = () => {
       const authenticated = LoginService.isAuthenticated();
@@ -97,27 +116,8 @@ const Dashboard = () => {
   }, [navigate]);
 
   useEffect(() => {
-    const fetchTransactions = async () => {
-      if (!isAuthenticated) return;
-
-      try {
-        setLoading(true);
-        setError(null);
-
-        const userId = getUserIdFromToken();
-
-        const data = await TransactionService.getTransactions(userId);
-        setTransactions(data);
-      } catch (err) {
-        console.error("Error fetching transactions:", err);
-        setError("Failed to load transactions");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchTransactions();
-  }, [isAuthenticated]);
+  }, [fetchTransactions]);
 
   const handleLogout = () => {
     LoginService.logout();
@@ -166,7 +166,7 @@ const Dashboard = () => {
           Your Transactions
         </Heading>
 
-        <CreateTransactionModal />
+        <CreateTransactionModal onTransactionCreated={fetchTransactions} />
 
         {loading && <Text>Loading transactions...</Text>}
 
