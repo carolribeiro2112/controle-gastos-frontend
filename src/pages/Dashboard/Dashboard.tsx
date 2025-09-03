@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Flex, Heading, Text } from "@radix-ui/themes";
 import LoginService from "../../services/LoginService/LoginService";
 import TransactionService, {
@@ -7,16 +6,8 @@ import TransactionService, {
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import CustomTable from "../../components/CustomTable/Table";
-import { jwtDecode } from "jwt-decode";
-
-const getUserIdFromToken = () => {
-  const token = LoginService.getToken();
-  if (token) {
-    const decoded: any = jwtDecode(token);
-    return decoded.id;
-  }
-  return null;
-};
+import { getUserIdFromToken } from "../../utils/getUserData";
+import { Trash2 } from "lucide-react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -33,6 +24,30 @@ const Dashboard = () => {
     { id: "actions", label: "Actions" },
   ];
 
+  const handleDeleteTransaction = async (transactionId: string) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this transaction?"
+    );
+    if (!confirmed) return;
+
+    try {
+      setError(null);
+
+      await TransactionService.deleteTransaction(transactionId);
+
+      setTransactions((prevTransactions) =>
+        prevTransactions.filter(
+          (transaction) => transaction.id !== transactionId
+        )
+      );
+
+      console.log("Transaction deleted successfully");
+    } catch (err) {
+      console.error("Error deleting transaction:", err);
+      setError("Failed to delete transaction");
+    }
+  };
+
   const transformedData = transactions.map((transaction, index) => ({
     id: index + 1,
     originalId: transaction.id,
@@ -40,7 +55,13 @@ const Dashboard = () => {
     value: `R$${transaction.value.toFixed(2)}`,
     type: transaction.type,
     transactionDate: new Date(transaction.transactionDate).toLocaleDateString(),
-    actions: "Edit/Delete",
+    actions: (
+      <Trash2
+        size={16}
+        style={{ cursor: "pointer", color: "#ef4444" }}
+        onClick={() => handleDeleteTransaction(transaction.id)}
+      />
+    ),
   }));
 
   useEffect(() => {

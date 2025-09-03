@@ -19,7 +19,7 @@ const getAuthHeaders = () => {
 
 const TransactionService = {
   createTransaction: async (transactionData: Transaction) => {
-    const response = await Api.post("/transactions", transactionData, {
+    const response = await Api.post("/transaction", transactionData, {
       headers: getAuthHeaders()
     });
     return response.data;
@@ -34,7 +34,7 @@ const TransactionService = {
   },
 
   deleteTransaction: async (transactionId: string) => {
-    const response = await Api.delete(`/transactions/${transactionId}`, {
+    const response = await Api.delete(`/transaction/${transactionId}`, {
       headers: getAuthHeaders()
     });
     return response.data;
