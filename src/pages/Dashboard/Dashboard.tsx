@@ -1,46 +1,49 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Flex, Heading, Text } from "@radix-ui/themes";
 import LoginService from "../../services/LoginService/LoginService";
+import TransactionService, {
+  type TransactionResponse,
+} from "../../services/TransactionService/TransactionService";
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import CustomTable from "../../components/CustomTable/Table";
+import { jwtDecode } from "jwt-decode";
+
+const getUserIdFromToken = () => {
+  const token = LoginService.getToken();
+  if (token) {
+    const decoded: any = jwtDecode(token);
+    return decoded.id;
+  }
+  return null;
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const columns = [
-    { id: "name", label: "Full name" },
-    { id: "email", label: "Email" },
-    { id: "group", label: "Group" },
+    { id: "description", label: "Description" },
+    { id: "value", label: "Value" },
+    { id: "type", label: "Type" },
+    { id: "transactionDate", label: "Date" },
     { id: "actions", label: "Actions" },
   ];
 
-  const data = [
-    {
-      id: 1,
-      name: "Danilo Sousa",
-      email: "danilo@example.com",
-      group: "Developer",
-      actions: "Edit/Delete",
-    },
-    {
-      id: 2,
-      name: "Zahra Ambessa",
-      email: "zahra@example.com",
-      group: "Admin",
-      actions: "Edit/Delete",
-    },
-    {
-      id: 3,
-      name: "Jasper Eriksson",
-      email: "jasper@example.com",
-      group: "Developer",
-      actions: "Edit/Delete",
-    },
-  ];
+  const transformedData = transactions.map((transaction, index) => ({
+    id: index + 1,
+    originalId: transaction.id,
+    description: transaction.description,
+    value: `R$${transaction.value.toFixed(2)}`,
+    type: transaction.type,
+    transactionDate: new Date(transaction.transactionDate).toLocaleDateString(),
+    actions: "Edit/Delete",
+  }));
 
   useEffect(() => {
-    // Double-check authentication when component mounts
     const checkAuth = () => {
       const authenticated = LoginService.isAuthenticated();
       setIsAuthenticated(authenticated);
@@ -52,6 +55,29 @@ const Dashboard = () => {
 
     checkAuth();
   }, [navigate]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      if (!isAuthenticated) return;
+
+      try {
+        setLoading(true);
+        setError(null);
+
+        const userId = getUserIdFromToken();
+
+        const data = await TransactionService.getTransactions(userId);
+        setTransactions(data);
+      } catch (err) {
+        console.error("Error fetching transactions:", err);
+        setError("Failed to load transactions");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTransactions();
+  }, [isAuthenticated]);
 
   const handleLogout = () => {
     LoginService.logout();
@@ -89,7 +115,29 @@ const Dashboard = () => {
       >
         Logout
       </Button>
-      <CustomTable columns={columns} data={data} />
+
+      <Flex
+        direction="column"
+        align="center"
+        gap="3"
+        style={{ width: "100%", maxWidth: "800px" }}
+      >
+        <Heading as="h2" size="6" color="blue">
+          Your Transactions
+        </Heading>
+
+        {loading && <Text>Loading transactions...</Text>}
+
+        {error && <Text color="red">{error}</Text>}
+
+        {!loading && !error && transactions.length === 0 && (
+          <Text color="gray">No transactions found.</Text>
+        )}
+
+        {!loading && !error && transactions.length > 0 && (
+          <CustomTable columns={columns} data={transformedData} />
+        )}
+      </Flex>
     </Flex>
   );
 };
