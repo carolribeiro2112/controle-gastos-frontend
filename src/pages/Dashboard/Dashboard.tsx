@@ -19,6 +19,7 @@ import {
 } from "../../utils/getUserData";
 import { Trash2 } from "lucide-react";
 import CreateTransactionModal from "../../components/CreateTransactionModal/CreateTransactionModal";
+import Toast from "../../components/Toast/Toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -30,6 +31,8 @@ const Dashboard = () => {
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
     null
   );
+
+  const [showToast, setShowToast] = useState(false);
 
   const columns: {
     id: string;
@@ -44,6 +47,15 @@ const Dashboard = () => {
   ];
 
   const userRole = getUserRoleFromToken();
+
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
 
   const handleDeleteClick = (transactionId: string) => {
     setTransactionToDelete(transactionId);
@@ -63,6 +75,7 @@ const Dashboard = () => {
           (transaction) => transaction.id !== transactionToDelete
         )
       );
+      setShowToast(true);
     } catch (err) {
       console.error("Error deleting transaction:", err);
       setError("Failed to delete transaction");
@@ -191,6 +204,14 @@ const Dashboard = () => {
 
         {!loading && !error && transactions.length > 0 && (
           <CustomTable columns={columns} data={transformedData} />
+        )}
+
+        {showToast && (
+          <Toast
+            type="success"
+            message="Your transaction has been successfully deleted."
+            duration={2000}
+          />
         )}
 
         <AlertDialog.Root
