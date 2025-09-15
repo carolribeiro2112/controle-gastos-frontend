@@ -24,12 +24,25 @@ interface ApiErrorResponse {
 const LoginService = {
   login: async (credentials: LoginRequest): Promise<AuthResponse> => {
     try {
+      // console.log('🔐 Logging in...');
       const response = await Api.post<AuthResponse>('/auth/login', credentials);
       
       if (response.data.token) {
+        // console.log('✅ Login successful! New token received');
+        
+        // Clear and set new token
+        localStorage.removeItem('authToken');
         localStorage.setItem('authToken', response.data.token);
-
         Api.defaults.headers.common['Authorization'] = `Bearer ${response.data.token}`;
+        
+        // Log token details
+        // try {
+        //   const payload = JSON.parse(atob(response.data.token.split('.')[1]));
+        //   console.log('� User ID:', payload.id);
+        //   console.log('⏰ Token expires:', new Date(payload.exp * 1000));
+        // } catch (e) {
+        //   console.error('❌ Error decoding token:', e);
+        // }
       }
       
       return response.data;
@@ -51,8 +64,10 @@ const LoginService = {
   },
 
   logout: (): void => {
+    // console.log('🚪 Logging out...');
     localStorage.removeItem('authToken');
     delete Api.defaults.headers.common['Authorization'];
+    // console.log('✅ Token cleared');
   },
 
   getToken: (): string | null => {

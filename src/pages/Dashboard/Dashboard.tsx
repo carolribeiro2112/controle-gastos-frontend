@@ -1,4 +1,11 @@
-import { AlertDialog, Button, Flex, Heading, Text } from "@radix-ui/themes";
+import {
+  AlertDialog,
+  Button,
+  Flex,
+  Heading,
+  Text,
+  IconButton,
+} from "@radix-ui/themes";
 import LoginService from "../../services/LoginService/LoginService";
 import TransactionService, {
   type TransactionResponse,
@@ -6,9 +13,13 @@ import TransactionService, {
 import { useNavigate } from "react-router";
 import { useEffect, useState, useCallback } from "react";
 import CustomTable from "../../components/CustomTable/Table";
-import { getUserIdFromToken } from "../../utils/getUserData";
+import {
+  getUserIdFromToken,
+  getUserRoleFromToken,
+} from "../../utils/getUserData";
 import { Trash2 } from "lucide-react";
 import CreateTransactionModal from "../../components/CreateTransactionModal/CreateTransactionModal";
+import Toast from "../../components/Toast/Toast";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -21,6 +32,8 @@ const Dashboard = () => {
     null
   );
 
+  const [showToast, setShowToast] = useState(false);
+
   const columns: {
     id: string;
     label: string;
@@ -32,6 +45,17 @@ const Dashboard = () => {
     { id: "transactionDate", label: "Date", justify: "start" },
     { id: "actions", label: "Actions", justify: "center" },
   ];
+
+  const userRole = getUserRoleFromToken();
+
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(false);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
 
   const handleDeleteClick = (transactionId: string) => {
     setTransactionToDelete(transactionId);
@@ -51,8 +75,7 @@ const Dashboard = () => {
           (transaction) => transaction.id !== transactionToDelete
         )
       );
-
-      console.log("Transaction deleted successfully");
+      setShowToast(true);
     } catch (err) {
       console.error("Error deleting transaction:", err);
       setError("Failed to delete transaction");
@@ -75,11 +98,14 @@ const Dashboard = () => {
     type: transaction.type,
     transactionDate: new Date(transaction.transactionDate).toLocaleDateString(),
     actions: (
-      <Trash2
-        size={16}
-        style={{ cursor: "pointer", color: "#ef4444" }}
+      <IconButton
         onClick={() => handleDeleteClick(transaction.id)}
-      />
+        disabled={userRole === "USER"}
+        radius="full"
+        style={{ cursor: "pointer" }}
+      >
+        <Trash2 size={16} />
+      </IconButton>
     ),
   }));
 
@@ -151,7 +177,7 @@ const Dashboard = () => {
         color="red"
         variant="outline"
         onClick={handleLogout}
-        style={{ marginTop: "20px" }}
+        style={{ marginTop: "20px", cursor: "pointer" }}
       >
         Logout
       </Button>
@@ -178,6 +204,14 @@ const Dashboard = () => {
 
         {!loading && !error && transactions.length > 0 && (
           <CustomTable columns={columns} data={transformedData} />
+        )}
+
+        {showToast && (
+          <Toast
+            type="success"
+            message="Your transaction has been successfully deleted."
+            duration={2000}
+          />
         )}
 
         <AlertDialog.Root
