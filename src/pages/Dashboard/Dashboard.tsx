@@ -1,4 +1,11 @@
-import { AlertDialog, Button, Flex, Heading, Text } from "@radix-ui/themes";
+import {
+  AlertDialog,
+  Button,
+  Flex,
+  Heading,
+  Text,
+  IconButton,
+} from "@radix-ui/themes";
 import LoginService from "../../services/LoginService/LoginService";
 import TransactionService, {
   type TransactionResponse,
@@ -6,7 +13,10 @@ import TransactionService, {
 import { useNavigate } from "react-router";
 import { useEffect, useState, useCallback } from "react";
 import CustomTable from "../../components/CustomTable/Table";
-import { getUserIdFromToken } from "../../utils/getUserData";
+import {
+  getUserIdFromToken,
+  getUserRoleFromToken,
+} from "../../utils/getUserData";
 import { Trash2 } from "lucide-react";
 import CreateTransactionModal from "../../components/CreateTransactionModal/CreateTransactionModal";
 
@@ -33,6 +43,8 @@ const Dashboard = () => {
     { id: "actions", label: "Actions", justify: "center" },
   ];
 
+  const userRole = getUserRoleFromToken();
+
   const handleDeleteClick = (transactionId: string) => {
     setTransactionToDelete(transactionId);
     setDeleteDialogOpen(true);
@@ -51,8 +63,6 @@ const Dashboard = () => {
           (transaction) => transaction.id !== transactionToDelete
         )
       );
-
-      console.log("Transaction deleted successfully");
     } catch (err) {
       console.error("Error deleting transaction:", err);
       setError("Failed to delete transaction");
@@ -75,11 +85,14 @@ const Dashboard = () => {
     type: transaction.type,
     transactionDate: new Date(transaction.transactionDate).toLocaleDateString(),
     actions: (
-      <Trash2
-        size={16}
-        style={{ cursor: "pointer", color: "#ef4444" }}
+      <IconButton
         onClick={() => handleDeleteClick(transaction.id)}
-      />
+        disabled={userRole === "USER"}
+        radius="full"
+        style={{ cursor: "pointer" }}
+      >
+        <Trash2 size={16} />
+      </IconButton>
     ),
   }));
 
@@ -151,7 +164,7 @@ const Dashboard = () => {
         color="red"
         variant="outline"
         onClick={handleLogout}
-        style={{ marginTop: "20px" }}
+        style={{ marginTop: "20px", cursor: "pointer" }}
       >
         Logout
       </Button>

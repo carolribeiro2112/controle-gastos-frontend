@@ -10,7 +10,10 @@ import { useState } from "react";
 import TransactionService, {
   type Transaction,
 } from "../../services/TransactionService/TransactionService";
-import { getUserIdFromToken } from "../../utils/getUserData";
+import {
+  getUserIdFromToken,
+  getUserRoleFromToken,
+} from "../../utils/getUserData";
 
 interface CreateTransactionModalProps {
   onTransactionCreated?: () => void;
@@ -25,6 +28,8 @@ const CreateTransactionModal = ({
   const [description, setDescription] = useState("");
   const [value, setValue] = useState("");
   const [type, setType] = useState<string>("");
+
+  const userRole = getUserRoleFromToken();
 
   const resetForm = () => {
     setDescription("");
@@ -87,10 +92,15 @@ const CreateTransactionModal = ({
       setLoading(false);
     }
   };
+
+  const isDisabled = userRole === "USER";
+
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger>
-        <Button>Add new transaction</Button>
+        <Button disabled={isDisabled} style={{ cursor: "pointer" }}>
+          Add new transaction
+        </Button>
       </Dialog.Trigger>
 
       <Dialog.Content maxWidth="450px">
