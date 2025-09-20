@@ -137,7 +137,7 @@ const Login = () => {
 
       <Button
         size="3"
-        style={{ width: "300px" }}
+        style={{ width: "300px", cursor: "pointer" }}
         color="jade"
         onClick={handleLogin}
         disabled={isLoading}
@@ -149,7 +149,7 @@ const Login = () => {
         variant="ghost"
         color="jade"
         size="3"
-        style={{ width: "275px" }}
+        style={{ width: "275px", cursor: "pointer" }}
         onClick={handleRegister}
         disabled={isLoading}
       >

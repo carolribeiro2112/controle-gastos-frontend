@@ -181,7 +181,7 @@ const Register = () => {
 
         <Button
           size="3"
-          style={{ width: "300px" }}
+          style={{ width: "300px", cursor: "pointer" }}
           color="jade"
           onClick={handleRegister}
           disabled={isLoading}
@@ -193,7 +193,7 @@ const Register = () => {
           variant="ghost"
           color="jade"
           size="3"
-          style={{ width: "275px" }}
+          style={{ width: "275px", cursor: "pointer" }}
           onClick={handleGoToLogin}
           disabled={isLoading}
         >
