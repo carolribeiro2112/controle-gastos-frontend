@@ -1,14 +1,22 @@
-import { Button, Flex, Heading, Text, TextField } from "@radix-ui/themes";
+import {
+  Button,
+  Flex,
+  Heading,
+  Text,
+  TextField,
+  DataList,
+} from "@radix-ui/themes";
 import { useState } from "react";
 import UserService from "../../services/UserService/UserService";
 import RelationService from "../../services/RelationService/RelationService";
 import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
+import { getUserIdFromToken } from "../../utils/getUserData";
 
 interface UserData {
   id: string;
   login: string;
-  email?: string;
+  age: number;
 }
 
 const SettingsPage = () => {
@@ -16,6 +24,7 @@ const SettingsPage = () => {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showToast, setShowToast] = useState(false);
 
   const handleSearch = async () => {
     if (!userName.trim()) {
@@ -42,20 +51,23 @@ const SettingsPage = () => {
     }
   };
 
-  console.log("User Data:", userData);
-
   const handleBindUser = async () => {
     if (!userData) return;
 
     setLoading(true);
     setError(null);
 
+    const relationData = {
+      adminId: getUserIdFromToken(),
+      userId: userData.id,
+    };
+
     try {
-      await RelationService.createRelation(userData.id);
-      alert("Usuário vinculado com sucesso!");
+      await RelationService.createRelation(relationData);
+      setShowToast(true);
     } catch (error: unknown) {
       console.error("Error binding user:", error);
-      const errorMessage = "Failed to bind user. Please try again.";
+      const errorMessage = "Falha ao vincular o usuário. Tente novamente.";
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -69,7 +81,7 @@ const SettingsPage = () => {
         Settings
       </Heading>
 
-      <div style={{ marginBottom: "20px" }}>
+      <div style={{ marginBottom: "20px", gap: "10px", width: "250px" }}>
         <label>
           <Text as="div" size="2" mb="1" weight="bold">
             Type user name
@@ -83,79 +95,55 @@ const SettingsPage = () => {
             style={{ marginBottom: "10px" }}
           />
         </label>
-        <Button onClick={handleSearch} disabled={loading || !userName.trim()}>
-          {loading ? "Searching..." : "Search"}
-        </Button>
+        <Flex justify="between">
+          <Button
+            onClick={handleSearch}
+            disabled={loading || !userName.trim()}
+            style={{ cursor: "pointer" }}
+          >
+            {loading ? "Searching..." : "Search"}
+          </Button>
+          <Button
+            onClick={handleBindUser}
+            disabled={!userData}
+            style={{ cursor: "pointer" }}
+          >
+            Vincular usuário
+          </Button>
+        </Flex>
       </div>
 
       {error && <Toast type="error" message={error} duration={2500} />}
-
-      {userData && (
-        <div
-          style={{
-            backgroundColor: "#ffffff",
-            border: "1px solid #e5e7eb",
-            borderRadius: "8px",
-            padding: "20px",
-            boxShadow:
-              "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
-          }}
-        >
-          <h2
-            style={{ marginTop: "0", marginBottom: "16px", color: "#374151" }}
-          >
-            User Details
-          </h2>
-          <div style={{ display: "grid", gap: "12px" }}>
-            <div
-              style={{
-                padding: "8px 0",
-                borderBottom: "1px solid #f3f4f6",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text weight="bold" style={{ color: "#6b7280" }}>
-                ID:
-              </Text>
-              <Text style={{ color: "#111827" }}>{userData.id}</Text>
-            </div>
-            <div
-              style={{
-                padding: "8px 0",
-                borderBottom: "1px solid #f3f4f6",
-                display: "flex",
-                justifyContent: "space-between",
-              }}
-            >
-              <Text weight="bold" style={{ color: "#6b7280" }}>
-                Username:
-              </Text>
-              <Text style={{ color: "#111827" }}>{userData.login}</Text>
-            </div>
-            {userData.email && (
-              <div
-                style={{
-                  padding: "8px 0",
-                  display: "flex",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Text weight="bold" style={{ color: "#6b7280" }}>
-                  Email:
-                </Text>
-                <Text style={{ color: "#111827" }}>{userData.email}</Text>
-              </div>
-            )}
-          </div>
-        </div>
+      {showToast && (
+        <Toast
+          type="success"
+          message="Usuário vinculado com sucesso!"
+          duration={2500}
+        />
       )}
 
-      <div style={{ marginTop: "20px" }}>
-        <Button onClick={handleBindUser} disabled={!userData}>
-          Vincular usuário
-        </Button>
-      </div>
+      {userData && (
+        <DataList.Root
+          style={{
+            border: "1px solid #f4fefbb0",
+            borderRadius: "8px",
+            padding: "16px",
+          }}
+        >
+          <DataList.Item>
+            <DataList.Label>ID</DataList.Label>
+            <DataList.Value>{userData.id}</DataList.Value>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.Label>Username</DataList.Label>
+            <DataList.Value>{userData.login}</DataList.Value>
+          </DataList.Item>
+          <DataList.Item>
+            <DataList.Label>Age</DataList.Label>
+            <DataList.Value>{userData.age}</DataList.Value>
+          </DataList.Item>
+        </DataList.Root>
+      )}
     </Flex>
   );
 };
