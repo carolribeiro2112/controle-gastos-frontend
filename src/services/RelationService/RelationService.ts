@@ -7,7 +7,6 @@ const getAuthHeaders = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-
 const RelationService = {
   createRelation: async (relationData: any) => {
     const response = await Api.post("/admin/bind", relationData, {
