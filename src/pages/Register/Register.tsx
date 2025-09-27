@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { useState } from "react";
 import { registerUser } from "../../services/RegisterService/RegisterService";
 import Toast from "../../components/Toast/Toast";
+import { LogoLandingPage } from "../../components/Logo/Logo";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -119,10 +120,8 @@ const Register = () => {
             duration={2000}
           />
         )}
-        <Heading as="h1" size="9" color="jade">
-          Controle de gastos
-        </Heading>
-        <Heading as="h1" size="8" color="jade">
+        <LogoLandingPage />
+        <Heading as="h3" size="6" color="jade">
           Create your account
         </Heading>
 
@@ -181,7 +180,7 @@ const Register = () => {
 
         <Button
           size="3"
-          style={{ width: "300px" }}
+          style={{ width: "300px", cursor: "pointer" }}
           color="jade"
           onClick={handleRegister}
           disabled={isLoading}
@@ -193,7 +192,7 @@ const Register = () => {
           variant="ghost"
           color="jade"
           size="3"
-          style={{ width: "275px" }}
+          style={{ width: "275px", cursor: "pointer" }}
           onClick={handleGoToLogin}
           disabled={isLoading}
         >

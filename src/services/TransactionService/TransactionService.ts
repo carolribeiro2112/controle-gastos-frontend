@@ -13,30 +13,32 @@ export type TransactionResponse = Transaction & {
   transactionDate: string;
 };
 
-const getAuthHeaders = async () => {
+const getAuthHeaders = async (): Promise<Record<string, string>> => {
   const adminId = await getAdminId();
   const token = localStorage.getItem('authToken'); 
-  return {
-    token,
-    adminId,
-    headers: {
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      adminId
-    }
-  };
+
+  const headers: Record<string, string> = {};
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  if (adminId) {
+    headers['adminId'] = adminId;
+  }
+
+  return headers;
 };
 
 const TransactionService = {
   createTransaction: async (transactionData: Transaction) => {
-    const { headers } = await getAuthHeaders();
-    const response = await Api.post("/transaction", transactionData, {
-      headers
-    });
+    const headers = await getAuthHeaders();
+    const response = await Api.post("/transaction", transactionData, { headers });
     return response.data;
   },
 
   getTransactions: async (userId: string) => {
-    const { headers } = await getAuthHeaders();
+    const headers = await getAuthHeaders();
     const response = await Api.get("/transaction", {
       params: { userId },
       headers
@@ -45,10 +47,8 @@ const TransactionService = {
   },
 
   deleteTransaction: async (transactionId: string) => {
-    const { headers } = await getAuthHeaders();
-    const response = await Api.delete(`/transaction/${transactionId}`, {
-      headers
-    });
+    const headers = await getAuthHeaders();
+    const response = await Api.delete(`/transaction/${transactionId}`, { headers });
     return response.data;
   },
 };

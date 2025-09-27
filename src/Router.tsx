@@ -4,6 +4,7 @@ import Register from "./pages/Register/Register";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute/PublicRoute";
+import SettingsPage from "./pages/SettingsPage/SettingsPage";
 
 const Router = () => {
   return (
@@ -30,6 +31,14 @@ const Router = () => {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
             </ProtectedRoute>
           }
         />

@@ -2,19 +2,26 @@
 import Api from "../../Api/Api";
 import { getUserIdFromToken } from "../../utils/getUserData";
 
-const getAuthHeaders = () => {
+const getAuthHeaders = (adminId?: string) => {
   const token = localStorage.getItem('authToken'); 
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
+  const headers: Record<string, string> = {};
 
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  if (adminId) {
+    headers['adminId'] = adminId;
+  }
+
+  return headers;
+};
 
 const RelationService = {
   createRelation: async (relationData: any) => {
+    const adminId = getUserIdFromToken(); // já é síncrono
     const response = await Api.post("/admin/bind", relationData, {
-      headers: {
-        ...getAuthHeaders(),
-        adminId: getUserIdFromToken()
-      },
+      headers: getAuthHeaders(adminId),
     });
     return response.data;
   },

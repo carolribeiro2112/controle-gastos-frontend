@@ -4,6 +4,7 @@ import { useState } from "react";
 import LoginService from "../../services/LoginService/LoginService";
 import Toast from "../../components/Toast/Toast";
 import { AxiosError } from "axios";
+import { LogoLandingPage } from "../../components/Logo/Logo";
 
 interface ApiErrorResponse {
   message?: string;
@@ -89,10 +90,8 @@ const Login = () => {
 
   return (
     <Flex direction="column" align="center" justify="center" gap="4" m="9">
-      <Heading as="h1" size="9" color="jade">
-        Controle de gastos
-      </Heading>
-      <Heading as="h1" size="8" color="jade">
+      <LogoLandingPage />
+      <Heading as="h3" size="6" color="jade">
         Login to your account
       </Heading>
 
@@ -137,7 +136,7 @@ const Login = () => {
 
       <Button
         size="3"
-        style={{ width: "300px" }}
+        style={{ width: "300px", cursor: "pointer" }}
         color="jade"
         onClick={handleLogin}
         disabled={isLoading}
@@ -149,7 +148,7 @@ const Login = () => {
         variant="ghost"
         color="jade"
         size="3"
-        style={{ width: "275px" }}
+        style={{ width: "275px", cursor: "pointer" }}
         onClick={handleRegister}
         disabled={isLoading}
       >

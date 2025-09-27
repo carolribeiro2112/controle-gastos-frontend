@@ -20,6 +20,7 @@ import {
 import { Trash2 } from "lucide-react";
 import CreateTransactionModal from "../../components/CreateTransactionModal/CreateTransactionModal";
 import Toast from "../../components/Toast/Toast";
+import Header from "../../components/Header/Header";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -145,11 +146,6 @@ const Dashboard = () => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  const handleLogout = () => {
-    LoginService.logout();
-    navigate("/");
-  };
-
   if (!isAuthenticated) {
     return (
       <Flex direction="column" align="center" justify="center" gap="4" m="9">
@@ -159,7 +155,8 @@ const Dashboard = () => {
   }
 
   return (
-    <Flex direction="column" align="center" gap="4" m="9">
+    <Flex direction="column" align="center" gap="4" m="9" mt="0">
+      <Header />
       <Heading as="h1" size="8" color="jade">
         Dashboard - Controle de Gastos
       </Heading>
@@ -171,16 +168,6 @@ const Dashboard = () => {
       <Text size="2" color="gray">
         Token JWT presente: ✅
       </Text>
-
-      <Button
-        size="3"
-        color="red"
-        variant="outline"
-        onClick={handleLogout}
-        style={{ marginTop: "20px", cursor: "pointer" }}
-      >
-        Logout
-      </Button>
 
       <Flex
         direction="column"
