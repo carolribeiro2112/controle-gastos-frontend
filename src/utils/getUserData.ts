@@ -22,10 +22,12 @@ const getUserRoleFromToken = () => {
   return userData ? userData.role : null;
 };
 
-const getAdminId = () => {
-  const relations = RelationService.getRelations();
-  const adminId = relations.then((data) => data[0]?.adminId);
+const getAdminId = async() => {
+  const relations = await RelationService.getRelations();
+  const isUserBinded = relations?.some((relation:any) => relation.userId === getUserIdFromToken());
+  const adminId = isUserBinded ? relations?.[0]?.adminId : null;
   return adminId;
 };
+
 
 export { getUserData, getUserIdFromToken, getAdminId, getUserRoleFromToken };
