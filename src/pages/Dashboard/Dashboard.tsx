@@ -1,12 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  AlertDialog,
-  Button,
-  Flex,
-  Heading,
-  Text,
-  IconButton,
-} from "@radix-ui/themes";
+import { Flex, Heading, Text, IconButton } from "@radix-ui/themes";
 import LoginService from "../../services/LoginService/LoginService";
 import TransactionService, {
   type TransactionResponse,
@@ -24,6 +17,7 @@ import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
 import RelationsList from "../../components/RelationsList/RelationsList";
 import RelationService from "../../services/RelationService/RelationService";
+import DeleteDialog from "../../components/DeleteDialog/DeleteDialog";
 
 interface Relation {
   adminId: string;
@@ -279,39 +273,12 @@ const Dashboard = () => {
           />
         )}
 
-        <AlertDialog.Root
-          open={deleteDialogOpen}
-          onOpenChange={setDeleteDialogOpen}
-        >
-          <AlertDialog.Content maxWidth="450px">
-            <AlertDialog.Title>Delete transaction</AlertDialog.Title>
-            <AlertDialog.Description size="2">
-              Are you sure you want to delete this transaction? This action
-              cannot be undone.
-            </AlertDialog.Description>
-
-            <Flex gap="3" mt="4" justify="end">
-              <AlertDialog.Cancel>
-                <Button
-                  variant="soft"
-                  color="gray"
-                  onClick={handleDeleteCancel}
-                >
-                  Cancel
-                </Button>
-              </AlertDialog.Cancel>
-              <AlertDialog.Action>
-                <Button
-                  variant="solid"
-                  color="red"
-                  onClick={handleDeleteConfirm}
-                >
-                  Delete
-                </Button>
-              </AlertDialog.Action>
-            </Flex>
-          </AlertDialog.Content>
-        </AlertDialog.Root>
+        <DeleteDialog
+          deleteDialogOpen={deleteDialogOpen}
+          setDeleteDialogOpen={setDeleteDialogOpen}
+          handleDeleteCancel={handleDeleteCancel}
+          handleDeleteConfirm={handleDeleteConfirm}
+        />
       </Flex>
     </Flex>
   );
