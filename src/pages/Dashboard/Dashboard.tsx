@@ -44,6 +44,7 @@ const Dashboard = () => {
   );
   const [adminId, setAdminId] = useState<string | null>(null);
   const [relations, setRelations] = useState<Relation[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const [showToast, setShowToast] = useState(false);
 
@@ -151,7 +152,9 @@ const Dashboard = () => {
     }
   }, [adminId]);
 
-  console.log(relations);
+  const handleUserSelection = (userId: string) => {
+    setSelectedUserId(userId);
+  };
 
   const fetchTransactions = useCallback(async () => {
     if (!isAuthenticated) return;
@@ -160,9 +163,11 @@ const Dashboard = () => {
       setLoading(true);
       setError(null);
 
-      const userId = getUserIdFromToken();
-
-      const data = await TransactionService.getTransactions(userId);
+      if (!selectedUserId) {
+        setTransactions([]);
+        return;
+      }
+      const data = await TransactionService.getTransactions(selectedUserId);
       setTransactions(data);
     } catch (err) {
       console.error("Error fetching transactions:", err);
@@ -170,7 +175,7 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, selectedUserId]);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -222,7 +227,15 @@ const Dashboard = () => {
           Your Transactions
         </Heading>
 
-        <CreateTransactionModal onTransactionCreated={fetchTransactions} />
+        <RelationsList
+          relations={relations}
+          onUserSelect={handleUserSelection}
+        />
+
+        <CreateTransactionModal
+          onTransactionCreated={fetchTransactions}
+          userId={selectedUserId}
+        />
 
         {loading && <Text>Loading transactions...</Text>}
 
@@ -231,8 +244,6 @@ const Dashboard = () => {
         {!loading && !error && transactions.length === 0 && (
           <Text color="gray">No transactions found.</Text>
         )}
-
-        <RelationsList relations={relations} />
 
         {!loading && !error && transactions.length > 0 && (
           <CustomTable columns={columns} data={transformedData} />

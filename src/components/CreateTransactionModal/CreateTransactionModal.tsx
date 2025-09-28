@@ -10,18 +10,17 @@ import { useState, useEffect } from "react";
 import TransactionService, {
   type Transaction,
 } from "../../services/TransactionService/TransactionService";
-import {
-  getUserIdFromToken,
-  getUserRoleFromToken,
-} from "../../utils/getUserData";
+import { getUserRoleFromToken } from "../../utils/getUserData";
 import Toast from "../Toast/Toast";
 
 interface CreateTransactionModalProps {
   onTransactionCreated?: () => void;
+  userId?: string | null;
 }
 
 const CreateTransactionModal = ({
   onTransactionCreated,
+  userId,
 }: CreateTransactionModalProps) => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -80,14 +79,14 @@ const CreateTransactionModal = ({
         return;
       }
 
-      const userId = getUserIdFromToken();
       if (!userId) {
         setError("User not authenticated");
+        setLoading(false);
         return;
       }
 
       const transactionData: Transaction = {
-        userId,
+        userId: userId,
         description: description.trim(),
         value: numericValue,
         type,

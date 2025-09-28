@@ -4,6 +4,7 @@ import { getUserData } from "../../utils/getUserData";
 
 interface Relations {
   relations: RelationProps[];
+  onUserSelect?: (userId: string) => void;
 }
 interface RelationProps {
   adminId: string;
@@ -12,20 +13,27 @@ interface RelationProps {
   userLogin: string;
 }
 
-function RelationsList(relations: Relations) {
+function RelationsList({ relations, onUserSelect }: Relations) {
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const userData = getUserData();
+
+  const handleUserSelection = (userId: string) => {
+    setSelectedUserId(userId);
+    if (onUserSelect) {
+      onUserSelect(userId);
+    }
+  };
 
   return (
     <div>
       <h2>Selecionar usuário</h2>
-      {relations.relations.length === 0 ? (
+      {relations.length === 0 ? (
         <p>Nenhuma relação encontrada.</p>
       ) : (
-        <Select.Root value={selectedUserId} onValueChange={setSelectedUserId}>
+        <Select.Root value={selectedUserId} onValueChange={handleUserSelection}>
           <Select.Trigger placeholder="Selecione um usuário" />
           <Select.Content>
-            {relations.relations.map((rel: RelationProps) => (
+            {relations.map((rel: RelationProps) => (
               <Select.Item key={rel.userId} value={rel.userId}>
                 {rel.userLogin}
               </Select.Item>
