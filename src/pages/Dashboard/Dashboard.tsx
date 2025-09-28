@@ -76,13 +76,18 @@ const Dashboard = () => {
       try {
         const id = await getUserIdFromToken();
         setAdminId(id);
+
+        // Se for usuário USER, automaticamente seleciona o próprio ID
+        if (userRole === "USER") {
+          setSelectedUserId(id);
+        }
       } catch (err) {
         console.error("Erro ao buscar adminId:", err);
       }
     };
 
     fetchAdminId();
-  }, []);
+  }, [userRole]);
 
   const handleDeleteClick = (transactionId: string) => {
     setTransactionToDelete(transactionId);
@@ -138,7 +143,9 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchRelations = async () => {
-      if (!adminId) return;
+      // Apenas usuários ADMIN podem buscar relações
+      if (!adminId || userRole !== "ADMIN") return;
+
       try {
         const data = await RelationService.getRelationsByAdminId(adminId);
         setRelations(data);
@@ -147,10 +154,10 @@ const Dashboard = () => {
       }
     };
 
-    if (adminId) {
+    if (adminId && userRole === "ADMIN") {
       fetchRelations();
     }
-  }, [adminId]);
+  }, [adminId, userRole]);
 
   const handleUserSelection = (userId: string) => {
     setSelectedUserId(userId);
@@ -163,11 +170,22 @@ const Dashboard = () => {
       setLoading(true);
       setError(null);
 
-      if (!selectedUserId) {
-        setTransactions([]);
-        return;
+      let userIdToFetch: string;
+
+      if (userRole === "USER") {
+        // Para usuários USER, sempre busca as próprias transações
+        userIdToFetch = await getUserIdFromToken();
+      } else {
+        // Para usuários ADMIN, precisa ter selecionado um usuário
+        if (!selectedUserId) {
+          setTransactions([]);
+          setLoading(false);
+          return;
+        }
+        userIdToFetch = selectedUserId;
       }
-      const data = await TransactionService.getTransactions(selectedUserId);
+
+      const data = await TransactionService.getTransactions(userIdToFetch);
       setTransactions(data);
     } catch (err) {
       console.error("Error fetching transactions:", err);
@@ -175,7 +193,7 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated, selectedUserId]);
+  }, [isAuthenticated, selectedUserId, userRole]);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -227,15 +245,19 @@ const Dashboard = () => {
           Your Transactions
         </Heading>
 
-        <RelationsList
-          relations={relations}
-          onUserSelect={handleUserSelection}
-        />
+        {userRole === "ADMIN" && (
+          <RelationsList
+            relations={relations}
+            onUserSelect={handleUserSelection}
+          />
+        )}
 
-        <CreateTransactionModal
-          onTransactionCreated={fetchTransactions}
-          userId={selectedUserId}
-        />
+        {userRole === "ADMIN" && (
+          <CreateTransactionModal
+            onTransactionCreated={fetchTransactions}
+            userId={selectedUserId}
+          />
+        )}
 
         {loading && <Text>Loading transactions...</Text>}
 
