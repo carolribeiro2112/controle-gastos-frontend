@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   AlertDialog,
   Button,
@@ -22,6 +23,14 @@ import CreateTransactionModal from "../../components/CreateTransactionModal/Crea
 import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
 import RelationsList from "../../components/RelationsList/RelationsList";
+import RelationService from "../../services/RelationService/RelationService";
+
+interface Relation {
+  adminId: string;
+  adminLogin: string;
+  userId: string;
+  userLogin: string;
+}
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -34,6 +43,7 @@ const Dashboard = () => {
     null
   );
   const [adminId, setAdminId] = useState<string | null>(null);
+  const [relations, setRelations] = useState<Relation[]>([]);
 
   const [showToast, setShowToast] = useState(false);
 
@@ -64,7 +74,6 @@ const Dashboard = () => {
     const fetchAdminId = async () => {
       try {
         const id = await getUserIdFromToken();
-        console.log(id);
         setAdminId(id);
       } catch (err) {
         console.error("Erro ao buscar adminId:", err);
@@ -125,6 +134,24 @@ const Dashboard = () => {
       </IconButton>
     ),
   }));
+
+  useEffect(() => {
+    const fetchRelations = async () => {
+      if (!adminId) return;
+      try {
+        const data = await RelationService.getRelationsByAdminId(adminId);
+        setRelations(data);
+      } catch (err: any) {
+        setError(err.message || "Erro ao buscar relações");
+      }
+    };
+
+    if (adminId) {
+      fetchRelations();
+    }
+  }, [adminId]);
+
+  console.log(relations);
 
   const fetchTransactions = useCallback(async () => {
     if (!isAuthenticated) return;
@@ -205,11 +232,11 @@ const Dashboard = () => {
           <Text color="gray">No transactions found.</Text>
         )}
 
+        <RelationsList relations={relations} />
+
         {!loading && !error && transactions.length > 0 && (
           <CustomTable columns={columns} data={transformedData} />
         )}
-
-        <RelationsList adminId={adminId} />
 
         {showToast && (
           <Toast

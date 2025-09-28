@@ -1,59 +1,38 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
-import RelationService from "../../services/RelationService/RelationService";
+import { useState } from "react";
 import { Select } from "@radix-ui/themes";
+import { getUserData } from "../../utils/getUserData";
 
-interface AdminRelationsProps {
-  adminId: string;
-  onUserSelected?: (userId: string, userLogin: string) => void;
+interface Relations {
+  relations: RelationProps[];
 }
-
-interface Relation {
+interface RelationProps {
   adminId: string;
   adminLogin: string;
   userId: string;
   userLogin: string;
 }
 
-function RelationsList({ adminId }: AdminRelationsProps) {
-  const [relations, setRelations] = useState<Relation[]>([]);
-  const [error, setError] = useState<string | null>(null);
+function RelationsList(relations: Relations) {
   const [selectedUserId, setSelectedUserId] = useState<string>("");
-
-  useEffect(() => {
-    const fetchRelations = async () => {
-      try {
-        const data = await RelationService.getRelationsByAdminId(adminId);
-        setRelations(data);
-      } catch (err: any) {
-        setError(err.message || "Erro ao buscar relações");
-      }
-    };
-
-    if (adminId) {
-      fetchRelations();
-    }
-  }, [adminId]);
-
-  if (error) return <p>Erro: {error}</p>;
-
-  console.log("Relations:", relations);
-  console.log("Selected User ID:", selectedUserId);
+  const userData = getUserData();
 
   return (
     <div>
-      <h2>Relações do Admin</h2>
-      {relations.length === 0 ? (
+      <h2>Selecionar usuário</h2>
+      {relations.relations.length === 0 ? (
         <p>Nenhuma relação encontrada.</p>
       ) : (
         <Select.Root value={selectedUserId} onValueChange={setSelectedUserId}>
           <Select.Trigger placeholder="Selecione um usuário" />
           <Select.Content>
-            {relations.map((rel) => (
+            {relations.relations.map((rel: RelationProps) => (
               <Select.Item key={rel.userId} value={rel.userId}>
                 {rel.userLogin}
               </Select.Item>
             ))}
+            <Select.Item key={userData.id} value={userData.id}>
+              {userData.sub}
+            </Select.Item>
           </Select.Content>
         </Select.Root>
       )}
