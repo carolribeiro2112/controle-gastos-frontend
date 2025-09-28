@@ -19,7 +19,7 @@ const getAuthHeaders = (adminId?: string) => {
 
 const RelationService = {
   createRelation: async (relationData: any) => {
-    const adminId = getUserIdFromToken(); // já é síncrono
+    const adminId = getUserIdFromToken(); 
     const response = await Api.post("/admin/bind", relationData, {
       headers: getAuthHeaders(adminId),
     });
@@ -32,6 +32,13 @@ const RelationService = {
     });
     return response.data;
   },
+
+  getRelationsByAdminId: async (adminId: string) => {
+    const response = await Api.get(`/admin/relations-by-admin/${adminId}`, {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
+  }
 };
 
 export default RelationService;

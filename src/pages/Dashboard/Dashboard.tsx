@@ -21,6 +21,7 @@ import { Trash2 } from "lucide-react";
 import CreateTransactionModal from "../../components/CreateTransactionModal/CreateTransactionModal";
 import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
+import RelationsList from "../../components/RelationsList/RelationsList";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ const Dashboard = () => {
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
     null
   );
+  const [adminId, setAdminId] = useState<string | null>(null);
 
   const [showToast, setShowToast] = useState(false);
 
@@ -57,6 +59,20 @@ const Dashboard = () => {
       return () => clearTimeout(timer);
     }
   }, [showToast]);
+
+  useEffect(() => {
+    const fetchAdminId = async () => {
+      try {
+        const id = await getUserIdFromToken();
+        console.log(id);
+        setAdminId(id);
+      } catch (err) {
+        console.error("Erro ao buscar adminId:", err);
+      }
+    };
+
+    fetchAdminId();
+  }, []);
 
   const handleDeleteClick = (transactionId: string) => {
     setTransactionToDelete(transactionId);
@@ -192,6 +208,8 @@ const Dashboard = () => {
         {!loading && !error && transactions.length > 0 && (
           <CustomTable columns={columns} data={transformedData} />
         )}
+
+        <RelationsList adminId={adminId} />
 
         {showToast && (
           <Toast
