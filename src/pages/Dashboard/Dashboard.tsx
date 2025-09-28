@@ -236,21 +236,20 @@ const Dashboard = () => {
         style={{ width: "100%", maxWidth: "800px" }}
       >
         <Heading as="h2" size="6" color="jade">
-          Your Transactions
+          Suas transações
         </Heading>
 
         {userRole === "ADMIN" && (
-          <RelationsList
-            relations={relations}
-            onUserSelect={handleUserSelection}
-          />
-        )}
-
-        {userRole === "ADMIN" && (
-          <CreateTransactionModal
-            onTransactionCreated={fetchTransactions}
-            userId={selectedUserId}
-          />
+          <>
+            <RelationsList
+              relations={relations}
+              onUserSelect={handleUserSelection}
+            />
+            <CreateTransactionModal
+              onTransactionCreated={fetchTransactions}
+              userId={selectedUserId}
+            />
+          </>
         )}
 
         {loading && <Text>Loading transactions...</Text>}
