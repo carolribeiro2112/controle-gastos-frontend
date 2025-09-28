@@ -1,46 +1,40 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Flex, Heading, Text, IconButton } from "@radix-ui/themes";
-import LoginService from "../../services/LoginService/LoginService";
-import TransactionService, {
-  type TransactionResponse,
-} from "../../services/TransactionService/TransactionService";
-import { useNavigate } from "react-router";
-import { useEffect, useState, useCallback } from "react";
 import CustomTable from "../../components/CustomTable/Table";
-import {
-  getUserIdFromToken,
-  getUserRoleFromToken,
-} from "../../utils/getUserData";
 import { Trash2 } from "lucide-react";
 import CreateTransactionModal from "../../components/CreateTransactionModal/CreateTransactionModal";
 import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
 import RelationsList from "../../components/RelationsList/RelationsList";
-import RelationService from "../../services/RelationService/RelationService";
 import DeleteDialog from "../../components/DeleteDialog/DeleteDialog";
 
-interface Relation {
-  adminId: string;
-  adminLogin: string;
-  userId: string;
-  userLogin: string;
-}
+// Importando os hooks customizados
+import { useAuth } from "../../hooks/useAuth";
+import { useTransactions } from "../../hooks/useTransactions";
+import { useRelations } from "../../hooks/useRelations";
+import { useToast } from "../../hooks/useToast";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
-    null
-  );
-  const [adminId, setAdminId] = useState<string | null>(null);
-  const [relations, setRelations] = useState<Relation[]>([]);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-
-  const [showToast, setShowToast] = useState(false);
+  // Usando os hooks customizados
+  const {
+    isAuthenticated,
+    adminId,
+    selectedUserId,
+    userRole,
+    handleUserSelection,
+  } = useAuth();
+  const {
+    transactions,
+    loading,
+    error,
+    deleteDialogOpen,
+    setDeleteDialogOpen,
+    fetchTransactions,
+    handleDeleteClick,
+    handleDeleteConfirm,
+    handleDeleteCancel,
+  } = useTransactions({ isAuthenticated, selectedUserId, userRole });
+  const { relations } = useRelations({ adminId, userRole });
+  const { showToast, showSuccessToast } = useToast();
 
   const columns: {
     id: string;
@@ -54,66 +48,12 @@ const Dashboard = () => {
     { id: "actions", label: "Actions", justify: "center" },
   ];
 
-  const userRole = getUserRoleFromToken();
-
-  useEffect(() => {
-    if (showToast) {
-      const timer = setTimeout(() => {
-        setShowToast(false);
-      }, 2000);
-      return () => clearTimeout(timer);
+  // Handler para confirmação de delete com toast
+  const handleDeleteWithToast = async () => {
+    const result = await handleDeleteConfirm();
+    if (result?.success) {
+      showSuccessToast();
     }
-  }, [showToast]);
-
-  useEffect(() => {
-    const fetchAdminId = async () => {
-      try {
-        const id = await getUserIdFromToken();
-        setAdminId(id);
-
-        // Se for usuário USER, automaticamente seleciona o próprio ID
-        if (userRole === "USER") {
-          setSelectedUserId(id);
-        }
-      } catch (err) {
-        console.error("Erro ao buscar adminId:", err);
-      }
-    };
-
-    fetchAdminId();
-  }, [userRole]);
-
-  const handleDeleteClick = (transactionId: string) => {
-    setTransactionToDelete(transactionId);
-    setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirm = async () => {
-    if (!transactionToDelete) return;
-
-    try {
-      setError(null);
-
-      await TransactionService.deleteTransaction(transactionToDelete);
-
-      setTransactions((prevTransactions) =>
-        prevTransactions.filter(
-          (transaction) => transaction.id !== transactionToDelete
-        )
-      );
-      setShowToast(true);
-    } catch (err) {
-      console.error("Error deleting transaction:", err);
-      setError("Failed to delete transaction");
-    } finally {
-      setDeleteDialogOpen(false);
-      setTransactionToDelete(null);
-    }
-  };
-
-  const handleDeleteCancel = () => {
-    setDeleteDialogOpen(false);
-    setTransactionToDelete(null);
   };
 
   const transformedData = transactions.map((transaction, index) => ({
@@ -134,77 +74,6 @@ const Dashboard = () => {
       </IconButton>
     ),
   }));
-
-  useEffect(() => {
-    const fetchRelations = async () => {
-      // Apenas usuários ADMIN podem buscar relações
-      if (!adminId || userRole !== "ADMIN") return;
-
-      try {
-        const data = await RelationService.getRelationsByAdminId(adminId);
-        setRelations(data);
-      } catch (err: any) {
-        setError(err.message || "Erro ao buscar relações");
-      }
-    };
-
-    if (adminId && userRole === "ADMIN") {
-      fetchRelations();
-    }
-  }, [adminId, userRole]);
-
-  const handleUserSelection = (userId: string) => {
-    setSelectedUserId(userId);
-  };
-
-  const fetchTransactions = useCallback(async () => {
-    if (!isAuthenticated) return;
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      let userIdToFetch: string;
-
-      if (userRole === "USER") {
-        // Para usuários USER, sempre busca as próprias transações
-        userIdToFetch = await getUserIdFromToken();
-      } else {
-        // Para usuários ADMIN, precisa ter selecionado um usuário
-        if (!selectedUserId) {
-          setTransactions([]);
-          setLoading(false);
-          return;
-        }
-        userIdToFetch = selectedUserId;
-      }
-
-      const data = await TransactionService.getTransactions(userIdToFetch);
-      setTransactions(data);
-    } catch (err) {
-      console.error("Error fetching transactions:", err);
-      setError("Failed to load transactions");
-    } finally {
-      setLoading(false);
-    }
-  }, [isAuthenticated, selectedUserId, userRole]);
-
-  useEffect(() => {
-    const checkAuth = () => {
-      const authenticated = LoginService.isAuthenticated();
-      setIsAuthenticated(authenticated);
-
-      if (!authenticated) {
-        navigate("/");
-      }
-    };
-
-    checkAuth();
-  }, [navigate]);
-
-  useEffect(() => {
-    fetchTransactions();
-  }, [fetchTransactions]);
 
   if (!isAuthenticated) {
     return (
@@ -276,7 +145,7 @@ const Dashboard = () => {
           deleteDialogOpen={deleteDialogOpen}
           setDeleteDialogOpen={setDeleteDialogOpen}
           handleDeleteCancel={handleDeleteCancel}
-          handleDeleteConfirm={handleDeleteConfirm}
+          handleDeleteConfirm={handleDeleteWithToast}
         />
       </Flex>
     </Flex>
