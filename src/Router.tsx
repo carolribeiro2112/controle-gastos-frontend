@@ -3,6 +3,7 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import AdminProtectedRoute from "./components/AdminProtectedRoute/AdminProtectedRoute";
 import PublicRoute from "./components/PublicRoute/PublicRoute";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
 
@@ -37,9 +38,9 @@ const Router = () => {
         <Route
           path="/settings"
           element={
-            <ProtectedRoute>
+            <AdminProtectedRoute>
               <SettingsPage />
-            </ProtectedRoute>
+            </AdminProtectedRoute>
           }
         />
       </Routes>
