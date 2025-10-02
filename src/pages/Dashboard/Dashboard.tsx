@@ -6,15 +6,13 @@ import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
 import RelationsList from "../../components/RelationsList/RelationsList";
 import DeleteDialog from "../../components/DeleteDialog/DeleteDialog";
-
-// Importando os hooks customizados
+import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { useAuth } from "../../hooks/useAuth";
 import { useTransactions } from "../../hooks/useTransactions";
 import { useRelations } from "../../hooks/useRelations";
 import { useToast } from "../../hooks/useToast";
 
 const Dashboard = () => {
-  // Usando os hooks customizados
   const {
     isAuthenticated,
     adminId,
@@ -48,7 +46,6 @@ const Dashboard = () => {
     { id: "actions", label: "Actions", justify: "center" },
   ];
 
-  // Handler para confirmação de delete com toast
   const handleDeleteWithToast = async () => {
     const result = await handleDeleteConfirm();
     if (result?.success) {
@@ -86,6 +83,7 @@ const Dashboard = () => {
   return (
     <Flex direction="column" align="center" gap="4" m="9" mt="0">
       <Header />
+      <Breadcrumb />
       <Heading as="h1" size="8" color="jade">
         Dashboard - Controle de Gastos
       </Heading>

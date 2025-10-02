@@ -25,3 +25,5 @@ reports/
 *.njsproj
 *.sln
 *.sw?
+
+src/components/Breadcrumb/README.md
