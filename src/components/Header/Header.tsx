@@ -3,6 +3,7 @@ import LoginService from "../../services/LoginService/LoginService";
 import { useNavigate } from "react-router";
 import { Settings } from "lucide-react";
 import { LogoHeader } from "../Logo/Logo";
+import { getUserRoleFromToken } from "../../utils/getUserData";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -11,6 +12,8 @@ const Header = () => {
     LoginService.logout();
     navigate("/");
   };
+
+  const userRole = getUserRoleFromToken();
 
   return (
     <Flex
@@ -23,14 +26,16 @@ const Header = () => {
     >
       <LogoHeader />
       <Flex justify="between" width="140px">
-        <IconButton
-          size="3"
-          onClick={() => navigate("/settings")}
-          variant="outline"
-          style={{ cursor: "pointer" }}
-        >
-          <Settings size={24} />
-        </IconButton>
+        {userRole === "ADMIN" && (
+          <IconButton
+            size="3"
+            onClick={() => navigate("/settings")}
+            variant="outline"
+            style={{ cursor: "pointer" }}
+          >
+            <Settings size={24} />
+          </IconButton>
+        )}
         <Button
           size="3"
           color="red"
