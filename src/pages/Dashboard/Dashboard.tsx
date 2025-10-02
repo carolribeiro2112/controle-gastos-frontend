@@ -6,6 +6,7 @@ import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
 import RelationsList from "../../components/RelationsList/RelationsList";
 import DeleteDialog from "../../components/DeleteDialog/DeleteDialog";
+import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 
 // Importando os hooks customizados
 import { useAuth } from "../../hooks/useAuth";
@@ -86,6 +87,7 @@ const Dashboard = () => {
   return (
     <Flex direction="column" align="center" gap="4" m="9" mt="0">
       <Header />
+      <Breadcrumb />
       <Heading as="h1" size="8" color="jade">
         Dashboard - Controle de Gastos
       </Heading>
