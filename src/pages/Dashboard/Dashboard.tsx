@@ -7,15 +7,12 @@ import Header from "../../components/Header/Header";
 import RelationsList from "../../components/RelationsList/RelationsList";
 import DeleteDialog from "../../components/DeleteDialog/DeleteDialog";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
-
-// Importando os hooks customizados
 import { useAuth } from "../../hooks/useAuth";
 import { useTransactions } from "../../hooks/useTransactions";
 import { useRelations } from "../../hooks/useRelations";
 import { useToast } from "../../hooks/useToast";
 
 const Dashboard = () => {
-  // Usando os hooks customizados
   const {
     isAuthenticated,
     adminId,
@@ -49,7 +46,6 @@ const Dashboard = () => {
     { id: "actions", label: "Actions", justify: "center" },
   ];
 
-  // Handler para confirmação de delete com toast
   const handleDeleteWithToast = async () => {
     const result = await handleDeleteConfirm();
     if (result?.success) {
