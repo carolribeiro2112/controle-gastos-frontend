@@ -74,15 +74,42 @@ const LoginService = {
     return localStorage.getItem('authToken');
   },
 
+  // Método melhorado para verificar se o token está válido
+  isTokenValid: (token: string): boolean => {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const currentTime = Math.floor(Date.now() / 1000);
+      return payload.exp > currentTime;
+    } catch (error) {
+      console.error('Erro ao validar token:', error);
+      return false;
+    }
+  },
+
   isAuthenticated: (): boolean => {
     const token = localStorage.getItem('authToken');
-    return !!token;
+    
+    if (!token) {
+      return false;
+    }
+
+    // Verifica se o token não está expirado
+    if (!LoginService.isTokenValid(token)) {
+      // Token expirado, remove do localStorage
+      LoginService.logout();
+      return false;
+    }
+
+    return true;
   },
 
   initializeAuth: (): void => {
     const token = localStorage.getItem('authToken');
-    if (token) {
+    if (token && LoginService.isTokenValid(token)) {
       Api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    } else if (token) {
+      // Token inválido ou expirado, remove
+      LoginService.logout();
     }
   }
 };
