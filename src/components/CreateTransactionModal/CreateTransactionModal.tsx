@@ -129,7 +129,11 @@ const CreateTransactionModal = ({
 
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Trigger>
-          <Button disabled={isDisabled} style={{ cursor: "pointer" }}>
+          <Button
+            disabled={isDisabled}
+            style={{ cursor: "pointer" }}
+            size={"3"}
+          >
             Add new transaction
           </Button>
         </Dialog.Trigger>

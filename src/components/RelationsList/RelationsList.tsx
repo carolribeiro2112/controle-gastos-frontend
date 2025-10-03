@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Select, Text } from "@radix-ui/themes";
+import { Select } from "@radix-ui/themes";
 import { getUserData } from "../../utils/getUserData";
 
 interface Relations {
@@ -25,31 +25,25 @@ function RelationsList({ relations, onUserSelect }: Relations) {
   };
 
   return (
-    <div>
-      {relations.length === 0 ? (
-        <p>Nenhuma relação encontrada.</p>
-      ) : (
-        <label>
-          <Text as="div" size="2" mb="1" weight="bold">
-            Selecionar usuário
-          </Text>
-          <Select.Root
-            value={selectedUserId}
-            onValueChange={handleUserSelection}
-          >
-            <Select.Trigger placeholder="Selecione um usuário" />
-            <Select.Content>
-              {relations.map((rel: RelationProps) => (
-                <Select.Item key={rel.userId} value={rel.userId}>
-                  {rel.userLogin}
-                </Select.Item>
-              ))}
-              <Select.Item key={userData.id} value={userData.id}>
-                {userData.sub}
+    <div style={{ marginBottom: "16px" }}>
+      {relations.length !== 0 && (
+        <Select.Root
+          value={selectedUserId}
+          onValueChange={handleUserSelection}
+          size={"3"}
+        >
+          <Select.Trigger placeholder="Selecione um usuário" radius="full" />
+          <Select.Content style={{ overflowY: "auto" }} position="popper">
+            <Select.Item key={userData.id} value={userData.id}>
+              {userData.sub}
+            </Select.Item>
+            {relations.map((rel: RelationProps) => (
+              <Select.Item key={rel.userId} value={rel.userId}>
+                {rel.userLogin}
               </Select.Item>
-            </Select.Content>
-          </Select.Root>
-        </label>
+            ))}
+          </Select.Content>
+        </Select.Root>
       )}
     </div>
   );
