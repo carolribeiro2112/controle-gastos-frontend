@@ -101,6 +101,7 @@ const SettingsPage = () => {
             placeholder="Enter the user name"
             type="text"
             disabled={loading}
+            size={"3"}
           />
         </label>
         <Flex justify="between" mt={"4"}>
@@ -108,6 +109,8 @@ const SettingsPage = () => {
             onClick={handleSearch}
             disabled={loading || !userName.trim()}
             style={{ cursor: "pointer" }}
+            size={"3"}
+            radius="full"
           >
             {loading ? "Searching..." : "Search"}
           </Button>
@@ -115,6 +118,8 @@ const SettingsPage = () => {
             onClick={handleBindUser}
             disabled={!userData}
             style={{ cursor: "pointer" }}
+            size={"3"}
+            radius="full"
           >
             Vincular usuário
           </Button>

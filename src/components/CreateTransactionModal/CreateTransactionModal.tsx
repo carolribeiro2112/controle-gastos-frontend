@@ -133,6 +133,7 @@ const CreateTransactionModal = ({
             disabled={isDisabled}
             style={{ cursor: "pointer" }}
             size={"3"}
+            radius="full"
           >
             Add new transaction
           </Button>

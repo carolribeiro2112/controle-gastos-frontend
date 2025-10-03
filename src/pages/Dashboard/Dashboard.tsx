@@ -137,6 +137,7 @@ const Dashboard = () => {
           relations={relations}
           handleUserSelection={handleUserSelection}
           userRole={userRole}
+          selectedUserId={selectedUserId ?? undefined}
         />
 
         {showToast && (

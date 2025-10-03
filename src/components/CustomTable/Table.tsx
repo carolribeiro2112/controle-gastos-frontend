@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, Table, Text } from "@radix-ui/themes";
-import RelationsList from "../RelationsList/RelationsList";
+import RelationsSelect from "../RelationsSelect/RelationsSelect";
 
 interface CustomTableProps {
   columns: {
@@ -12,6 +12,7 @@ interface CustomTableProps {
   relations: any[];
   handleUserSelection: (userId: string) => void;
   userRole: string;
+  selectedUserId?: string;
 }
 const CustomTable = ({
   columns,
@@ -19,13 +20,15 @@ const CustomTable = ({
   relations,
   handleUserSelection,
   userRole,
+  selectedUserId,
 }: CustomTableProps) => {
   return (
     <Card style={{ gap: "16px", width: "100%", maxWidth: "1000px" }}>
       {userRole === "ADMIN" && (
-        <RelationsList
+        <RelationsSelect
           relations={relations}
           onUserSelect={handleUserSelection}
+          externalSelectedUserId={selectedUserId}
         />
       )}
       <Table.Root size={"3"} style={{ width: "100%", overflowX: "auto" }}>
