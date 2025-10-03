@@ -11,6 +11,7 @@ import { useTransactions } from "../../hooks/useTransactions";
 import { useRelations } from "../../hooks/useRelations";
 import { useToast } from "../../hooks/useToast";
 import Styled from "./Dashboard.style";
+import { useEffect } from "react";
 
 const Dashboard = () => {
   const {
@@ -44,6 +45,12 @@ const Dashboard = () => {
     { id: "transactionDate", label: "Date", justify: "start" },
     { id: "actions", label: "Actions", justify: "center" },
   ];
+
+  useEffect(() => {
+    if (userRole === "ADMIN" && adminId && !selectedUserId) {
+      handleUserSelection(adminId);
+    }
+  }, [userRole, adminId, selectedUserId, handleUserSelection]);
 
   const handleDeleteWithToast = async () => {
     const result = await handleDeleteConfirm();
