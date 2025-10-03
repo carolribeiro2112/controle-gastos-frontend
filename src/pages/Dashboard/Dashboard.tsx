@@ -1,16 +1,17 @@
 import { Flex, Heading, Text, IconButton } from "@radix-ui/themes";
 import CustomTable from "../../components/CustomTable/Table";
-import { Trash2 } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Trash2 } from "lucide-react";
 import CreateTransactionModal from "../../components/CreateTransactionModal/CreateTransactionModal";
 import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
-import RelationsList from "../../components/RelationsList/RelationsList";
 import DeleteDialog from "../../components/DeleteDialog/DeleteDialog";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { useAuth } from "../../hooks/useAuth";
 import { useTransactions } from "../../hooks/useTransactions";
 import { useRelations } from "../../hooks/useRelations";
 import { useToast } from "../../hooks/useToast";
+import Styled from "./Dashboard.style";
+import { useEffect } from "react";
 
 const Dashboard = () => {
   const {
@@ -41,10 +42,15 @@ const Dashboard = () => {
   }[] = [
     { id: "description", label: "Description", justify: "start" },
     { id: "value", label: "Value", justify: "start" },
-    { id: "type", label: "Type", justify: "start" },
     { id: "transactionDate", label: "Date", justify: "start" },
     { id: "actions", label: "Actions", justify: "center" },
   ];
+
+  useEffect(() => {
+    if (userRole === "ADMIN" && adminId && !selectedUserId) {
+      handleUserSelection(adminId);
+    }
+  }, [userRole, adminId, selectedUserId, handleUserSelection]);
 
   const handleDeleteWithToast = async () => {
     const result = await handleDeleteConfirm();
@@ -57,9 +63,24 @@ const Dashboard = () => {
     id: index + 1,
     originalId: transaction.id,
     description: transaction.description,
-    value: `R$${transaction.value.toFixed(2)}`,
+    value: (
+      <Text
+        color={transaction.type === "INCOME" ? "green" : "red"}
+        weight="bold"
+        style={{ display: "flex", alignItems: "center", gap: "4px" }}
+      >
+        {transaction.type === "EXPENSE" ? (
+          <ArrowDownLeft size={16} />
+        ) : (
+          <ArrowUpRight size={16} />
+        )}
+        R${transaction.value.toFixed(2)}
+      </Text>
+    ),
     type: transaction.type,
-    transactionDate: new Date(transaction.transactionDate).toLocaleDateString(),
+    transactionDate: new Date(transaction.transactionDate).toLocaleDateString(
+      "pt-BR"
+    ),
     actions: (
       <IconButton
         onClick={() => handleDeleteClick(transaction.id)}
@@ -84,52 +105,40 @@ const Dashboard = () => {
     <Flex direction="column" align="center" gap="4" m="9" mt="0">
       <Header />
       <Breadcrumb />
-      <Heading as="h1" size="8" color="jade">
+      <Heading as="h1" size="8" color="jade" align={"left"}>
         Dashboard - Controle de Gastos
       </Heading>
-
-      <Text size="4" color="gray">
-        Bem-vindo! Você está autenticado e pode acessar o dashboard.
-      </Text>
-
-      <Text size="2" color="gray">
-        Token JWT presente: ✅
-      </Text>
 
       <Flex
         direction="column"
         align="center"
         gap="3"
-        style={{ width: "100%", maxWidth: "800px" }}
+        style={{ width: "100%", maxWidth: "1000px" }}
       >
-        <Heading as="h2" size="6" color="jade">
-          Suas transações
-        </Heading>
-
-        {userRole === "ADMIN" && (
-          <>
-            <RelationsList
-              relations={relations}
-              onUserSelect={handleUserSelection}
-            />
+        <Styled.TableHeaderContainer>
+          <Heading as="h2" size="6" color="jade">
+            Suas transações
+          </Heading>
+          {userRole === "ADMIN" && (
             <CreateTransactionModal
               onTransactionCreated={fetchTransactions}
               userId={selectedUserId}
             />
-          </>
-        )}
+          )}
+        </Styled.TableHeaderContainer>
 
         {loading && <Text>Loading transactions...</Text>}
 
         {error && <Text color="red">{error}</Text>}
 
-        {!loading && !error && transactions.length === 0 && (
-          <Text color="gray">No transactions found.</Text>
-        )}
-
-        {!loading && !error && transactions.length > 0 && (
-          <CustomTable columns={columns} data={transformedData} />
-        )}
+        <CustomTable
+          columns={columns}
+          data={transformedData}
+          relations={relations}
+          handleUserSelection={handleUserSelection}
+          userRole={userRole}
+          selectedUserId={selectedUserId ?? undefined}
+        />
 
         {showToast && (
           <Toast

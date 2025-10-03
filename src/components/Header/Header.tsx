@@ -32,6 +32,7 @@ const Header = () => {
             onClick={() => navigate("/settings")}
             variant="outline"
             style={{ cursor: "pointer" }}
+            radius="full"
           >
             <Settings size={24} />
           </IconButton>
@@ -42,6 +43,7 @@ const Header = () => {
           variant="outline"
           onClick={handleLogout}
           style={{ cursor: "pointer" }}
+          radius="full"
         >
           Logout
         </Button>

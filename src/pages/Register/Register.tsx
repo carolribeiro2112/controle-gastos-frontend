@@ -184,6 +184,7 @@ const Register = () => {
           color="jade"
           onClick={handleRegister}
           disabled={isLoading}
+          radius="full"
         >
           {isLoading ? "Cadastrando..." : "Registrar"}
         </Button>
@@ -195,6 +196,7 @@ const Register = () => {
           style={{ width: "275px", cursor: "pointer" }}
           onClick={handleGoToLogin}
           disabled={isLoading}
+          radius="full"
         >
           Já tem conta? Faça login
         </Button>

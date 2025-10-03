@@ -33,7 +33,7 @@ const Breadcrumb = ({ items, showHomeIcon = true }: BreadcrumbProps) => {
         borderRadius: "6px",
         border: "1px solid var(--gray-6)",
         width: "100%",
-        maxWidth: "800px",
+        maxWidth: "1000px",
       }}
     >
       {showHomeIcon && <Home size={16} style={{ color: homeIconColor }} />}

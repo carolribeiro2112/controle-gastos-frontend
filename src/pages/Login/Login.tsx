@@ -140,6 +140,7 @@ const Login = () => {
         color="jade"
         onClick={handleLogin}
         disabled={isLoading}
+        radius="full"
       >
         {isLoading ? "Entrando..." : "Entrar"}
       </Button>
@@ -151,6 +152,7 @@ const Login = () => {
         style={{ width: "275px", cursor: "pointer" }}
         onClick={handleRegister}
         disabled={isLoading}
+        radius="full"
       >
         Registre-se
       </Button>

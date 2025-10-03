@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Table } from "@radix-ui/themes";
+import { Card, Table, Text } from "@radix-ui/themes";
+import RelationsSelect from "../RelationsSelect/RelationsSelect";
 
 interface CustomTableProps {
   columns: {
@@ -8,36 +9,57 @@ interface CustomTableProps {
     justify: "center" | "start" | "end";
   }[];
   data: { id: number; [key: string]: any }[];
+  relations: any[];
+  handleUserSelection: (userId: string) => void;
+  userRole: string;
+  selectedUserId?: string;
 }
-const CustomTable = ({ columns, data }: CustomTableProps) => {
+const CustomTable = ({
+  columns,
+  data,
+  relations,
+  handleUserSelection,
+  userRole,
+  selectedUserId,
+}: CustomTableProps) => {
   return (
-    <Table.Root variant="surface">
-      <Table.Header>
-        <Table.Row>
-          {columns.map((column) => (
-            <Table.ColumnHeaderCell key={column.id}>
-              {column.label}
-            </Table.ColumnHeaderCell>
-          ))}
-        </Table.Row>
-      </Table.Header>
-
-      <Table.Body>
-        {data.map((item) => (
-          <Table.Row key={item.id}>
-            {columns.map((column, index) => {
-              const CellComponent =
-                index === 0 ? Table.RowHeaderCell : Table.Cell;
-              return (
-                <CellComponent key={column.id} justify={column.justify}>
-                  {item[column.id as keyof typeof item]}
-                </CellComponent>
-              );
-            })}
+    <Card style={{ gap: "16px", width: "100%", maxWidth: "1000px" }}>
+      {userRole === "ADMIN" && (
+        <RelationsSelect
+          relations={relations}
+          onUserSelect={handleUserSelection}
+          externalSelectedUserId={selectedUserId}
+        />
+      )}
+      <Table.Root size={"3"} style={{ width: "100%", overflowX: "auto" }}>
+        <Table.Header style={{ backgroundColor: "var(--gray-a2)" }}>
+          <Table.Row>
+            {columns.map((column) => (
+              <Table.ColumnHeaderCell key={column.id} justify={column.justify}>
+                {column.label}
+              </Table.ColumnHeaderCell>
+            ))}
           </Table.Row>
-        ))}
-      </Table.Body>
-    </Table.Root>
+        </Table.Header>
+
+        <Table.Body>
+          {data.map((item) => (
+            <Table.Row key={item.id}>
+              {columns.map((column, index) => {
+                const CellComponent =
+                  index === 0 ? Table.RowHeaderCell : Table.Cell;
+                return (
+                  <CellComponent key={column.id} justify={column.justify}>
+                    {item[column.id as keyof typeof item]}
+                  </CellComponent>
+                );
+              })}
+            </Table.Row>
+          ))}
+          {data.length === 0 && <Text>No transactions found.</Text>}
+        </Table.Body>
+      </Table.Root>
+    </Card>
   );
 };
 

@@ -83,9 +83,16 @@ const SettingsPage = () => {
         Settings
       </Heading>
 
-      <div style={{ marginBottom: "20px", gap: "10px", width: "250px" }}>
+      <div
+        style={{
+          marginBottom: "20px",
+          gap: "10px",
+          width: "250px",
+          marginTop: "16px",
+        }}
+      >
         <label>
-          <Text as="div" size="2" mb="1" weight="bold">
+          <Text as="div" size="2" mb="2" weight="bold">
             Type user name
           </Text>
           <TextField.Root
@@ -94,14 +101,16 @@ const SettingsPage = () => {
             placeholder="Enter the user name"
             type="text"
             disabled={loading}
-            style={{ marginBottom: "10px" }}
+            size={"3"}
           />
         </label>
-        <Flex justify="between">
+        <Flex justify="between" mt={"4"}>
           <Button
             onClick={handleSearch}
             disabled={loading || !userName.trim()}
             style={{ cursor: "pointer" }}
+            size={"3"}
+            radius="full"
           >
             {loading ? "Searching..." : "Search"}
           </Button>
@@ -109,6 +118,8 @@ const SettingsPage = () => {
             onClick={handleBindUser}
             disabled={!userData}
             style={{ cursor: "pointer" }}
+            size={"3"}
+            radius="full"
           >
             Vincular usuário
           </Button>
