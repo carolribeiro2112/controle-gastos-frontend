@@ -29,6 +29,7 @@ const CreateTransactionModal = ({
   const [description, setDescription] = useState("");
   const [value, setValue] = useState("");
   const [type, setType] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
   const [showToast, setShowToast] = useState(false);
   const [toastType, setToastType] = useState<"success" | "error">("success");
 
@@ -47,6 +48,7 @@ const CreateTransactionModal = ({
     setDescription("");
     setValue("");
     setType("");
+    setCategory("");
     setError(null);
   };
 
@@ -74,6 +76,11 @@ const CreateTransactionModal = ({
         return;
       }
 
+      if (!category) {
+        setError("Category is required");
+        return;
+      }
+
       const numericValue = parseFloat(value);
       if (isNaN(numericValue) || numericValue <= 0) {
         setError("Please enter a valid positive number for value");
@@ -91,6 +98,7 @@ const CreateTransactionModal = ({
         description: description.trim(),
         value: numericValue,
         type,
+        category,
       };
 
       await TransactionService.createTransaction(transactionData);
@@ -181,22 +189,56 @@ const CreateTransactionModal = ({
               />
             </label>
 
-            <label>
-              <Text as="div" size="2" mb="1" weight="bold">
-                Type
-              </Text>
-              <Select.Root
-                value={type}
-                onValueChange={setType}
-                disabled={loading}
-              >
-                <Select.Trigger placeholder="Select the type" />
-                <Select.Content position="popper">
-                  <Select.Item value="INCOME">Income</Select.Item>
-                  <Select.Item value="EXPENSE">Expense</Select.Item>
-                </Select.Content>
-              </Select.Root>
-            </label>
+            <Flex gap="3">
+              <label>
+                <Text as="div" size="2" mb="1" weight="bold">
+                  Type
+                </Text>
+                <Select.Root
+                  value={type}
+                  onValueChange={setType}
+                  disabled={loading}
+                >
+                  <Select.Trigger placeholder="Select the type" />
+                  <Select.Content position="popper">
+                    <Select.Item value="INCOME">Entrada</Select.Item>
+                    <Select.Item value="EXPENSE">Despesa</Select.Item>
+                  </Select.Content>
+                </Select.Root>
+              </label>
+
+              <label>
+                <Text as="div" size="2" mb="1" weight="bold">
+                  Categoria
+                </Text>
+                <Select.Root
+                  value={category}
+                  onValueChange={setCategory}
+                  disabled={loading}
+                >
+                  <Select.Trigger placeholder="Select the category" />
+                  <Select.Content position="popper">
+                    <Select.Item value="FOOD">Alimentação</Select.Item>
+                    <Select.Item value="TRANSPORTATION">Transporte</Select.Item>
+                    <Select.Item value="UTILITIES">Utilidades</Select.Item>
+                    <Select.Item value="ENTERTAINMENT">
+                      Entretenimento
+                    </Select.Item>
+                    <Select.Item value="HEALTHCARE">Saúde</Select.Item>
+                    <Select.Item value="EDUCATION">Educação</Select.Item>
+                    <Select.Item value="PERSONAL_CARE">
+                      Cuidados Pessoais
+                    </Select.Item>
+                    <Select.Item value="GROCERIES">Supermercado</Select.Item>
+                    <Select.Item value="RENT">Aluguel</Select.Item>
+                    <Select.Item value="SALARY">Salário</Select.Item>
+                    <Select.Item value="INVESTMENTS">Investimentos</Select.Item>
+                    <Select.Item value="PETS">Animais de Estimação</Select.Item>
+                    <Select.Item value="OTHER">Outros</Select.Item>
+                  </Select.Content>
+                </Select.Root>
+              </label>
+            </Flex>
           </Flex>
 
           <Flex gap="3" mt="4" justify="end">
