@@ -27,12 +27,24 @@ const DeleteDialog = ({
 
         <Flex gap="3" mt="4" justify="end">
           <AlertDialog.Cancel>
-            <Button variant="soft" color="gray" onClick={handleDeleteCancel}>
+            <Button
+              variant="soft"
+              color="gray"
+              onClick={handleDeleteCancel}
+              style={{ cursor: "pointer" }}
+              radius="full"
+            >
               Cancel
             </Button>
           </AlertDialog.Cancel>
           <AlertDialog.Action>
-            <Button variant="solid" color="red" onClick={handleDeleteConfirm}>
+            <Button
+              variant="solid"
+              color="red"
+              onClick={handleDeleteConfirm}
+              radius="full"
+              style={{ cursor: "pointer" }}
+            >
               Delete
             </Button>
           </AlertDialog.Action>

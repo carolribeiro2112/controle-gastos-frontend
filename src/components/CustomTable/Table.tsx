@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Card, Table, Text } from "@radix-ui/themes";
+import { Card, Table } from "@radix-ui/themes";
 import RelationsSelect from "../RelationsSelect/RelationsSelect";
+import EmptyState from "../EmptyState/EmptyState";
 
 interface CustomTableProps {
   columns: {
@@ -56,9 +57,9 @@ const CustomTable = ({
               })}
             </Table.Row>
           ))}
-          {data.length === 0 && <Text>No transactions found.</Text>}
         </Table.Body>
       </Table.Root>
+      {data.length === 0 && <EmptyState />}
     </Card>
   );
 };

@@ -12,6 +12,7 @@ import TransactionService, {
 } from "../../services/TransactionService/TransactionService";
 import { getUserRoleFromToken } from "../../utils/getUserData";
 import Toast from "../Toast/Toast";
+import { PlusCircle } from "lucide-react";
 
 interface CreateTransactionModalProps {
   onTransactionCreated?: () => void;
@@ -135,6 +136,7 @@ const CreateTransactionModal = ({
             size={"3"}
             radius="full"
           >
+            <PlusCircle size={24} />
             Add new transaction
           </Button>
         </Dialog.Trigger>
@@ -189,7 +191,7 @@ const CreateTransactionModal = ({
                 disabled={loading}
               >
                 <Select.Trigger placeholder="Select the type" />
-                <Select.Content>
+                <Select.Content position="popper">
                   <Select.Item value="INCOME">Income</Select.Item>
                   <Select.Item value="EXPENSE">Expense</Select.Item>
                 </Select.Content>
@@ -203,10 +205,18 @@ const CreateTransactionModal = ({
               color="gray"
               onClick={handleCancel}
               disabled={loading}
+              radius="full"
+              style={{ cursor: "pointer" }}
             >
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={loading} loading={loading}>
+            <Button
+              onClick={handleSave}
+              disabled={loading}
+              loading={loading}
+              radius="full"
+              style={{ cursor: "pointer" }}
+            >
               {loading ? "Saving..." : "Save"}
             </Button>
           </Flex>
