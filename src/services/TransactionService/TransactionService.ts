@@ -6,6 +6,7 @@ export type Transaction = {
   description: string;
   value: number;
   type: string;
+  category: string;
 };
 
 export type TransactionResponse = Transaction & {

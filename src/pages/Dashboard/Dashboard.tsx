@@ -12,6 +12,7 @@ import { useRelations } from "../../hooks/useRelations";
 import { useToast } from "../../hooks/useToast";
 import Styled from "./Dashboard.style";
 import { useEffect } from "react";
+import Categories from "../../components/Categories/Categories";
 
 const Dashboard = () => {
   const {
@@ -62,7 +63,12 @@ const Dashboard = () => {
   const transformedData = transactions.map((transaction, index) => ({
     id: index + 1,
     originalId: transaction.id,
-    description: transaction.description,
+    description: (
+      <Flex align="center" gap="2">
+        <Categories category={transaction.category} />
+        <Text>{transaction.description}</Text>
+      </Flex>
+    ),
     value: (
       <Text
         color={transaction.type === "INCOME" ? "green" : "red"}
@@ -78,6 +84,7 @@ const Dashboard = () => {
       </Text>
     ),
     type: transaction.type,
+    category: transaction.category,
     transactionDate: new Date(transaction.transactionDate).toLocaleDateString(
       "pt-BR"
     ),
