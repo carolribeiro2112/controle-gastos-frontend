@@ -1,7 +1,12 @@
+import { IntlProvider } from "./i18n";
 import Router from "./Router";
 
 function App() {
-  return <Router />;
+  return (
+    <IntlProvider>
+      <Router />
+    </IntlProvider>
+  );
 }
 
 export default App;

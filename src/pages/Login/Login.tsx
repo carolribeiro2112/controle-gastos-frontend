@@ -5,6 +5,7 @@ import LoginService from "../../services/LoginService/LoginService";
 import Toast from "../../components/Toast/Toast";
 import { AxiosError } from "axios";
 import { LogoLandingPage } from "../../components/Logo/Logo";
+import { useIntl } from "react-intl";
 
 interface ApiErrorResponse {
   message?: string;
@@ -13,6 +14,7 @@ interface ApiErrorResponse {
 
 const Login = () => {
   const navigate = useNavigate();
+  const { formatMessage } = useIntl();
 
   const [formData, setFormData] = useState({
     login: "",
@@ -92,7 +94,7 @@ const Login = () => {
     <Flex direction="column" align="center" justify="center" gap="4" m="9">
       <LogoLandingPage />
       <Heading as="h3" size="6" color="jade">
-        Login to your account
+        {formatMessage({ id: "login.title" })}
       </Heading>
 
       {showToast && (
