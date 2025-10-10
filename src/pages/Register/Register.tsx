@@ -4,9 +4,11 @@ import { useState } from "react";
 import { registerUser } from "../../services/RegisterService/RegisterService";
 import Toast from "../../components/Toast/Toast";
 import { LogoLandingPage } from "../../components/Logo/Logo";
+import { useIntl } from "react-intl";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { formatMessage } = useIntl();
 
   const [formData, setFormData] = useState({
     login: "",
@@ -33,32 +35,32 @@ const Register = () => {
 
   const validateForm = (): string | null => {
     if (!formData.login.trim()) {
-      return "Por favor, insira um nome de usuário";
+      return formatMessage({ id: "register.usernamePrompt" });
     }
 
     if (formData.login.trim().length < 3) {
-      return "O nome de usuário deve ter pelo menos 3 caracteres";
+      return formatMessage({ id: "register.usernameMinLength" });
     }
 
     if (!formData.age.trim()) {
-      return "Por favor, insira sua idade";
+      return formatMessage({ id: "register.agePrompt" });
     }
 
     const age = parseInt(formData.age.trim());
     if (isNaN(age) || age < 1 || age > 120) {
-      return "Por favor, insira uma idade válida (1-120 anos)";
+      return formatMessage({ id: "register.ageValidation" });
     }
 
     if (!formData.password.trim()) {
-      return "Por favor, insira uma senha";
+      return formatMessage({ id: "register.passwordPrompt" });
     }
 
     if (formData.password.length < 6) {
-      return "A senha deve ter pelo menos 6 caracteres";
+      return formatMessage({ id: "register.passwordMinLength" });
     }
 
     if (formData.password !== formData.confirmPassword) {
-      return "As senhas não coincidem";
+      return formatMessage({ id: "register.passwordMismatch" });
     }
 
     return null;
@@ -91,9 +93,14 @@ const Register = () => {
         navigate("/");
       }, 2000);
     } catch (error) {
-      console.error("Registration failed:", error);
+      console.error(
+        formatMessage({ id: "register.registrationFailedPrefix" }),
+        error
+      );
       setError(
-        error instanceof Error ? error.message : "Erro durante o cadastro"
+        error instanceof Error
+          ? error.message
+          : formatMessage({ id: "register.registrationError" })
       );
     } finally {
       setIsLoading(false);
@@ -116,7 +123,7 @@ const Register = () => {
         {showSuccessToast && (
           <Toast
             type="success"
-            message="Cadastro realizado com sucesso!"
+            message={formatMessage({ id: "register.registrationSuccess" })}
             duration={2000}
           />
         )}
@@ -136,7 +143,7 @@ const Register = () => {
         )}
 
         <TextField.Root
-          placeholder="Enter your username"
+          placeholder={formatMessage({ id: "register.usernamePrompt" })}
           size="3"
           style={{ width: "300px" }}
           value={formData.login}
@@ -146,7 +153,7 @@ const Register = () => {
         />
 
         <TextField.Root
-          placeholder="Enter your age"
+          placeholder={formatMessage({ id: "register.agePrompt" })}
           type="text"
           size="3"
           style={{ width: "300px" }}
@@ -157,7 +164,7 @@ const Register = () => {
         />
 
         <TextField.Root
-          placeholder="Enter your password"
+          placeholder={formatMessage({ id: "register.passwordPrompt" })}
           type="password"
           size="3"
           style={{ width: "300px" }}
@@ -168,7 +175,7 @@ const Register = () => {
         />
 
         <TextField.Root
-          placeholder="Confirm your password"
+          placeholder={formatMessage({ id: "register.confirmPassword" })}
           type="password"
           size="3"
           style={{ width: "300px" }}
@@ -186,7 +193,9 @@ const Register = () => {
           disabled={isLoading}
           radius="full"
         >
-          {isLoading ? "Cadastrando..." : "Registrar"}
+          {isLoading
+            ? formatMessage({ id: "register.loading" })
+            : formatMessage({ id: "register.submitButton" })}
         </Button>
 
         <Button
@@ -198,7 +207,7 @@ const Register = () => {
           disabled={isLoading}
           radius="full"
         >
-          Já tem conta? Faça login
+          {formatMessage({ id: "register.alreadyHaveAccount" })}
         </Button>
       </Flex>
     </div>

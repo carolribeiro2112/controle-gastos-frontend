@@ -13,8 +13,10 @@ import { useToast } from "../../hooks/useToast";
 import Styled from "./Dashboard.style";
 import { useEffect } from "react";
 import Categories from "../../components/Categories/Categories";
+import { useIntl } from "react-intl";
 
 const Dashboard = () => {
+  const { formatMessage } = useIntl();
   const {
     isAuthenticated,
     adminId,
@@ -41,10 +43,26 @@ const Dashboard = () => {
     label: string;
     justify: "center" | "start" | "end";
   }[] = [
-    { id: "description", label: "Description", justify: "start" },
-    { id: "value", label: "Value", justify: "start" },
-    { id: "transactionDate", label: "Date", justify: "start" },
-    { id: "actions", label: "Actions", justify: "center" },
+    {
+      id: "description",
+      label: formatMessage({ id: "dashboard.description" }),
+      justify: "start",
+    },
+    {
+      id: "value",
+      label: formatMessage({ id: "dashboard.value" }),
+      justify: "start",
+    },
+    {
+      id: "transactionDate",
+      label: formatMessage({ id: "dashboard.date" }),
+      justify: "start",
+    },
+    {
+      id: "actions",
+      label: formatMessage({ id: "dashboard.actions" }),
+      justify: "center",
+    },
   ];
 
   useEffect(() => {
@@ -103,7 +121,7 @@ const Dashboard = () => {
   if (!isAuthenticated) {
     return (
       <Flex direction="column" align="center" justify="center" gap="4" m="9">
-        <Text>Redirecionando para login...</Text>
+        <Text>{formatMessage({ id: "dashboard.redirectingToLogin" })}</Text>
       </Flex>
     );
   }
@@ -113,7 +131,7 @@ const Dashboard = () => {
       <Header />
       <Breadcrumb />
       <Heading as="h1" size="8" color="jade" align={"left"}>
-        Dashboard - Controle de Gastos
+        {formatMessage({ id: "dashboard.title" })}
       </Heading>
 
       <Flex
@@ -124,7 +142,7 @@ const Dashboard = () => {
       >
         <Styled.TableHeaderContainer>
           <Heading as="h2" size="6" color="jade">
-            Suas transações
+            {formatMessage({ id: "dashboard.yourTransactions" })}
           </Heading>
           {userRole === "ADMIN" && (
             <CreateTransactionModal
@@ -134,7 +152,9 @@ const Dashboard = () => {
           )}
         </Styled.TableHeaderContainer>
 
-        {loading && <Text>Loading transactions...</Text>}
+        {loading && (
+          <Text>{formatMessage({ id: "dashboard.loadingTransactions" })}</Text>
+        )}
 
         {error && <Text color="red">{error}</Text>}
 
@@ -150,7 +170,7 @@ const Dashboard = () => {
         {showToast && (
           <Toast
             type="success"
-            message="Your transaction has been successfully deleted."
+            message={formatMessage({ id: "dashboard.transactionDeleted" })}
             duration={2000}
           />
         )}

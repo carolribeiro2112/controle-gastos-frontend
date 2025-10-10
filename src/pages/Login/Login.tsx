@@ -36,12 +36,12 @@ const Login = () => {
 
   const handleLogin = async () => {
     if (!formData.login.trim()) {
-      setError("Por favor, insira seu nome de usuário");
+      setError(formatMessage({ id: "login.usernamePrompt" }));
       return;
     }
 
     if (!formData.password.trim()) {
-      setError("Por favor, insira sua senha");
+      setError(formatMessage({ id: "login.passwordPrompt" }));
       return;
     }
 
@@ -57,7 +57,7 @@ const Login = () => {
 
       navigate("/dashboard");
     } catch (error) {
-      console.error("Login failed:", error);
+      console.error(formatMessage({ id: "login.loginError" }), error);
 
       if (error && typeof error === "object" && "response" in error) {
         const axiosError = error as AxiosError<ApiErrorResponse>;
@@ -67,12 +67,14 @@ const Login = () => {
           const errorMessage =
             axiosError.response?.data?.message ||
             axiosError.message ||
-            "Erro durante o login";
+            formatMessage({ id: "login.loginError" });
           setError(errorMessage);
         }
       } else {
         setError(
-          error instanceof Error ? error.message : "Erro durante o login"
+          error instanceof Error
+            ? error.message
+            : formatMessage({ id: "login.loginError" })
         );
       }
     } finally {
@@ -100,7 +102,7 @@ const Login = () => {
       {showToast && (
         <Toast
           type="error"
-          message="Credenciais inválidas tente novamente ou cadastre-se"
+          message={formatMessage({ id: "login.invalidCredentials" })}
           duration={2000}
         />
       )}
@@ -116,7 +118,7 @@ const Login = () => {
       )}
 
       <TextField.Root
-        placeholder="Enter your username"
+        placeholder={formatMessage({ id: "login.userNamePlaceholder" })}
         size="3"
         style={{ width: "300px" }}
         value={formData.login}
@@ -126,7 +128,7 @@ const Login = () => {
       />
 
       <TextField.Root
-        placeholder="Enter your password"
+        placeholder={formatMessage({ id: "login.passwordPlaceholder" })}
         type="password"
         size="3"
         style={{ width: "300px" }}
@@ -144,7 +146,9 @@ const Login = () => {
         disabled={isLoading}
         radius="full"
       >
-        {isLoading ? "Entrando..." : "Entrar"}
+        {isLoading
+          ? formatMessage({ id: "login.loggingIn" })
+          : formatMessage({ id: "login.logIn" })}
       </Button>
 
       <Button
@@ -156,7 +160,7 @@ const Login = () => {
         disabled={isLoading}
         radius="full"
       >
-        Registre-se
+        {formatMessage({ id: "login.signUp" })}
       </Button>
     </Flex>
   );

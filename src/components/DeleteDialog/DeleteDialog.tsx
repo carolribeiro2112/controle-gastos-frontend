@@ -1,4 +1,5 @@
 import { AlertDialog, Button, Flex } from "@radix-ui/themes";
+import { useIntl } from "react-intl";
 
 interface DeleteDialogProps {
   deleteDialogOpen: boolean;
@@ -13,16 +14,18 @@ const DeleteDialog = ({
   handleDeleteCancel,
   handleDeleteConfirm,
 }: DeleteDialogProps) => {
+  const { formatMessage } = useIntl();
   return (
     <AlertDialog.Root
       open={deleteDialogOpen}
       onOpenChange={setDeleteDialogOpen}
     >
       <AlertDialog.Content maxWidth="450px">
-        <AlertDialog.Title>Delete transaction</AlertDialog.Title>
+        <AlertDialog.Title>
+          {formatMessage({ id: "deleteDialog.title" })}
+        </AlertDialog.Title>
         <AlertDialog.Description size="2">
-          Are you sure you want to delete this transaction? This action cannot
-          be undone.
+          {formatMessage({ id: "deleteDialog.confirmation" })}
         </AlertDialog.Description>
 
         <Flex gap="3" mt="4" justify="end">
@@ -34,7 +37,7 @@ const DeleteDialog = ({
               style={{ cursor: "pointer" }}
               radius="full"
             >
-              Cancel
+              {formatMessage({ id: "deleteDialog.cancel" })}
             </Button>
           </AlertDialog.Cancel>
           <AlertDialog.Action>
@@ -45,7 +48,7 @@ const DeleteDialog = ({
               radius="full"
               style={{ cursor: "pointer" }}
             >
-              Delete
+              {formatMessage({ id: "deleteDialog.delete" })}
             </Button>
           </AlertDialog.Action>
         </Flex>

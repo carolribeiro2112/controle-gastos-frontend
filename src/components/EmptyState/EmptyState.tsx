@@ -1,7 +1,10 @@
 import { Flex, Heading, Text } from "@radix-ui/themes";
 import { BanknoteX } from "lucide-react";
+import { useIntl } from "react-intl";
 
 const EmptyState = () => {
+  const { formatMessage } = useIntl();
+
   return (
     <Flex
       direction="column"
@@ -11,10 +14,9 @@ const EmptyState = () => {
       p={"4"}
     >
       <BanknoteX size={64} />
-      <Heading m={"2"}>No Data Available</Heading>
+      <Heading m={"2"}>{formatMessage({ id: "emptyState.title" })}</Heading>
       <Text className="text-gray-600">
-        There is currently no data to display. Please check back later or add
-        new data.
+        {formatMessage({ id: "emptyState.message" })}
       </Text>
     </Flex>
   );

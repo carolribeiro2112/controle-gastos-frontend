@@ -4,9 +4,11 @@ import { useNavigate } from "react-router";
 import { Settings } from "lucide-react";
 import { LogoHeader } from "../Logo/Logo";
 import { getUserRoleFromToken } from "../../utils/getUserData";
+import { useIntl } from "react-intl";
 
 const Header = () => {
   const navigate = useNavigate();
+  const { formatMessage } = useIntl();
 
   const handleLogout = () => {
     LoginService.logout();
@@ -45,7 +47,7 @@ const Header = () => {
           style={{ cursor: "pointer" }}
           radius="full"
         >
-          Logout
+          {formatMessage({ id: "logoutButton" })}
         </Button>
       </Flex>
     </Flex>

@@ -13,6 +13,7 @@ import TransactionService, {
 import { getUserRoleFromToken } from "../../utils/getUserData";
 import Toast from "../Toast/Toast";
 import { PlusCircle } from "lucide-react";
+import { useIntl } from "react-intl";
 
 interface CreateTransactionModalProps {
   onTransactionCreated?: () => void;
@@ -23,6 +24,7 @@ const CreateTransactionModal = ({
   onTransactionCreated,
   userId,
 }: CreateTransactionModalProps) => {
+  const { formatMessage } = useIntl();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,31 +66,39 @@ const CreateTransactionModal = ({
 
       // Form validation
       if (!description.trim()) {
-        setError("Description is required");
+        setError(
+          formatMessage({ id: "createTransactionModal.descriptionRequired" })
+        );
         return;
       }
       if (!value.trim()) {
-        setError("Value is required");
+        setError(formatMessage({ id: "createTransactionModal.valueRequired" }));
         return;
       }
       if (!type) {
-        setError("Type is required");
+        setError(formatMessage({ id: "createTransactionModal.typeRequired" }));
         return;
       }
 
       if (!category) {
-        setError("Category is required");
+        setError(
+          formatMessage({ id: "createTransactionModal.categoryRequired" })
+        );
         return;
       }
 
       const numericValue = parseFloat(value);
       if (isNaN(numericValue) || numericValue <= 0) {
-        setError("Please enter a valid positive number for value");
+        setError(
+          formatMessage({ id: "createTransactionModal.valueValidation" })
+        );
         return;
       }
 
       if (!userId) {
-        setError("User not authenticated");
+        setError(
+          formatMessage({ id: "createTransactionModal.userNotAuthenticated" })
+        );
         setLoading(false);
         return;
       }
@@ -111,8 +121,11 @@ const CreateTransactionModal = ({
 
       onTransactionCreated?.();
     } catch (err) {
-      console.error("Error creating transaction:", err);
-      setError("Failed to create transaction. Please try again.");
+      console.error(
+        formatMessage({ id: "createTransactionModal.createErrorPrefix" }),
+        err
+      );
+      setError(formatMessage({ id: "createTransactionModal.createError" }));
       setToastType("error");
       setShowToast(true);
     } finally {
@@ -129,8 +142,8 @@ const CreateTransactionModal = ({
           type={toastType}
           message={
             toastType === "success"
-              ? "Your transaction has been successfully created."
-              : "Failed to create transaction. Please try again."
+              ? formatMessage({ id: "createTransactionModal.createSuccess" })
+              : formatMessage({ id: "createTransactionModal.createError" })
           }
           duration={2000}
         />
@@ -145,14 +158,16 @@ const CreateTransactionModal = ({
             radius="full"
           >
             <PlusCircle size={24} />
-            Add new transaction
+            {formatMessage({ id: "createTransactionModal.addTransaction" })}
           </Button>
         </Dialog.Trigger>
 
         <Dialog.Content maxWidth="450px">
-          <Dialog.Title>Add new transaction</Dialog.Title>
+          <Dialog.Title>
+            {formatMessage({ id: "createTransactionModal.addTransaction" })}
+          </Dialog.Title>
           <Dialog.Description size="2" mb="4">
-            Fill in the details below to add a new transaction.
+            {formatMessage({ id: "createTransactionModal.fillDetails" })}
           </Dialog.Description>
 
           {error && (
@@ -164,24 +179,28 @@ const CreateTransactionModal = ({
           <Flex direction="column" gap="3">
             <label>
               <Text as="div" size="2" mb="1" weight="bold">
-                Description
+                {formatMessage({ id: "createTransactionModal.description" })}
               </Text>
               <TextField.Root
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter the description"
+                placeholder={formatMessage({
+                  id: "createTransactionModal.descriptionPlaceholder",
+                })}
                 disabled={loading}
               />
             </label>
 
             <label>
               <Text as="div" size="2" mb="1" weight="bold">
-                Value
+                {formatMessage({ id: "createTransactionModal.value" })}
               </Text>
               <TextField.Root
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
-                placeholder="Enter the value"
+                placeholder={formatMessage({
+                  id: "createTransactionModal.valuePlaceholder",
+                })}
                 type="number"
                 step="0.01"
                 min="0"
@@ -192,49 +211,83 @@ const CreateTransactionModal = ({
             <Flex gap="3">
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
-                  Type
+                  {formatMessage({ id: "createTransactionModal.type" })}
                 </Text>
                 <Select.Root
                   value={type}
                   onValueChange={setType}
                   disabled={loading}
                 >
-                  <Select.Trigger placeholder="Select the type" />
+                  <Select.Trigger
+                    placeholder={formatMessage({
+                      id: "createTransactionModal.selectTypePlaceholder",
+                    })}
+                  />
                   <Select.Content position="popper">
-                    <Select.Item value="INCOME">Entrada</Select.Item>
-                    <Select.Item value="EXPENSE">Despesa</Select.Item>
+                    <Select.Item value="INCOME">
+                      {formatMessage({ id: "createTransactionModal.income" })}
+                    </Select.Item>
+                    <Select.Item value="EXPENSE">
+                      {formatMessage({ id: "createTransactionModal.expense" })}
+                    </Select.Item>
                   </Select.Content>
                 </Select.Root>
               </label>
 
               <label>
                 <Text as="div" size="2" mb="1" weight="bold">
-                  Categoria
+                  {formatMessage({ id: "createTransactionModal.category" })}
                 </Text>
                 <Select.Root
                   value={category}
                   onValueChange={setCategory}
                   disabled={loading}
                 >
-                  <Select.Trigger placeholder="Select the category" />
+                  <Select.Trigger
+                    placeholder={formatMessage({
+                      id: "createTransactionModal.selectCategoryPlaceholder",
+                    })}
+                  />
                   <Select.Content position="popper">
-                    <Select.Item value="FOOD">Alimentação</Select.Item>
-                    <Select.Item value="TRANSPORTATION">Transporte</Select.Item>
-                    <Select.Item value="UTILITIES">Utilidades</Select.Item>
+                    <Select.Item value="FOOD">
+                      {formatMessage({ id: "categories.FOOD" })}
+                    </Select.Item>
+                    <Select.Item value="TRANSPORTATION">
+                      {formatMessage({ id: "categories.TRANSPORTATION" })}
+                    </Select.Item>
+                    <Select.Item value="UTILITIES">
+                      {formatMessage({ id: "categories.UTILITIES" })}
+                    </Select.Item>
                     <Select.Item value="ENTERTAINMENT">
-                      Entretenimento
+                      {formatMessage({ id: "categories.ENTERTAINMENT" })}
                     </Select.Item>
-                    <Select.Item value="HEALTHCARE">Saúde</Select.Item>
-                    <Select.Item value="EDUCATION">Educação</Select.Item>
+                    <Select.Item value="HEALTHCARE">
+                      {formatMessage({ id: "categories.HEALTHCARE" })}
+                    </Select.Item>
+                    <Select.Item value="EDUCATION">
+                      {formatMessage({ id: "categories.EDUCATION" })}
+                    </Select.Item>
                     <Select.Item value="PERSONAL_CARE">
-                      Cuidados Pessoais
+                      {formatMessage({ id: "categories.PERSONAL_CARE" })}
                     </Select.Item>
-                    <Select.Item value="GROCERIES">Supermercado</Select.Item>
-                    <Select.Item value="RENT">Aluguel</Select.Item>
-                    <Select.Item value="SALARY">Salário</Select.Item>
-                    <Select.Item value="INVESTMENTS">Investimentos</Select.Item>
-                    <Select.Item value="PETS">Animais de Estimação</Select.Item>
-                    <Select.Item value="OTHER">Outros</Select.Item>
+                    <Select.Item value="GROCERIES">
+                      {formatMessage({ id: "categories.GROCERIES" })}
+                    </Select.Item>
+                    <Select.Item value="RENT">
+                      {formatMessage({ id: "categories.RENT" })}
+                    </Select.Item>
+                    <Select.Item value="SALARY">
+                      {formatMessage({ id: "categories.SALARY" })}
+                    </Select.Item>
+                    <Select.Item value="INVESTMENTS">
+                      {formatMessage({ id: "categories.INVESTMENTS" })}
+                    </Select.Item>
+                    <Select.Item value="PETS">
+                      {formatMessage({ id: "categories.PETS" })}
+                    </Select.Item>
+                    <Select.Item value="OTHER">
+                      {formatMessage({ id: "categories.OTHER" })}
+                    </Select.Item>
                   </Select.Content>
                 </Select.Root>
               </label>
@@ -250,7 +303,7 @@ const CreateTransactionModal = ({
               radius="full"
               style={{ cursor: "pointer" }}
             >
-              Cancel
+              {formatMessage({ id: "createTransactionModal.cancel" })}
             </Button>
             <Button
               onClick={handleSave}
@@ -259,7 +312,9 @@ const CreateTransactionModal = ({
               radius="full"
               style={{ cursor: "pointer" }}
             >
-              {loading ? "Saving..." : "Save"}
+              {loading
+                ? formatMessage({ id: "createTransactionModal.saving" })
+                : formatMessage({ id: "createTransactionModal.save" })}
             </Button>
           </Flex>
         </Dialog.Content>

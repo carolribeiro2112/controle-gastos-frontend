@@ -13,6 +13,7 @@ import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { getUserIdFromToken } from "../../utils/getUserData";
+import { useIntl } from "react-intl";
 
 interface UserData {
   id: string;
@@ -21,6 +22,7 @@ interface UserData {
 }
 
 const SettingsPage = () => {
+  const { formatMessage } = useIntl();
   const [userName, setUserName] = useState("");
   const [userData, setUserData] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -29,7 +31,7 @@ const SettingsPage = () => {
 
   const handleSearch = async () => {
     if (!userName.trim()) {
-      setError("Please enter a username to search");
+      setError(formatMessage({ id: "settings.usernameSearchPrompt" }));
       return;
     }
 
@@ -42,9 +44,12 @@ const SettingsPage = () => {
       setUserData(response);
       setUserName("");
     } catch (error: unknown) {
-      console.error("Error fetching user:", error);
+      console.error(
+        formatMessage({ id: "settings.fetchUserErrorPrefix" }),
+        error
+      );
 
-      const errorMessage = "Failed to fetch user. Please try again.";
+      const errorMessage = formatMessage({ id: "settings.fetchUserError" });
 
       setError(errorMessage);
     } finally {
@@ -67,8 +72,11 @@ const SettingsPage = () => {
       await RelationService.createRelation(relationData);
       setShowToast(true);
     } catch (error: unknown) {
-      console.error("Error binding user:", error);
-      const errorMessage = "Falha ao vincular o usuário. Tente novamente.";
+      console.error(
+        formatMessage({ id: "settings.bindUserErrorPrefix" }),
+        error
+      );
+      const errorMessage = formatMessage({ id: "settings.bindUserError" });
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -80,7 +88,7 @@ const SettingsPage = () => {
       <Header />
       <Breadcrumb />
       <Heading as="h1" size="8" color="jade">
-        Settings
+        {formatMessage({ id: "settings.title" })}
       </Heading>
 
       <div
@@ -93,12 +101,12 @@ const SettingsPage = () => {
       >
         <label>
           <Text as="div" size="2" mb="2" weight="bold">
-            Type user name
+            {formatMessage({ id: "settings.typeUsername" })}
           </Text>
           <TextField.Root
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
-            placeholder="Enter the user name"
+            placeholder={formatMessage({ id: "settings.enterUsername" })}
             type="text"
             disabled={loading}
             size={"3"}
@@ -112,7 +120,9 @@ const SettingsPage = () => {
             size={"3"}
             radius="full"
           >
-            {loading ? "Searching..." : "Search"}
+            {loading
+              ? formatMessage({ id: "settings.searching" })
+              : formatMessage({ id: "settings.searchButton" })}
           </Button>
           <Button
             onClick={handleBindUser}
@@ -121,7 +131,7 @@ const SettingsPage = () => {
             size={"3"}
             radius="full"
           >
-            Vincular usuário
+            {formatMessage({ id: "settings.bindUserButton" })}
           </Button>
         </Flex>
       </div>
@@ -130,7 +140,7 @@ const SettingsPage = () => {
       {showToast && (
         <Toast
           type="success"
-          message="Usuário vinculado com sucesso!"
+          message={formatMessage({ id: "settings.bindUserSuccess" })}
           duration={2500}
         />
       )}
@@ -144,15 +154,21 @@ const SettingsPage = () => {
           }}
         >
           <DataList.Item>
-            <DataList.Label>ID</DataList.Label>
+            <DataList.Label>
+              {formatMessage({ id: "settings.id" })}
+            </DataList.Label>
             <DataList.Value>{userData.id}</DataList.Value>
           </DataList.Item>
           <DataList.Item>
-            <DataList.Label>Username</DataList.Label>
+            <DataList.Label>
+              {formatMessage({ id: "settings.username" })}
+            </DataList.Label>
             <DataList.Value>{userData.login}</DataList.Value>
           </DataList.Item>
           <DataList.Item>
-            <DataList.Label>Age</DataList.Label>
+            <DataList.Label>
+              {formatMessage({ id: "settings.age" })}
+            </DataList.Label>
             <DataList.Value>{userData.age}</DataList.Value>
           </DataList.Item>
         </DataList.Root>
