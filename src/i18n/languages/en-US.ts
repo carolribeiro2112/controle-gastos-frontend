@@ -15,6 +15,23 @@ const enUS: MessageMap = {
     loggingIn: "Logging in...",
     logIn: "Log in",
     signUp: "Sign up"
+  },
+  register: {
+    title: "Create your account",
+    usernamePrompt: "Enter your username",
+    usernameMinLength: "Username must be at least 3 characters",
+    agePrompt: "Enter your age",
+    ageValidation: "Please enter a valid age (1–120 years)",
+    passwordPrompt: "Enter your password",
+    passwordMinLength: "Password must be at least 6 characters",
+    passwordMismatch: "Passwords do not match",
+    registrationFailedPrefix: "Registration failed:",
+    registrationError: "Registration error",
+    registrationSuccess: "Registration successful!",
+    confirmPassword: "Confirm your password",
+    loading: "Registering...",
+    submitButton: "Register",
+    alreadyHaveAccount: "Already have an account? Log in"
   }
 };
 
