@@ -85,6 +85,12 @@ const ptBR: MessageMap = {
     PETS: "Animais de Estimação",
     OTHER: "Outros",
   },
+  deleteDialog: {
+    title: "Excluir transação",
+    confirmation: "Tem certeza de que deseja excluir esta transação? Esta ação não pode ser desfeita.",
+    cancel: "Cancelar",
+    delete: "Excluir"
+  },
   settings: {
     title: "Configurações",
     usernameSearchPrompt: "Por favor, insira um nome de usuário para buscar",

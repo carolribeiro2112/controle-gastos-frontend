@@ -85,6 +85,12 @@ const enUS: MessageMap = {
     PETS: "Pets",
     OTHER: "Other",
   },
+  deleteDialog: {
+    title: "Delete transaction",
+    confirmation: "Are you sure you want to delete this transaction? This action cannot be undone.",
+    cancel: "Cancel",
+    delete: "Delete"
+  },
   settings: {
     title: "Settings",
     usernameSearchPrompt: "Please enter a username to search",
