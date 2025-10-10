@@ -32,6 +32,17 @@ const ptBR: MessageMap = {
     loading: "Cadastrando...",
     submitButton: "Registrar",
     alreadyHaveAccount: "Já tem conta? Faça login"
+  },
+  dashboard: {
+    description: "Descrição",
+    value: "Valor",
+    date: "Data",
+    actions: "Ações",
+    redirectingToLogin: "Redirecionando para login...",
+    title: "Dashboard - Controle de Gastos",
+    yourTransactions: "Suas transações",
+    loadingTransactions: "Carregando transações...",
+    transactionDeleted: "Sua transação foi excluída com sucesso."
   }
 };
 

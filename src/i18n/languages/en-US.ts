@@ -32,6 +32,17 @@ const enUS: MessageMap = {
     loading: "Registering...",
     submitButton: "Register",
     alreadyHaveAccount: "Already have an account? Log in"
+  },
+  dashboard: {
+    description: "Description",
+    value: "Value",
+    date: "Date",
+    actions: "Actions",
+    redirectingToLogin: "Redirecting to login...",
+    title: "Dashboard - Expense Tracker",
+    yourTransactions: "Your transactions",
+    loadingTransactions: "Loading transactions...",
+    transactionDeleted: "Your transaction has been successfully deleted."
   }
 };
 
