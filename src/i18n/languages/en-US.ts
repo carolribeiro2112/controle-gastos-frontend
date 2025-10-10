@@ -91,6 +91,10 @@ const enUS: MessageMap = {
     cancel: "Cancel",
     delete: "Delete"
   },
+  emptyState: {
+    title: "No Data Available",
+    message: "There is currently no data to display. Please check back later or add new data."
+  },
   settings: {
     title: "Settings",
     usernameSearchPrompt: "Please enter a username to search",

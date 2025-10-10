@@ -91,6 +91,10 @@ const ptBR: MessageMap = {
     cancel: "Cancelar",
     delete: "Excluir"
   },
+  emptyState: {
+    title: "Nenhum dado disponível",
+    message: "No momento não há dados para exibir. Por favor, volte mais tarde ou adicione novos dados."
+  },
   settings: {
     title: "Configurações",
     usernameSearchPrompt: "Por favor, insira um nome de usuário para buscar",
