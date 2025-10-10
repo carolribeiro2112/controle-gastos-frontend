@@ -34,15 +34,32 @@ const ptBR: MessageMap = {
     alreadyHaveAccount: "Já tem conta? Faça login"
   },
   dashboard: {
+    title: "Dashboard - Controle de Gastos",
     description: "Descrição",
     value: "Valor",
     date: "Data",
     actions: "Ações",
     redirectingToLogin: "Redirecionando para login...",
-    title: "Dashboard - Controle de Gastos",
     yourTransactions: "Suas transações",
     loadingTransactions: "Carregando transações...",
     transactionDeleted: "Sua transação foi excluída com sucesso."
+  },
+  settings: {
+    title: "Configurações",
+    usernameSearchPrompt: "Por favor, insira um nome de usuário para buscar",
+    fetchUserErrorPrefix: "Erro ao buscar usuário:",
+    fetchUserError: "Falha ao buscar usuário. Tente novamente.",
+    bindUserErrorPrefix: "Erro ao vincular usuário:",
+    bindUserError: "Falha ao vincular o usuário. Tente novamente.",
+    typeUsername: "Digite o nome de usuário",
+    enterUsername: "Insira o nome de usuário",
+    searching: "Buscando...",
+    searchButton: "Buscar",
+    bindUserButton: "Vincular usuário",
+    bindUserSuccess: "Usuário vinculado com sucesso!",
+    id: "ID",
+    username: "Nome de usuário",
+    age: "Idade"
   }
 };
 

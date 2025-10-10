@@ -34,15 +34,32 @@ const enUS: MessageMap = {
     alreadyHaveAccount: "Already have an account? Log in"
   },
   dashboard: {
+    title: "Dashboard - Expense Tracker",
     description: "Description",
     value: "Value",
     date: "Date",
     actions: "Actions",
     redirectingToLogin: "Redirecting to login...",
-    title: "Dashboard - Expense Tracker",
     yourTransactions: "Your transactions",
     loadingTransactions: "Loading transactions...",
     transactionDeleted: "Your transaction has been successfully deleted."
+  },
+  settings: {
+    title: "Settings",
+    usernameSearchPrompt: "Please enter a username to search",
+    fetchUserErrorPrefix: "Error fetching user:",
+    fetchUserError: "Failed to fetch user. Please try again.",
+    bindUserErrorPrefix: "Error binding user:",
+    bindUserError: "Failed to bind user. Please try again.",
+    typeUsername: "Type user name",
+    enterUsername: "Enter the user name",
+    searching: "Searching...",
+    searchButton: "Search",
+    bindUserButton: "Bind user",
+    bindUserSuccess: "User successfully bound!",
+    id: "ID",
+    username: "Username",
+    age: "Age"
   }
 };
 
