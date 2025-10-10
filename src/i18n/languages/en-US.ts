@@ -95,6 +95,10 @@ const enUS: MessageMap = {
     title: "No Data Available",
     message: "There is currently no data to display. Please check back later or add new data."
   },
+  relationsSelect:{
+    selectUser: "Select a user"
+  },
+  logoutButton: "Logout",
   settings: {
     title: "Settings",
     usernameSearchPrompt: "Please enter a username to search",

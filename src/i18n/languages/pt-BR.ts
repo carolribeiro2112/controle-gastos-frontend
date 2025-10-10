@@ -95,6 +95,10 @@ const ptBR: MessageMap = {
     title: "Nenhum dado disponível",
     message: "No momento não há dados para exibir. Por favor, volte mais tarde ou adicione novos dados."
   },
+  relationsSelect:{
+    selectUser: "Selecione um usuário"
+  },
+  logoutButton: "Sair",
   settings: {
     title: "Configurações",
     usernameSearchPrompt: "Por favor, insira um nome de usuário para buscar",

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Select } from "@radix-ui/themes";
 import { getUserData } from "../../utils/getUserData";
 import { SelectContainer } from "./RelationSelect.style";
+import { useIntl } from "react-intl";
 
 interface Relations {
   relations: RelationProps[];
@@ -20,6 +21,7 @@ function RelationsSelect({
   onUserSelect,
   externalSelectedUserId,
 }: Relations) {
+  const { formatMessage } = useIntl();
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const userData = getUserData();
 
@@ -40,13 +42,16 @@ function RelationsSelect({
     <div style={{ marginBottom: "16px" }}>
       {relations.length !== 0 && (
         <SelectContainer>
-          <label>Selecione um usuário</label>
+          <label>{formatMessage({ id: "relationsSelect.selectUser" })}</label>
           <Select.Root
             value={selectedUserId}
             onValueChange={handleUserSelection}
             size={"3"}
           >
-            <Select.Trigger placeholder="Selecione um usuário" radius="full" />
+            <Select.Trigger
+              placeholder={formatMessage({ id: "relationsSelect.selectUser" })}
+              radius="full"
+            />
             <Select.Content style={{ overflowY: "auto" }} position="popper">
               <Select.Item key={userData.id} value={userData.id}>
                 {userData.sub}
