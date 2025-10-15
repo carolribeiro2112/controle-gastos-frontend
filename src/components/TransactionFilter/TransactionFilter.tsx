@@ -4,10 +4,13 @@ import { useState } from "react";
 import { useIntl } from "react-intl";
 
 interface TransactionFiltersProps {
-  onFiltersChange: (filters: { type?: string; category?: string }) => void;
+  onFiltersChange: (filters: {
+    types?: string[];
+    categories?: string[];
+  }) => void;
   initialFilters?: {
-    type?: string;
-    category?: string;
+    types?: string[];
+    categories?: string[];
   };
 }
 
@@ -16,11 +19,11 @@ const TransactionFilters = ({
   initialFilters,
 }: TransactionFiltersProps) => {
   const { formatMessage } = useIntl();
-  const [selectedType, setSelectedType] = useState<string | undefined>(
-    initialFilters?.type
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(
+    initialFilters?.types || []
   );
-  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
-    initialFilters?.category
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+    initialFilters?.categories || []
   );
 
   const categories = [
@@ -42,24 +45,46 @@ const TransactionFilters = ({
   const types = ["INCOME", "EXPENSE"];
 
   const handleTypeChange = (type: string, checked: boolean) => {
-    const newType = checked ? type : undefined;
-    setSelectedType(newType);
-    onFiltersChange({ type: newType, category: selectedCategory });
+    let newTypes: string[];
+
+    if (checked) {
+      newTypes = [...selectedTypes, type];
+    } else {
+      newTypes = selectedTypes.filter((t) => t !== type);
+    }
+
+    setSelectedTypes(newTypes);
+    onFiltersChange({
+      types: newTypes.length > 0 ? newTypes : undefined,
+      categories:
+        selectedCategories.length > 0 ? selectedCategories : undefined,
+    });
   };
 
   const handleCategoryChange = (category: string, checked: boolean) => {
-    const newCategory = checked ? category : undefined;
-    setSelectedCategory(newCategory);
-    onFiltersChange({ type: selectedType, category: newCategory });
+    let newCategories: string[];
+
+    if (checked) {
+      newCategories = [...selectedCategories, category];
+    } else {
+      newCategories = selectedCategories.filter((c) => c !== category);
+    }
+
+    setSelectedCategories(newCategories);
+    onFiltersChange({
+      types: selectedTypes.length > 0 ? selectedTypes : undefined,
+      categories: newCategories.length > 0 ? newCategories : undefined,
+    });
   };
 
   const clearFilters = () => {
-    setSelectedType(undefined);
-    setSelectedCategory(undefined);
+    setSelectedTypes([]);
+    setSelectedCategories([]);
     onFiltersChange({});
   };
 
-  const hasActiveFilters = selectedType || selectedCategory;
+  const hasActiveFilters =
+    selectedTypes.length > 0 || selectedCategories.length > 0;
 
   return (
     <Flex
@@ -77,6 +102,12 @@ const TransactionFilters = ({
         <Flex align="center" gap="2">
           <Filter size={16} />
           <Text weight="medium">{formatMessage({ id: "filters.title" })}</Text>
+          {hasActiveFilters && (
+            <Text size="1" color="gray">
+              ({selectedTypes.length + selectedCategories.length}{" "}
+              {formatMessage({ id: "filters.selected" })})
+            </Text>
+          )}
         </Flex>
         {hasActiveFilters && (
           <Button variant="ghost" size="1" onClick={clearFilters}>
@@ -90,22 +121,38 @@ const TransactionFilters = ({
         <Tabs.List>
           <Tabs.Trigger value="type">
             {formatMessage({ id: "filters.typeTab" })}
+            {selectedTypes.length > 0 && (
+              <Text
+                size="1"
+                style={{ marginLeft: "4px", color: "var(--accent-9)" }}
+              >
+                ({selectedTypes.length})
+              </Text>
+            )}
           </Tabs.Trigger>
           <Tabs.Trigger value="category">
             {formatMessage({ id: "filters.categoryTab" })}
+            {selectedCategories.length > 0 && (
+              <Text
+                size="1"
+                style={{ marginLeft: "4px", color: "var(--accent-9)" }}
+              >
+                ({selectedCategories.length})
+              </Text>
+            )}
           </Tabs.Trigger>
         </Tabs.List>
 
         <Tabs.Content value="type" style={{ paddingTop: "16px" }}>
           <Flex direction="column" gap="3">
             <Text size="2" weight="medium" color="gray">
-              {formatMessage({ id: "filters.selectType" })}
+              {formatMessage({ id: "filters.selectTypes" })}
             </Text>
             <Flex gap="4" wrap="wrap">
               {types.map((type) => (
                 <Flex key={type} align="center" gap="2">
                   <Checkbox
-                    checked={selectedType === type}
+                    checked={selectedTypes.includes(type)}
                     onCheckedChange={(checked) =>
                       handleTypeChange(type, checked === true)
                     }
@@ -121,13 +168,38 @@ const TransactionFilters = ({
                 </Flex>
               ))}
             </Flex>
+            {selectedTypes.length > 0 && (
+              <Flex gap="2" wrap="wrap">
+                <Text size="1" color="gray">
+                  {formatMessage({ id: "filters.selectedTypes" })}:
+                </Text>
+                {selectedTypes.map((type) => (
+                  <Text
+                    key={type}
+                    size="1"
+                    style={{
+                      padding: "2px 6px",
+                      backgroundColor: "var(--accent-3)",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    {formatMessage({
+                      id:
+                        type === "INCOME"
+                          ? "transaction.income"
+                          : "transaction.expense",
+                    })}
+                  </Text>
+                ))}
+              </Flex>
+            )}
           </Flex>
         </Tabs.Content>
 
         <Tabs.Content value="category" style={{ paddingTop: "16px" }}>
           <Flex direction="column" gap="3">
             <Text size="2" weight="medium" color="gray">
-              {formatMessage({ id: "filters.selectCategory" })}
+              {formatMessage({ id: "filters.selectCategories" })}
             </Text>
             <Flex
               gap="4"
@@ -142,7 +214,7 @@ const TransactionFilters = ({
                   style={{ minWidth: "140px" }}
                 >
                   <Checkbox
-                    checked={selectedCategory === category}
+                    checked={selectedCategories.includes(category)}
                     onCheckedChange={(checked) =>
                       handleCategoryChange(category, checked === true)
                     }
@@ -155,6 +227,28 @@ const TransactionFilters = ({
                 </Flex>
               ))}
             </Flex>
+            {selectedCategories.length > 0 && (
+              <Flex gap="2" wrap="wrap" style={{ marginTop: "8px" }}>
+                <Text size="1" color="gray">
+                  {formatMessage({ id: "filters.selectedCategories" })}:
+                </Text>
+                {selectedCategories.map((category) => (
+                  <Text
+                    key={category}
+                    size="1"
+                    style={{
+                      padding: "2px 6px",
+                      backgroundColor: "var(--accent-3)",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    {formatMessage({
+                      id: `category.${category.toLowerCase()}`,
+                    })}
+                  </Text>
+                ))}
+              </Flex>
+            )}
           </Flex>
         </Tabs.Content>
       </Tabs.Root>

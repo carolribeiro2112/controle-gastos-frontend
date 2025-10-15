@@ -38,10 +38,20 @@ const TransactionService = {
     return response.data;
   },
 
-  getTransactions: async (userId: string, type?: string, category?: string) => {
+  getTransactions: async (userId: string, type?: string[], category?: string[]) => {
     const headers = await getAuthHeaders();
+    const params: Record<string, string> = { userId };
+    
+    if (type && type.length > 0) {
+      params.type = type.join(', ');
+    }
+    
+    if (category && category.length > 0) {
+      params.category = category.join(', ');
+    }
+    
     const response = await Api.get("/transaction", {
-      params: { userId, type, category },
+      params,
       headers
     });
     return response.data;

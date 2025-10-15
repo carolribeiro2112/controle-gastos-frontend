@@ -17,9 +17,10 @@ import { useIntl } from "react-intl";
 
 const Dashboard = () => {
   const { formatMessage } = useIntl();
-  const [filters, setFilters] = useState<{ type?: string; category?: string }>(
-    {}
-  );
+  const [filters, setFilters] = useState<{
+    types?: string[];
+    categories?: string[];
+  }>({});
   const {
     isAuthenticated,
     adminId,
@@ -41,15 +42,15 @@ const Dashboard = () => {
     isAuthenticated,
     selectedUserId,
     userRole,
-    type: filters.type,
-    category: filters.category,
+    type: filters.types,
+    category: filters.categories,
   });
   const { relations } = useRelations({ adminId, userRole });
   const { showToast, showSuccessToast } = useToast();
 
   const handleFiltersChange = (newFilters: {
-    type?: string;
-    category?: string;
+    types?: string[];
+    categories?: string[];
   }) => {
     setFilters(newFilters);
   };

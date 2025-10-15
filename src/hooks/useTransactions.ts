@@ -6,8 +6,8 @@ interface UseTransactionsProps {
   isAuthenticated: boolean;
   selectedUserId: string | null;
   userRole: string;
-  type?: string;
-  category?: string;
+  type?: string[];
+  category?: string[];
 }
 
 export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, type, category }: UseTransactionsProps) => {

@@ -15,7 +15,10 @@ interface CustomTableProps {
   handleUserSelection: (userId: string) => void;
   userRole: string;
   selectedUserId?: string;
-  onFiltersChange?: (filters: { type?: string; category?: string }) => void;
+  onFiltersChange?: (filters: {
+    types?: string[];
+    categories?: string[];
+  }) => void;
   showFilters?: boolean;
 }
 const CustomTable = ({
