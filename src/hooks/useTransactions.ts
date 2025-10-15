@@ -6,9 +6,11 @@ interface UseTransactionsProps {
   isAuthenticated: boolean;
   selectedUserId: string | null;
   userRole: string;
+  type?: string;
+  category?: string;
 }
 
-export const useTransactions = ({ isAuthenticated, selectedUserId, userRole }: UseTransactionsProps) => {
+export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, type, category }: UseTransactionsProps) => {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -37,7 +39,7 @@ export const useTransactions = ({ isAuthenticated, selectedUserId, userRole }: U
         userIdToFetch = selectedUserId;
       }
 
-      const data = await TransactionService.getTransactions(userIdToFetch);
+      const data = await TransactionService.getTransactions(userIdToFetch, type, category);
       setTransactions(data);
     } catch (err) {
       console.error("Error fetching transactions:", err);
@@ -45,7 +47,7 @@ export const useTransactions = ({ isAuthenticated, selectedUserId, userRole }: U
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated, selectedUserId, userRole]);
+  }, [isAuthenticated, selectedUserId, userRole, type, category]);
 
   const handleDeleteClick = (transactionId: string) => {
     setTransactionToDelete(transactionId);
