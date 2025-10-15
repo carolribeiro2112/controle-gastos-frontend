@@ -115,7 +115,16 @@ const enUS: MessageMap = {
     id: "ID",
     username: "Username",
     age: "Age"
-  }
+  }, 
+  filters: {
+    title: "Filters",
+    typeTab: "Type",
+    categoryTab: "Category",
+    clearFilters: "Clear Filters",
+    selectType: "Select Type",
+    selectCategory: "Select Category",
+    selectedCategories: "Selected Categories",
+  },
 };
 
 export default enUS;
