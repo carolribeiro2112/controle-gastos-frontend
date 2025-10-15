@@ -105,14 +105,14 @@ const TransactionFilters = ({
           {hasActiveFilters && (
             <Text size="1" color="gray">
               ({selectedTypes.length + selectedCategories.length}{" "}
-              {formatMessage({ id: "filters.selected" })})
+              {formatMessage({ id: "filters.selectType" })})
             </Text>
           )}
         </Flex>
         {hasActiveFilters && (
           <Button variant="ghost" size="1" onClick={clearFilters}>
             <X size={14} />
-            {formatMessage({ id: "filters.clear" })}
+            {formatMessage({ id: "filters.clearFilters" })}
           </Button>
         )}
       </Flex>
@@ -146,7 +146,7 @@ const TransactionFilters = ({
         <Tabs.Content value="type" style={{ paddingTop: "16px" }}>
           <Flex direction="column" gap="3">
             <Text size="2" weight="medium" color="gray">
-              {formatMessage({ id: "filters.selectTypes" })}
+              {formatMessage({ id: "filters.selectType" })}
             </Text>
             <Flex gap="4" wrap="wrap">
               {types.map((type) => (
@@ -161,8 +161,8 @@ const TransactionFilters = ({
                     {formatMessage({
                       id:
                         type === "INCOME"
-                          ? "transaction.income"
-                          : "transaction.expense",
+                          ? "createTransactionModal.income"
+                          : "createTransactionModal.expense",
                     })}
                   </Text>
                 </Flex>
@@ -186,8 +186,8 @@ const TransactionFilters = ({
                     {formatMessage({
                       id:
                         type === "INCOME"
-                          ? "transaction.income"
-                          : "transaction.expense",
+                          ? "createTransactionModal.income"
+                          : "createTransactionModal.expense",
                     })}
                   </Text>
                 ))}
@@ -199,7 +199,7 @@ const TransactionFilters = ({
         <Tabs.Content value="category" style={{ paddingTop: "16px" }}>
           <Flex direction="column" gap="3">
             <Text size="2" weight="medium" color="gray">
-              {formatMessage({ id: "filters.selectCategories" })}
+              {formatMessage({ id: "filters.selectCategory" })}
             </Text>
             <Flex
               gap="4"
@@ -221,7 +221,7 @@ const TransactionFilters = ({
                   />
                   <Text size="2">
                     {formatMessage({
-                      id: `category.${category.toLowerCase()}`,
+                      id: `categories.${category.toUpperCase()}`,
                     })}
                   </Text>
                 </Flex>
@@ -243,7 +243,7 @@ const TransactionFilters = ({
                     }}
                   >
                     {formatMessage({
-                      id: `category.${category.toLowerCase()}`,
+                      id: `categories.${category.toUpperCase()}`,
                     })}
                   </Text>
                 ))}

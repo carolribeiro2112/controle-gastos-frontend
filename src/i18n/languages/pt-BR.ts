@@ -115,7 +115,15 @@ const ptBR: MessageMap = {
     id: "ID",
     username: "Nome de usuário",
     age: "Idade"
-  }
+  },
+  filters: {
+    title: "Filtros",
+    typeTab: "Tipo",
+    categoryTab: "Categoria",
+    clearFilters: "Limpar Filtros",
+    selectType: "Selecionar Tipo",
+    selectCategory: "Selecionar Categoria"
+  },
 };
 
 export default ptBR;
