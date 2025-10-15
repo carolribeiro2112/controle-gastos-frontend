@@ -39,7 +39,7 @@ function RelationsSelect({
   };
 
   return (
-    <div style={{ marginBottom: "16px" }}>
+    <div>
       {relations.length !== 0 && (
         <SelectContainer>
           <label>{formatMessage({ id: "relationsSelect.selectUser" })}</label>

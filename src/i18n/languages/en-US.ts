@@ -122,7 +122,8 @@ const enUS: MessageMap = {
     categoryTab: "Category",
     clearFilters: "Clear Filters",
     selectType: "Select Type",
-    selectCategory: "Select Category"
+    selectCategory: "Select Category",
+    selectedCategories: "Selected Categories",
   },
 };
 

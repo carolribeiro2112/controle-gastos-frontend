@@ -122,7 +122,8 @@ const ptBR: MessageMap = {
     categoryTab: "Categoria",
     clearFilters: "Limpar Filtros",
     selectType: "Selecionar Tipo",
-    selectCategory: "Selecionar Categoria"
+    selectCategory: "Selecionar Categoria",
+    selectedCategories: "Categorias Selecionadas",
   },
 };
 

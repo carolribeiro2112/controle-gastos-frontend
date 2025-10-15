@@ -1,4 +1,4 @@
-import { Flex, Tabs, Checkbox, Button, Text } from "@radix-ui/themes";
+import { Flex, Tabs, Checkbox, Button, Text, Popover } from "@radix-ui/themes";
 import { Filter, X } from "lucide-react";
 import { useState } from "react";
 import { useIntl } from "react-intl";
@@ -86,173 +86,205 @@ const TransactionFilters = ({
   const hasActiveFilters =
     selectedTypes.length > 0 || selectedCategories.length > 0;
 
+  const activeFiltersCount = selectedTypes.length + selectedCategories.length;
+
   return (
-    <Flex
-      direction="column"
-      gap="3"
-      p="3"
-      style={{
-        border: "1px solid var(--gray-a6)",
-        borderRadius: "8px",
-        backgroundColor: "var(--gray-a2)",
-        width: "100%",
-      }}
-    >
-      <Flex align="center" justify="between">
-        <Flex align="center" gap="2">
+    <Popover.Root>
+      <Popover.Trigger>
+        <Button
+          variant="outline"
+          style={{ position: "relative", marginTop: "26px" }}
+          size="3"
+          radius="full"
+        >
           <Filter size={16} />
-          <Text weight="medium">{formatMessage({ id: "filters.title" })}</Text>
+          {formatMessage({ id: "filters.title" })}
           {hasActiveFilters && (
-            <Text size="1" color="gray">
-              ({selectedTypes.length + selectedCategories.length}{" "}
-              {formatMessage({ id: "filters.selectType" })})
-            </Text>
-          )}
-        </Flex>
-        {hasActiveFilters && (
-          <Button variant="ghost" size="1" onClick={clearFilters}>
-            <X size={14} />
-            {formatMessage({ id: "filters.clearFilters" })}
-          </Button>
-        )}
-      </Flex>
-
-      <Tabs.Root defaultValue="type" style={{ width: "100%" }}>
-        <Tabs.List>
-          <Tabs.Trigger value="type">
-            {formatMessage({ id: "filters.typeTab" })}
-            {selectedTypes.length > 0 && (
-              <Text
-                size="1"
-                style={{ marginLeft: "4px", color: "var(--accent-9)" }}
-              >
-                ({selectedTypes.length})
-              </Text>
-            )}
-          </Tabs.Trigger>
-          <Tabs.Trigger value="category">
-            {formatMessage({ id: "filters.categoryTab" })}
-            {selectedCategories.length > 0 && (
-              <Text
-                size="1"
-                style={{ marginLeft: "4px", color: "var(--accent-9)" }}
-              >
-                ({selectedCategories.length})
-              </Text>
-            )}
-          </Tabs.Trigger>
-        </Tabs.List>
-
-        <Tabs.Content value="type" style={{ paddingTop: "16px" }}>
-          <Flex direction="column" gap="3">
-            <Text size="2" weight="medium" color="gray">
-              {formatMessage({ id: "filters.selectType" })}
-            </Text>
-            <Flex gap="4" wrap="wrap">
-              {types.map((type) => (
-                <Flex key={type} align="center" gap="2">
-                  <Checkbox
-                    checked={selectedTypes.includes(type)}
-                    onCheckedChange={(checked) =>
-                      handleTypeChange(type, checked === true)
-                    }
-                  />
-                  <Text size="2">
-                    {formatMessage({
-                      id:
-                        type === "INCOME"
-                          ? "createTransactionModal.income"
-                          : "createTransactionModal.expense",
-                    })}
-                  </Text>
-                </Flex>
-              ))}
-            </Flex>
-            {selectedTypes.length > 0 && (
-              <Flex gap="2" wrap="wrap">
-                <Text size="1" color="gray">
-                  {formatMessage({ id: "filters.selectedTypes" })}:
-                </Text>
-                {selectedTypes.map((type) => (
-                  <Text
-                    key={type}
-                    size="1"
-                    style={{
-                      padding: "2px 6px",
-                      backgroundColor: "var(--accent-3)",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    {formatMessage({
-                      id:
-                        type === "INCOME"
-                          ? "createTransactionModal.income"
-                          : "createTransactionModal.expense",
-                    })}
-                  </Text>
-                ))}
-              </Flex>
-            )}
-          </Flex>
-        </Tabs.Content>
-
-        <Tabs.Content value="category" style={{ paddingTop: "16px" }}>
-          <Flex direction="column" gap="3">
-            <Text size="2" weight="medium" color="gray">
-              {formatMessage({ id: "filters.selectCategory" })}
-            </Text>
             <Flex
-              gap="4"
-              wrap="wrap"
-              style={{ maxHeight: "200px", overflowY: "auto" }}
+              align="center"
+              justify="center"
+              style={{
+                position: "absolute",
+                top: "-8px",
+                right: "-8px",
+                backgroundColor: "var(--accent-9)",
+                color: "white",
+                borderRadius: "50%",
+                width: "20px",
+                height: "20px",
+                fontSize: "12px",
+                fontWeight: "bold",
+              }}
             >
-              {categories.map((category) => (
-                <Flex
-                  key={category}
-                  align="center"
-                  gap="2"
-                  style={{ minWidth: "140px" }}
-                >
-                  <Checkbox
-                    checked={selectedCategories.includes(category)}
-                    onCheckedChange={(checked) =>
-                      handleCategoryChange(category, checked === true)
-                    }
-                  />
-                  <Text size="2">
-                    {formatMessage({
-                      id: `categories.${category.toUpperCase()}`,
-                    })}
-                  </Text>
-                </Flex>
-              ))}
+              {activeFiltersCount}
             </Flex>
-            {selectedCategories.length > 0 && (
-              <Flex gap="2" wrap="wrap" style={{ marginTop: "8px" }}>
+          )}
+        </Button>
+      </Popover.Trigger>
+
+      <Popover.Content
+        style={{ width: "400px", maxWidth: "90vw", height: "auto" }}
+      >
+        <Flex direction="column" gap="3">
+          <Flex align="center" justify="between">
+            <Flex align="center" gap="2">
+              <Filter size={16} />
+              <Text weight="medium">
+                {formatMessage({ id: "filters.title" })}
+              </Text>
+              {hasActiveFilters && (
                 <Text size="1" color="gray">
-                  {formatMessage({ id: "filters.selectedCategories" })}:
+                  ({activeFiltersCount}{" "}
+                  {formatMessage({ id: "filters.selected" })})
                 </Text>
-                {selectedCategories.map((category) => (
-                  <Text
-                    key={category}
-                    size="1"
-                    style={{
-                      padding: "2px 6px",
-                      backgroundColor: "var(--accent-3)",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    {formatMessage({
-                      id: `categories.${category.toUpperCase()}`,
-                    })}
-                  </Text>
-                ))}
-              </Flex>
+              )}
+            </Flex>
+            {hasActiveFilters && (
+              <Button variant="ghost" size="1" onClick={clearFilters}>
+                <X size={14} />
+                {formatMessage({ id: "filters.clearFilters" })}
+              </Button>
             )}
           </Flex>
-        </Tabs.Content>
-      </Tabs.Root>
-    </Flex>
+
+          <Tabs.Root defaultValue="type" style={{ width: "100%" }}>
+            <Tabs.List>
+              <Tabs.Trigger value="type">
+                {formatMessage({ id: "filters.typeTab" })}
+                {selectedTypes.length > 0 && (
+                  <Text
+                    size="1"
+                    style={{ marginLeft: "4px", color: "var(--accent-9)" }}
+                  >
+                    ({selectedTypes.length})
+                  </Text>
+                )}
+              </Tabs.Trigger>
+              <Tabs.Trigger value="category">
+                {formatMessage({ id: "filters.categoryTab" })}
+                {selectedCategories.length > 0 && (
+                  <Text
+                    size="1"
+                    style={{ marginLeft: "4px", color: "var(--accent-9)" }}
+                  >
+                    ({selectedCategories.length})
+                  </Text>
+                )}
+              </Tabs.Trigger>
+            </Tabs.List>
+
+            <Tabs.Content value="type" style={{ paddingTop: "16px" }}>
+              <Flex direction="column" gap="3">
+                <Text size="2" weight="medium" color="gray">
+                  {formatMessage({ id: "filters.selectType" })}
+                </Text>
+                <Flex gap="4" wrap="wrap">
+                  {types.map((type) => (
+                    <Flex key={type} align="center" gap="2">
+                      <Checkbox
+                        checked={selectedTypes.includes(type)}
+                        onCheckedChange={(checked) =>
+                          handleTypeChange(type, checked === true)
+                        }
+                      />
+                      <Text size="2">
+                        {formatMessage({
+                          id:
+                            type === "INCOME"
+                              ? "createTransactionModal.income"
+                              : "createTransactionModal.expense",
+                        })}
+                      </Text>
+                    </Flex>
+                  ))}
+                </Flex>
+                {selectedTypes.length > 0 && (
+                  <Flex gap="2" wrap="wrap">
+                    <Text size="1" color="gray">
+                      {formatMessage({ id: "filters.selectedTypes" })}:
+                    </Text>
+                    {selectedTypes.map((type) => (
+                      <Text
+                        key={type}
+                        size="1"
+                        style={{
+                          padding: "2px 6px",
+                          backgroundColor: "var(--accent-3)",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        {formatMessage({
+                          id:
+                            type === "INCOME"
+                              ? "createTransactionModal.income"
+                              : "createTransactionModal.expense",
+                        })}
+                      </Text>
+                    ))}
+                  </Flex>
+                )}
+              </Flex>
+            </Tabs.Content>
+
+            <Tabs.Content value="category" style={{ paddingTop: "16px" }}>
+              <Flex direction="column" gap="3">
+                <Text size="2" weight="medium" color="gray">
+                  {formatMessage({ id: "filters.selectCategory" })}
+                </Text>
+                <Flex
+                  gap="4"
+                  wrap="wrap"
+                  style={{ maxHeight: "250px", overflowY: "hidden" }}
+                >
+                  {categories.map((category) => (
+                    <Flex
+                      key={category}
+                      align="center"
+                      gap="2"
+                      style={{ minWidth: "140px" }}
+                    >
+                      <Checkbox
+                        checked={selectedCategories.includes(category)}
+                        onCheckedChange={(checked) =>
+                          handleCategoryChange(category, checked === true)
+                        }
+                      />
+                      <Text size="2">
+                        {formatMessage({
+                          id: `categories.${category.toUpperCase()}`,
+                        })}
+                      </Text>
+                    </Flex>
+                  ))}
+                </Flex>
+                {selectedCategories.length > 0 && (
+                  <Flex gap="2" wrap="wrap" style={{ marginTop: "8px" }}>
+                    <Text size="1" color="gray">
+                      {formatMessage({ id: "filters.selectedCategories" })}:
+                    </Text>
+                    {selectedCategories.map((category) => (
+                      <Text
+                        key={category}
+                        size="1"
+                        style={{
+                          padding: "2px 6px",
+                          backgroundColor: "var(--accent-3)",
+                          borderRadius: "4px",
+                        }}
+                      >
+                        {formatMessage({
+                          id: `categories.${category.toUpperCase()}`,
+                        })}
+                      </Text>
+                    ))}
+                  </Flex>
+                )}
+              </Flex>
+            </Tabs.Content>
+          </Tabs.Root>
+        </Flex>
+      </Popover.Content>
+    </Popover.Root>
   );
 };
 
