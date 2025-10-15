@@ -11,12 +11,15 @@ import { useTransactions } from "../../hooks/useTransactions";
 import { useRelations } from "../../hooks/useRelations";
 import { useToast } from "../../hooks/useToast";
 import Styled from "./Dashboard.style";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Categories from "../../components/Categories/Categories";
 import { useIntl } from "react-intl";
 
 const Dashboard = () => {
   const { formatMessage } = useIntl();
+  const [filters, setFilters] = useState<{ type?: string; category?: string }>(
+    {}
+  );
   const {
     isAuthenticated,
     adminId,
@@ -34,9 +37,22 @@ const Dashboard = () => {
     handleDeleteClick,
     handleDeleteConfirm,
     handleDeleteCancel,
-  } = useTransactions({ isAuthenticated, selectedUserId, userRole });
+  } = useTransactions({
+    isAuthenticated,
+    selectedUserId,
+    userRole,
+    type: filters.type,
+    category: filters.category,
+  });
   const { relations } = useRelations({ adminId, userRole });
   const { showToast, showSuccessToast } = useToast();
+
+  const handleFiltersChange = (newFilters: {
+    type?: string;
+    category?: string;
+  }) => {
+    setFilters(newFilters);
+  };
 
   const columns: {
     id: string;
@@ -165,6 +181,8 @@ const Dashboard = () => {
           handleUserSelection={handleUserSelection}
           userRole={userRole}
           selectedUserId={selectedUserId ?? undefined}
+          onFiltersChange={handleFiltersChange}
+          showFilters
         />
 
         {showToast && (

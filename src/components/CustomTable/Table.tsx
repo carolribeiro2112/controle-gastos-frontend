@@ -2,6 +2,7 @@
 import { Card, Table } from "@radix-ui/themes";
 import RelationsSelect from "../RelationsSelect/RelationsSelect";
 import EmptyState from "../EmptyState/EmptyState";
+import TransactionFilters from "../TransactionFilter/TransactionFilter";
 
 interface CustomTableProps {
   columns: {
@@ -14,6 +15,8 @@ interface CustomTableProps {
   handleUserSelection: (userId: string) => void;
   userRole: string;
   selectedUserId?: string;
+  onFiltersChange?: (filters: { type?: string; category?: string }) => void;
+  showFilters?: boolean;
 }
 const CustomTable = ({
   columns,
@@ -22,9 +25,14 @@ const CustomTable = ({
   handleUserSelection,
   userRole,
   selectedUserId,
+  onFiltersChange,
+  showFilters = true,
 }: CustomTableProps) => {
   return (
     <Card style={{ gap: "16px", width: "100%", maxWidth: "1000px" }}>
+      {showFilters && onFiltersChange && (
+        <TransactionFilters onFiltersChange={onFiltersChange} />
+      )}
       {userRole === "ADMIN" && (
         <RelationsSelect
           relations={relations}
