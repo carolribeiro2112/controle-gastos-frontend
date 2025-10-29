@@ -47,7 +47,10 @@ const Dashboard = () => {
     category: filters.categories,
   });
 
-  const { transactions: allTransactions } = useTransactions({
+  const {
+    transactions: allTransactions,
+    fetchTransactions: fetchAllTransactions,
+  } = useTransactions({
     isAuthenticated,
     selectedUserId,
     userRole,
@@ -60,6 +63,11 @@ const Dashboard = () => {
     categories?: string[];
   }) => {
     setFilters(newFilters);
+  };
+
+  const handleTransactionChange = async () => {
+    await fetchTransactions(); // Atualiza tabela (com filtros)
+    await fetchAllTransactions(); // Atualiza gráfico (sem filtros)
   };
 
   const columns: {
@@ -99,6 +107,7 @@ const Dashboard = () => {
     const result = await handleDeleteConfirm();
     if (result?.success) {
       showSuccessToast();
+      await fetchAllTransactions();
     }
   };
 
@@ -170,7 +179,7 @@ const Dashboard = () => {
           </Heading>
           {userRole === "ADMIN" && (
             <CreateTransactionModal
-              onTransactionCreated={fetchTransactions}
+              onTransactionCreated={handleTransactionChange}
               userId={selectedUserId}
             />
           )}
