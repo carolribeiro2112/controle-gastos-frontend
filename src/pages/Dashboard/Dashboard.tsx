@@ -14,6 +14,7 @@ import Styled from "./Dashboard.style";
 import { useEffect, useState } from "react";
 import Categories from "../../components/Categories/Categories";
 import { useIntl } from "react-intl";
+import PieChart from "../../components/Chart/Chart";
 
 const Dashboard = () => {
   const { formatMessage } = useIntl();
@@ -44,6 +45,12 @@ const Dashboard = () => {
     userRole,
     type: filters.types,
     category: filters.categories,
+  });
+
+  const { transactions: allTransactions } = useTransactions({
+    isAuthenticated,
+    selectedUserId,
+    userRole,
   });
   const { relations } = useRelations({ adminId, userRole });
   const { showToast, showSuccessToast } = useToast();
@@ -184,6 +191,16 @@ const Dashboard = () => {
           selectedUserId={selectedUserId ?? undefined}
           onFiltersChange={handleFiltersChange}
           showFilters
+          originalTransactions={transactions}
+        />
+
+        <PieChart
+          transactions={allTransactions
+            .filter((t) => t.type === "EXPENSE")
+            .map((t) => ({
+              ...t,
+              type: t.type === "EXPENSE" ? "EXPENSE" : "INCOME",
+            }))}
         />
 
         {showToast && (
