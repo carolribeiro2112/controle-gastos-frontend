@@ -200,7 +200,7 @@ const Dashboard = () => {
           selectedUserId={selectedUserId ?? undefined}
           onFiltersChange={handleFiltersChange}
           showFilters
-          originalTransactions={transactions}
+          originalTransactions={allTransactions}
         />
 
         <PieChart
