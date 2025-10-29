@@ -14,6 +14,7 @@ import Styled from "./Dashboard.style";
 import { useEffect, useState } from "react";
 import Categories from "../../components/Categories/Categories";
 import { useIntl } from "react-intl";
+import PieChart from "../../components/Chart/Chart";
 
 const Dashboard = () => {
   const { formatMessage } = useIntl();
@@ -45,6 +46,15 @@ const Dashboard = () => {
     type: filters.types,
     category: filters.categories,
   });
+
+  const {
+    transactions: allTransactions,
+    fetchTransactions: fetchAllTransactions,
+  } = useTransactions({
+    isAuthenticated,
+    selectedUserId,
+    userRole,
+  });
   const { relations } = useRelations({ adminId, userRole });
   const { showToast, showSuccessToast } = useToast();
 
@@ -53,6 +63,11 @@ const Dashboard = () => {
     categories?: string[];
   }) => {
     setFilters(newFilters);
+  };
+
+  const handleTransactionChange = async () => {
+    await fetchTransactions(); // Atualiza tabela (com filtros)
+    await fetchAllTransactions(); // Atualiza gráfico (sem filtros)
   };
 
   const columns: {
@@ -92,6 +107,7 @@ const Dashboard = () => {
     const result = await handleDeleteConfirm();
     if (result?.success) {
       showSuccessToast();
+      await fetchAllTransactions();
     }
   };
 
@@ -163,7 +179,7 @@ const Dashboard = () => {
           </Heading>
           {userRole === "ADMIN" && (
             <CreateTransactionModal
-              onTransactionCreated={fetchTransactions}
+              onTransactionCreated={handleTransactionChange}
               userId={selectedUserId}
             />
           )}
@@ -184,6 +200,16 @@ const Dashboard = () => {
           selectedUserId={selectedUserId ?? undefined}
           onFiltersChange={handleFiltersChange}
           showFilters
+          originalTransactions={allTransactions}
+        />
+
+        <PieChart
+          transactions={allTransactions
+            .filter((t) => t.type === "EXPENSE")
+            .map((t) => ({
+              ...t,
+              type: t.type === "EXPENSE" ? "EXPENSE" : "INCOME",
+            }))}
         />
 
         {showToast && (

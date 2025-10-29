@@ -4,6 +4,7 @@ import RelationsSelect from "../RelationsSelect/RelationsSelect";
 import EmptyState from "../EmptyState/EmptyState";
 import TransactionFilters from "../TransactionFilter/TransactionFilter";
 import { FiltersContainer } from "./Table.style.ts";
+import Summary from "../Summary/Summary.tsx";
 interface CustomTableProps {
   columns: {
     id: string;
@@ -20,6 +21,7 @@ interface CustomTableProps {
     categories?: string[];
   }) => void;
   showFilters?: boolean;
+  originalTransactions?: any[];
 }
 const CustomTable = ({
   columns,
@@ -29,22 +31,27 @@ const CustomTable = ({
   userRole,
   selectedUserId,
   onFiltersChange,
+  originalTransactions,
   showFilters = true,
 }: CustomTableProps) => {
   return (
     <Card style={{ gap: "16px", width: "100%", maxWidth: "1000px" }}>
-      <FiltersContainer>
-        {userRole === "ADMIN" && (
-          <RelationsSelect
-            relations={relations}
-            onUserSelect={handleUserSelection}
-            externalSelectedUserId={selectedUserId}
-          />
-        )}
-        {showFilters && onFiltersChange && (
-          <TransactionFilters onFiltersChange={onFiltersChange} />
-        )}
-      </FiltersContainer>
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <FiltersContainer>
+          {userRole === "ADMIN" && (
+            <RelationsSelect
+              relations={relations}
+              onUserSelect={handleUserSelection}
+              externalSelectedUserId={selectedUserId}
+            />
+          )}
+          {showFilters && onFiltersChange && (
+            <TransactionFilters onFiltersChange={onFiltersChange} />
+          )}
+        </FiltersContainer>
+        <Summary data={originalTransactions ?? []} />
+      </div>
+
       <Table.Root size={"3"} style={{ width: "100%", overflowX: "auto" }}>
         <Table.Header style={{ backgroundColor: "var(--gray-a2)" }}>
           <Table.Row>
