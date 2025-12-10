@@ -38,10 +38,15 @@ const TransactionService = {
     return response.data;
   },
 
-  getTransactions: async (userId: string, type?: string[], category?: string[]) => {
+  getTransactions: async (userId: string, type?: string[], category?: string[], page?: number, pageSize?: number) => {
     const headers = await getAuthHeaders();
     const params: Record<string, string> = { userId };
-    
+    if (page !== undefined) {
+      params.page = page.toString();
+    }
+    if (pageSize !== undefined) {
+      params.pageSize = pageSize.toString();
+    }
     if (type && type.length > 0) {
       params.type = type.join(', ');
     }

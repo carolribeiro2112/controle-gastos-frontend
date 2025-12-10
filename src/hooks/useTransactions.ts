@@ -8,14 +8,24 @@ interface UseTransactionsProps {
   userRole: string;
   type?: string[];
   category?: string[];
+  page?: number;
+  pageSize?: number;
 }
 
-export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, type, category }: UseTransactionsProps) => {
+export interface PaginationData {
+  totalElements: number;
+  totalPages: number;
+  currentPage: number;
+  pageSize: number;
+}
+
+export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, type, category, page, pageSize }: UseTransactionsProps) => {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationData>({ totalElements: 0, totalPages: 0, currentPage: 0, pageSize: 10 });
 
   const fetchTransactions = useCallback(async () => {
     if (!isAuthenticated) return;
@@ -34,20 +44,27 @@ export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, typ
         if (!selectedUserId) {
           setTransactions([]);
           setLoading(false);
+          setPagination({ totalElements: 0, totalPages: 0, currentPage: 0, pageSize: 10 });
           return;
         }
         userIdToFetch = selectedUserId;
       }
 
-      const data = await TransactionService.getTransactions(userIdToFetch, type, category);
-      setTransactions(data);
+      const data = await TransactionService.getTransactions(userIdToFetch, type, category, page, pageSize);
+      setTransactions(data.content);
+      setPagination({
+        totalElements: data.totalElements,
+        totalPages: data.totalPages,
+        currentPage: data.page,
+        pageSize: data.pageSize,
+      });
     } catch (err) {
       console.error("Error fetching transactions:", err);
       setError("Failed to load transactions");
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated, selectedUserId, userRole, type, category]);
+  }, [isAuthenticated, userRole, type, category, page, pageSize, selectedUserId]);
 
   const handleDeleteClick = (transactionId: string) => {
     setTransactionToDelete(transactionId);
@@ -67,6 +84,11 @@ export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, typ
           (transaction) => transaction.id !== transactionToDelete
         )
       );
+
+      setPagination((prev) => ({
+        ...prev,
+        totalElements: prev.totalElements - 1,
+      }));
 
       return { success: true };
     } catch (err) {
@@ -90,6 +112,7 @@ export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, typ
 
   return {
     transactions,
+    pagination,
     loading,
     error,
     deleteDialogOpen,

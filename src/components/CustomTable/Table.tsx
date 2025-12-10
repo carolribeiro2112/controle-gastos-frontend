@@ -5,6 +5,7 @@ import EmptyState from "../EmptyState/EmptyState";
 import TransactionFilters from "../TransactionFilter/TransactionFilter";
 import { FiltersContainer } from "./Table.style.ts";
 import Summary from "../Summary/Summary.tsx";
+import type { PaginationData } from "../../hooks/useTransactions.ts";
 interface CustomTableProps {
   columns: {
     id: string;
@@ -22,6 +23,9 @@ interface CustomTableProps {
   }) => void;
   showFilters?: boolean;
   originalTransactions?: any[];
+  pagination?: PaginationData;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
 }
 const CustomTable = ({
   columns,
@@ -33,7 +37,31 @@ const CustomTable = ({
   onFiltersChange,
   originalTransactions,
   showFilters = true,
-}: CustomTableProps) => {
+}: // pagination,
+// onPageChange,
+// onPageSizeChange,
+CustomTableProps) => {
+  // const handlePreviousPage = () => {
+  //   if (pagination && onPageChange && pagination.currentPage > 0) {
+  //     onPageChange(pagination.currentPage - 1);
+  //   }
+  // };
+
+  // const handleNextPage = () => {
+  //   if (
+  //     pagination &&
+  //     onPageChange &&
+  //     pagination.currentPage < pagination.totalPages - 1
+  //   ) {
+  //     onPageChange(pagination.currentPage + 1);
+  //   }
+  // };
+
+  // const handlePageSizeChange = (newSize: string) => {
+  //   if (onPageSizeChange) {
+  //     onPageSizeChange(parseInt(newSize));
+  //   }
+  // };
   return (
     <Card style={{ gap: "16px", width: "100%", maxWidth: "1000px" }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>

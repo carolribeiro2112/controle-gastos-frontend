@@ -22,6 +22,9 @@ const Dashboard = () => {
     types?: string[];
     categories?: string[];
   }>({});
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+
   const {
     isAuthenticated,
     adminId,
@@ -29,8 +32,10 @@ const Dashboard = () => {
     userRole,
     handleUserSelection,
   } = useAuth();
+
   const {
     transactions,
+    pagination,
     loading,
     error,
     deleteDialogOpen,
@@ -45,6 +50,8 @@ const Dashboard = () => {
     userRole,
     type: filters.types,
     category: filters.categories,
+    page: currentPage,
+    pageSize: pageSize,
   });
 
   const {
@@ -54,7 +61,10 @@ const Dashboard = () => {
     isAuthenticated,
     selectedUserId,
     userRole,
+    page: currentPage,
+    pageSize: pageSize,
   });
+
   const { relations } = useRelations({ adminId, userRole });
   const { showToast, showSuccessToast } = useToast();
 
@@ -63,6 +73,16 @@ const Dashboard = () => {
     categories?: string[];
   }) => {
     setFilters(newFilters);
+    setCurrentPage(0); // Reset to first page on filter change
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setPageSize(newPageSize);
+    setCurrentPage(0); // Reset to first page when page size changes
   };
 
   const handleTransactionChange = async () => {
@@ -108,6 +128,9 @@ const Dashboard = () => {
     if (result?.success) {
       showSuccessToast();
       await fetchAllTransactions();
+      if (transactions.length === 1 && currentPage > 0) {
+        setCurrentPage(currentPage - 1);
+      }
     }
   };
 
@@ -201,6 +224,9 @@ const Dashboard = () => {
           onFiltersChange={handleFiltersChange}
           showFilters
           originalTransactions={allTransactions}
+          pagination={pagination}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
         />
 
         <PieChart

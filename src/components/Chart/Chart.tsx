@@ -1,6 +1,6 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Heading } from "@radix-ui/themes";
-import { Pie } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -58,7 +58,7 @@ const PieChart = ({ transactions }: PieChartProps) => {
       <Heading style={{ textAlign: "center", marginBottom: "10px" }}>
         Distribuição de Despesas por Categoria
       </Heading>
-      <Pie
+      <Doughnut
         data={{
           labels,
           datasets: [
