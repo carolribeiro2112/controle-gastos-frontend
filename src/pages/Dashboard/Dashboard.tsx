@@ -11,7 +11,7 @@ import { useTransactions } from "../../hooks/useTransactions";
 import { useRelations } from "../../hooks/useRelations";
 import { useToast } from "../../hooks/useToast";
 import Styled from "./Dashboard.style";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Categories from "../../components/Categories/Categories";
 import { useIntl } from "react-intl";
 import PieChart from "../../components/Chart/Chart";
@@ -22,8 +22,6 @@ const Dashboard = () => {
     types?: string[];
     categories?: string[];
   }>({});
-  const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
 
   const {
     isAuthenticated,
@@ -33,6 +31,7 @@ const Dashboard = () => {
     handleUserSelection,
   } = useAuth();
 
+  // MANTÉM APENAS UM HOOK useTransactions
   const {
     transactions,
     pagination,
@@ -44,16 +43,19 @@ const Dashboard = () => {
     handleDeleteClick,
     handleDeleteConfirm,
     handleDeleteCancel,
+    handlePageChange,
+    handlePageSizeChange,
   } = useTransactions({
     isAuthenticated,
     selectedUserId,
     userRole,
     type: filters.types,
     category: filters.categories,
-    page: currentPage,
-    pageSize: pageSize,
+    initialPage: 0,
+    initialPageSize: 5,
   });
 
+  // HOOK separado para dados SEM FILTROS (para gráfico e summary)
   const {
     transactions: allTransactions,
     fetchTransactions: fetchAllTransactions,
@@ -61,8 +63,9 @@ const Dashboard = () => {
     isAuthenticated,
     selectedUserId,
     userRole,
-    page: currentPage,
-    pageSize: pageSize,
+    // SEM filtros para pegar todos os dados
+    initialPage: 0,
+    initialPageSize: 1000, // Tamanho grande para pegar todos
   });
 
   const { relations } = useRelations({ adminId, userRole });
@@ -73,49 +76,38 @@ const Dashboard = () => {
     categories?: string[];
   }) => {
     setFilters(newFilters);
-    setCurrentPage(0); // Reset to first page on filter change
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-  };
-
-  const handlePageSizeChange = (newPageSize: number) => {
-    setPageSize(newPageSize);
-    setCurrentPage(0); // Reset to first page when page size changes
   };
 
   const handleTransactionChange = async () => {
-    await fetchTransactions(); // Atualiza tabela (com filtros)
-    await fetchAllTransactions(); // Atualiza gráfico (sem filtros)
+    await fetchTransactions();
+    await fetchAllTransactions();
   };
 
-  const columns: {
-    id: string;
-    label: string;
-    justify: "center" | "start" | "end";
-  }[] = [
-    {
-      id: "description",
-      label: formatMessage({ id: "dashboard.description" }),
-      justify: "start",
-    },
-    {
-      id: "value",
-      label: formatMessage({ id: "dashboard.value" }),
-      justify: "start",
-    },
-    {
-      id: "transactionDate",
-      label: formatMessage({ id: "dashboard.date" }),
-      justify: "start",
-    },
-    {
-      id: "actions",
-      label: formatMessage({ id: "dashboard.actions" }),
-      justify: "center",
-    },
-  ];
+  const columns = useMemo(
+    () => [
+      {
+        id: "description",
+        label: formatMessage({ id: "dashboard.description" }),
+        justify: "start" as const,
+      },
+      {
+        id: "value",
+        label: formatMessage({ id: "dashboard.value" }),
+        justify: "start" as const,
+      },
+      {
+        id: "transactionDate",
+        label: formatMessage({ id: "dashboard.date" }),
+        justify: "start" as const,
+      },
+      {
+        id: "actions",
+        label: formatMessage({ id: "dashboard.actions" }),
+        justify: "center" as const,
+      },
+    ],
+    [formatMessage]
+  );
 
   useEffect(() => {
     if (userRole === "ADMIN" && adminId && !selectedUserId) {
@@ -128,51 +120,61 @@ const Dashboard = () => {
     if (result?.success) {
       showSuccessToast();
       await fetchAllTransactions();
-      if (transactions.length === 1 && currentPage > 0) {
-        setCurrentPage(currentPage - 1);
-      }
     }
   };
 
-  const transformedData = transactions.map((transaction, index) => ({
-    id: index + 1,
-    originalId: transaction.id,
-    description: (
-      <Flex align="center" gap="2">
-        <Categories category={transaction.category} />
-        <Text>{transaction.description}</Text>
-      </Flex>
-    ),
-    value: (
-      <Text
-        color={transaction.type === "INCOME" ? "green" : "red"}
-        weight="bold"
-        style={{ display: "flex", alignItems: "center", gap: "4px" }}
-      >
-        {transaction.type === "EXPENSE" ? (
-          <ArrowDownLeft size={16} />
-        ) : (
-          <ArrowUpRight size={16} />
-        )}
-        R${transaction.value.toFixed(2)}
-      </Text>
-    ),
-    type: transaction.type,
-    category: transaction.category,
-    transactionDate: new Date(transaction.transactionDate).toLocaleDateString(
-      "pt-BR"
-    ),
-    actions: (
-      <IconButton
-        onClick={() => handleDeleteClick(transaction.id)}
-        disabled={userRole === "USER"}
-        radius="full"
-        style={{ cursor: "pointer" }}
-      >
-        <Trash2 size={16} />
-      </IconButton>
-    ),
-  }));
+  // MEMOIZAR os dados transformados para evitar recalculos desnecessários
+  const transformedData = useMemo(() => {
+    // Adiciona timestamp para garantir que seja único
+    const timestamp = Date.now();
+
+    return transactions.map((transaction, index) => ({
+      id: index + 1,
+      originalId: transaction.id,
+      uniqueKey: `${transaction.id}-${pagination.currentPage}-${timestamp}`, // Chave única
+      description: (
+        <Flex align="center" gap="2">
+          <Categories category={transaction.category} />
+          <Text>{transaction.description}</Text>
+        </Flex>
+      ),
+      value: (
+        <Text
+          color={transaction.type === "INCOME" ? "green" : "red"}
+          weight="bold"
+          style={{ display: "flex", alignItems: "center", gap: "4px" }}
+        >
+          {transaction.type === "EXPENSE" ? (
+            <ArrowDownLeft size={16} />
+          ) : (
+            <ArrowUpRight size={16} />
+          )}
+          R${transaction.value.toFixed(2)}
+        </Text>
+      ),
+      type: transaction.type,
+      category: transaction.category,
+      transactionDate: new Date(transaction.transactionDate).toLocaleDateString(
+        "pt-BR"
+      ),
+      actions: (
+        <IconButton
+          onClick={() => handleDeleteClick(transaction.id)}
+          disabled={userRole === "USER"}
+          radius="full"
+          style={{ cursor: "pointer" }}
+        >
+          <Trash2 size={16} />
+        </IconButton>
+      ),
+    }));
+  }, [
+    transactions,
+    userRole,
+    handleDeleteClick,
+    pagination.currentPage,
+    pagination.pageSize,
+  ]);
 
   if (!isAuthenticated) {
     return (

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import TransactionService, { type TransactionResponse } from '../services/TransactionService/TransactionService';
 import { getUserIdFromToken } from '../utils/getUserData';
 
@@ -8,8 +8,8 @@ interface UseTransactionsProps {
   userRole: string;
   type?: string[];
   category?: string[];
-  page?: number;
-  pageSize?: number;
+  initialPage?: number;
+  initialPageSize?: number;
 }
 
 export interface PaginationData {
@@ -19,15 +19,32 @@ export interface PaginationData {
   pageSize: number;
 }
 
-export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, type, category, page, pageSize }: UseTransactionsProps) => {
+export const useTransactions = ({ 
+  isAuthenticated, 
+  selectedUserId, 
+  userRole, 
+  type, 
+  category, 
+  initialPage = 0, 
+  initialPageSize = 10 
+}: UseTransactionsProps) => {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationData>({ totalElements: 0, totalPages: 0, currentPage: 0, pageSize: 10 });
+  const [pagination, setPagination] = useState<PaginationData>({ 
+    totalElements: 0, 
+    totalPages: 0, 
+    currentPage: initialPage, 
+    pageSize: initialPageSize 
+  });
 
-  const fetchTransactions = useCallback(async () => {
+  // useRef para evitar dependências circulares
+  const paginationRef = useRef(pagination);
+  paginationRef.current = pagination;
+
+  const fetchTransactions = useCallback(async (page?: number, pageSize?: number) => {
     if (!isAuthenticated) return;
 
     try {
@@ -37,26 +54,40 @@ export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, typ
       let userIdToFetch: string;
 
       if (userRole === "USER") {
-        // Para usuários USER, sempre busca as próprias transações
         userIdToFetch = await getUserIdFromToken();
       } else {
-        // Para usuários ADMIN, precisa ter selecionado um usuário
         if (!selectedUserId) {
           setTransactions([]);
           setLoading(false);
-          setPagination({ totalElements: 0, totalPages: 0, currentPage: 0, pageSize: 10 });
+          setPagination(prev => ({ 
+            ...prev, 
+            totalElements: 0, 
+            totalPages: 0, 
+            currentPage: page !== undefined ? page : prev.currentPage
+          }));
           return;
         }
         userIdToFetch = selectedUserId;
       }
 
-      const data = await TransactionService.getTransactions(userIdToFetch, type, category, page, pageSize);
+      // Use valores do ref para evitar dependências circulares
+      const currentPage = page !== undefined ? page : paginationRef.current.currentPage;
+      const currentPageSize = pageSize !== undefined ? pageSize : paginationRef.current.pageSize;
+
+      const data = await TransactionService.getTransactions(
+        userIdToFetch, 
+        type, 
+        category, 
+        currentPage, 
+        currentPageSize
+      );
+      
       setTransactions(data.content);
       setPagination({
         totalElements: data.totalElements,
         totalPages: data.totalPages,
-        currentPage: data.page,
-        pageSize: data.pageSize,
+        currentPage: currentPage,
+        pageSize: currentPageSize,
       });
     } catch (err) {
       console.error("Error fetching transactions:", err);
@@ -64,7 +95,31 @@ export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, typ
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated, userRole, type, category, page, pageSize, selectedUserId]);
+  }, [isAuthenticated, userRole, selectedUserId, type, category]); // Removidas as dependências do pagination
+
+  const handlePageChange = useCallback((newPage: number) => {
+    // Atualizar o estado imediatamente
+    setPagination(prev => ({
+      ...prev,
+      currentPage: newPage
+    }));
+    
+    // Fazer a requisição com o novo valor
+    fetchTransactions(newPage, paginationRef.current.pageSize);
+  }, [fetchTransactions]);
+
+  const handlePageSizeChange = useCallback((newPageSize: number) => {
+    setPagination(prev => ({ 
+      ...prev, 
+      pageSize: newPageSize, 
+      currentPage: 0 
+    }));
+    
+    // Usar setTimeout para garantir que o estado foi atualizado
+    setTimeout(() => {
+      fetchTransactions(0, newPageSize);
+    }, 0);
+  }, [fetchTransactions]);
 
   const handleDeleteClick = (transactionId: string) => {
     setTransactionToDelete(transactionId);
@@ -79,16 +134,19 @@ export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, typ
       
       await TransactionService.deleteTransaction(transactionToDelete);
 
-      setTransactions((prevTransactions) =>
-        prevTransactions.filter(
-          (transaction) => transaction.id !== transactionToDelete
-        )
-      );
+      const currentPag = paginationRef.current;
+      const newTotalElements = currentPag.totalElements - 1;
+      const maxPage = Math.max(0, Math.ceil(newTotalElements / currentPag.pageSize) - 1);
+      const newCurrentPage = Math.min(currentPag.currentPage, maxPage);
 
-      setPagination((prev) => ({
+      setPagination(prev => ({
         ...prev,
-        totalElements: prev.totalElements - 1,
+        totalElements: newTotalElements,
+        totalPages: Math.ceil(newTotalElements / prev.pageSize),
+        currentPage: newCurrentPage,
       }));
+
+      fetchTransactions(newCurrentPage, currentPag.pageSize);
 
       return { success: true };
     } catch (err) {
@@ -106,9 +164,20 @@ export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, typ
     setTransactionToDelete(null);
   };
 
+  // Efeito inicial para carregar dados
   useEffect(() => {
     fetchTransactions();
-  }, [fetchTransactions]);
+  }, [isAuthenticated, userRole, selectedUserId]);
+
+  // Efeito separado para mudanças de filtro
+  useEffect(() => {
+    if (type || category) {
+      setPagination(prev => ({ ...prev, currentPage: 0 }));
+      setTimeout(() => {
+        fetchTransactions(0, paginationRef.current.pageSize);
+      }, 0);
+    }
+  }, [type, category, fetchTransactions]);
 
   return {
     transactions,
@@ -122,5 +191,7 @@ export const useTransactions = ({ isAuthenticated, selectedUserId, userRole, typ
     handleDeleteClick,
     handleDeleteConfirm,
     handleDeleteCancel,
+    handlePageChange,
+    handlePageSizeChange,
   };
 };

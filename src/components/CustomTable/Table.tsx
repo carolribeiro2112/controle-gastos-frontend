@@ -6,6 +6,8 @@ import TransactionFilters from "../TransactionFilter/TransactionFilter";
 import { FiltersContainer } from "./Table.style.ts";
 import Summary from "../Summary/Summary.tsx";
 import type { PaginationData } from "../../hooks/useTransactions.ts";
+import Pagination from "./components/Pagination/Pagination.tsx";
+
 interface CustomTableProps {
   columns: {
     id: string;
@@ -23,10 +25,11 @@ interface CustomTableProps {
   }) => void;
   showFilters?: boolean;
   originalTransactions?: any[];
-  pagination?: PaginationData;
-  onPageChange?: (page: number) => void;
-  onPageSizeChange?: (pageSize: number) => void;
+  pagination: PaginationData;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
 }
+
 const CustomTable = ({
   columns,
   data,
@@ -37,31 +40,12 @@ const CustomTable = ({
   onFiltersChange,
   originalTransactions,
   showFilters = true,
-}: // pagination,
-// onPageChange,
-// onPageSizeChange,
-CustomTableProps) => {
-  // const handlePreviousPage = () => {
-  //   if (pagination && onPageChange && pagination.currentPage > 0) {
-  //     onPageChange(pagination.currentPage - 1);
-  //   }
-  // };
+  pagination,
+  onPageChange,
+  onPageSizeChange,
+}: CustomTableProps) => {
+  const displayData = data;
 
-  // const handleNextPage = () => {
-  //   if (
-  //     pagination &&
-  //     onPageChange &&
-  //     pagination.currentPage < pagination.totalPages - 1
-  //   ) {
-  //     onPageChange(pagination.currentPage + 1);
-  //   }
-  // };
-
-  // const handlePageSizeChange = (newSize: string) => {
-  //   if (onPageSizeChange) {
-  //     onPageSizeChange(parseInt(newSize));
-  //   }
-  // };
   return (
     <Card style={{ gap: "16px", width: "100%", maxWidth: "1000px" }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -80,7 +64,11 @@ CustomTableProps) => {
         <Summary data={originalTransactions ?? []} />
       </div>
 
-      <Table.Root size={"3"} style={{ width: "100%", overflowX: "auto" }}>
+      <Table.Root
+        size={"3"}
+        style={{ width: "100%", overflowX: "auto" }}
+        key={`table-${pagination.currentPage}-${pagination.pageSize}`} // Força re-render
+      >
         <Table.Header style={{ backgroundColor: "var(--gray-a2)" }}>
           <Table.Row>
             {columns.map((column) => (
@@ -92,8 +80,12 @@ CustomTableProps) => {
         </Table.Header>
 
         <Table.Body>
-          {data.map((item) => (
-            <Table.Row key={item.id}>
+          {displayData.map((item, index) => (
+            <Table.Row
+              key={`${item.originalId || item.id}-${
+                pagination.currentPage
+              }-${index}`}
+            >
               {columns.map((column, index) => {
                 const CellComponent =
                   index === 0 ? Table.RowHeaderCell : Table.Cell;
@@ -107,7 +99,14 @@ CustomTableProps) => {
           ))}
         </Table.Body>
       </Table.Root>
-      {data.length === 0 && <EmptyState />}
+
+      {displayData.length === 0 && <EmptyState />}
+
+      <Pagination
+        pagination={pagination}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
     </Card>
   );
 };
