@@ -65,8 +65,6 @@ const Dashboard = () => {
     userRole,
   });
 
-  console.log("All Transactions:", allTransactions);
-
   const { relations } = useRelations({ adminId, userRole });
   const { showToast, showSuccessToast } = useToast();
 

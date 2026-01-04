@@ -14,15 +14,15 @@ const Pagination = ({
   onPageSizeChange,
 }: PaginationProps) => {
   const handlePreviousPage = () => {
-    if (pagination?.currentPage > 0) {
-      const newPage = pagination?.currentPage - 1;
+    if ((pagination.currentPage ?? 0) > 0) {
+      const newPage = (pagination.currentPage ?? 0) - 1;
       onPageChange(newPage);
     }
   };
 
   const handleNextPage = () => {
-    if (pagination.currentPage < (pagination.totalPages || 0) - 1) {
-      const newPage = pagination.currentPage + 1;
+    if ((pagination.currentPage ?? 0) < (pagination.totalPages || 0) - 1) {
+      const newPage = (pagination.currentPage ?? 0) + 1;
       onPageChange(newPage);
     }
   };
@@ -34,7 +34,7 @@ const Pagination = ({
   const totalElements = pagination.totalElements || 0;
   const totalPages = pagination.totalPages || 0;
   const currentPage = pagination.currentPage || 0;
-  const pageSize = pagination.pageSize;
+  const pageSize = pagination.pageSize ?? 5; // Default to 5 if undefined
 
   const startItem = totalElements > 0 ? currentPage * pageSize + 1 : 0;
   const endItem = Math.min((currentPage + 1) * pageSize, totalElements);

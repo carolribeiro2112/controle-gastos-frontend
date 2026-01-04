@@ -81,7 +81,6 @@ export const useTransactions = ({
         currentPage, 
         currentPageSize
       );
-      console.log("Fetched Transactions Data:", data);
       const dataToSet = currentPage !== undefined && currentPageSize !== undefined
         ? data.content
         : data;
@@ -129,7 +128,7 @@ export const useTransactions = ({
     setDeleteDialogOpen(true);
   };
 
-  const handleDeleteConfirm = async () => {
+    const handleDeleteConfirm = async () => {
     if (!transactionToDelete) return;
 
     try {
@@ -137,19 +136,11 @@ export const useTransactions = ({
       
       await TransactionService.deleteTransaction(transactionToDelete);
 
-      const currentPag = paginationRef.current;
-      const newTotalElements = currentPag.totalElements - 1;
-      const maxPage = Math.max(0, Math.ceil(newTotalElements / currentPag.pageSize) - 1);
-      const newCurrentPage = Math.min(currentPag.currentPage, maxPage);
-
-      setPagination(prev => ({
-        ...prev,
-        totalElements: newTotalElements,
-        totalPages: Math.ceil(newTotalElements / prev.pageSize),
-        currentPage: newCurrentPage,
-      }));
-
-      fetchTransactions(newCurrentPage, currentPag.pageSize);
+      setTransactions((prevTransactions) =>
+        prevTransactions.filter(
+          (transaction) => transaction.id !== transactionToDelete
+        )
+      );
 
       return { success: true };
     } catch (err) {

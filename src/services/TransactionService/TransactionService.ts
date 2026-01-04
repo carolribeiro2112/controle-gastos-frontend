@@ -59,8 +59,6 @@ getTransactions: async (userId: string, type?: string[], category?: string[], pa
     params,
     headers
   });
-
-  console.log("Response Data:", response.data);
   
   return response.data;
 },
