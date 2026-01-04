@@ -63,9 +63,6 @@ const Dashboard = () => {
     isAuthenticated,
     selectedUserId,
     userRole,
-    // SEM filtros para pegar todos os dados
-    initialPage: 0,
-    initialPageSize: 1000, // Tamanho grande para pegar todos
   });
 
   const { relations } = useRelations({ adminId, userRole });
@@ -233,7 +230,7 @@ const Dashboard = () => {
 
         <PieChart
           transactions={allTransactions
-            .filter((t) => t.type === "EXPENSE")
+            ?.filter((t) => t.type === "EXPENSE")
             .map((t) => ({
               ...t,
               type: t.type === "EXPENSE" ? "EXPENSE" : "INCOME",
