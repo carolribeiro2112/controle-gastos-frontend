@@ -14,8 +14,8 @@ const Pagination = ({
   onPageSizeChange,
 }: PaginationProps) => {
   const handlePreviousPage = () => {
-    if (pagination.currentPage > 0) {
-      const newPage = pagination.currentPage - 1;
+    if (pagination?.currentPage > 0) {
+      const newPage = pagination?.currentPage - 1;
       onPageChange(newPage);
     }
   };

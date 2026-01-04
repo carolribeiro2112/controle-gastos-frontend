@@ -63,10 +63,9 @@ const Dashboard = () => {
     isAuthenticated,
     selectedUserId,
     userRole,
-    // SEM filtros para pegar todos os dados
-    initialPage: 0,
-    initialPageSize: 1000, // Tamanho grande para pegar todos
   });
+
+  console.log("All Transactions:", allTransactions);
 
   const { relations } = useRelations({ adminId, userRole });
   const { showToast, showSuccessToast } = useToast();
@@ -233,7 +232,7 @@ const Dashboard = () => {
 
         <PieChart
           transactions={allTransactions
-            .filter((t) => t.type === "EXPENSE")
+            ?.filter((t) => t.type === "EXPENSE")
             .map((t) => ({
               ...t,
               type: t.type === "EXPENSE" ? "EXPENSE" : "INCOME",

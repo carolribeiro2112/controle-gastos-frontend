@@ -15,8 +15,8 @@ interface UseTransactionsProps {
 export interface PaginationData {
   totalElements: number;
   totalPages: number;
-  currentPage: number;
-  pageSize: number;
+  currentPage?: number;
+  pageSize?: number;
 }
 
 export const useTransactions = ({ 
@@ -25,8 +25,8 @@ export const useTransactions = ({
   userRole, 
   type, 
   category, 
-  initialPage = 0, 
-  initialPageSize = 10 
+  initialPageSize,
+  initialPage, 
 }: UseTransactionsProps) => {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +37,7 @@ export const useTransactions = ({
     totalElements: 0, 
     totalPages: 0, 
     currentPage: initialPage, 
-    pageSize: initialPageSize 
+    pageSize: initialPageSize
   });
 
   // useRef para evitar dependências circulares
@@ -81,8 +81,11 @@ export const useTransactions = ({
         currentPage, 
         currentPageSize
       );
-      
-      setTransactions(data.content);
+      console.log("Fetched Transactions Data:", data);
+      const dataToSet = currentPage !== undefined && currentPageSize !== undefined
+        ? data.content
+        : data;
+      setTransactions(dataToSet);
       setPagination({
         totalElements: data.totalElements,
         totalPages: data.totalPages,
