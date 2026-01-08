@@ -6,6 +6,7 @@ import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import AdminProtectedRoute from "./components/AdminProtectedRoute/AdminProtectedRoute";
 import PublicRoute from "./components/PublicRoute/PublicRoute";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
+import Transactions from "./pages/Transactions/Transactions";
 
 const Router = () => {
   return (
@@ -32,6 +33,14 @@ const Router = () => {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute>
+              <Transactions />
             </ProtectedRoute>
           }
         />

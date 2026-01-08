@@ -1,19 +1,21 @@
-import { Flex, Heading, Text, IconButton, Button } from "@radix-ui/themes";
+import { Flex, Heading, Text, IconButton } from "@radix-ui/themes";
 import CustomTable from "../../components/CustomTable/Table";
-import { ArrowDownLeft, ArrowUpRight, PlusCircle, Trash2 } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Trash2 } from "lucide-react";
+import CreateTransactionModal from "../../components/CreateTransactionModal/CreateTransactionModal";
+import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
+import DeleteDialog from "../../components/DeleteDialog/DeleteDialog";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { useAuth } from "../../hooks/useAuth";
 import { useTransactions } from "../../hooks/useTransactions";
 import { useRelations } from "../../hooks/useRelations";
-import Styled from "./Dashboard.style";
+import { useToast } from "../../hooks/useToast";
+import Styled from "./Transactions.style";
 import { useEffect, useState, useMemo } from "react";
 import Categories from "../../components/Categories/Categories";
 import { useIntl } from "react-intl";
-import PieChart from "../../components/Chart/Chart";
-import { useNavigate } from "react-router";
 
-const Dashboard = () => {
+const Transactions = () => {
   const { formatMessage } = useIntl();
   const [filters, setFilters] = useState<{
     types?: string[];
@@ -34,7 +36,12 @@ const Dashboard = () => {
     pagination,
     loading,
     error,
+    deleteDialogOpen,
+    setDeleteDialogOpen,
+    fetchTransactions,
     handleDeleteClick,
+    handleDeleteConfirm,
+    handleDeleteCancel,
     handlePageChange,
     handlePageSizeChange,
   } = useTransactions({
@@ -48,21 +55,28 @@ const Dashboard = () => {
   });
 
   // HOOK separado para dados SEM FILTROS (para gráfico e summary)
-  const { transactions: allTransactions } = useTransactions({
+  const {
+    transactions: allTransactions,
+    fetchTransactions: fetchAllTransactions,
+  } = useTransactions({
     isAuthenticated,
     selectedUserId,
     userRole,
   });
 
-  const navigate = useNavigate();
-
   const { relations } = useRelations({ adminId, userRole });
+  const { showToast, showSuccessToast } = useToast();
 
   const handleFiltersChange = (newFilters: {
     types?: string[];
     categories?: string[];
   }) => {
     setFilters(newFilters);
+  };
+
+  const handleTransactionChange = async () => {
+    await fetchTransactions();
+    await fetchAllTransactions();
   };
 
   const columns = useMemo(
@@ -82,6 +96,11 @@ const Dashboard = () => {
         label: formatMessage({ id: "dashboard.date" }),
         justify: "start" as const,
       },
+      {
+        id: "actions",
+        label: formatMessage({ id: "dashboard.actions" }),
+        justify: "center" as const,
+      },
     ],
     [formatMessage]
   );
@@ -92,7 +111,13 @@ const Dashboard = () => {
     }
   }, [userRole, adminId, selectedUserId, handleUserSelection]);
 
-  const isDisabled = userRole === "USER";
+  const handleDeleteWithToast = async () => {
+    const result = await handleDeleteConfirm();
+    if (result?.success) {
+      showSuccessToast();
+      await fetchAllTransactions();
+    }
+  };
 
   // MEMOIZAR os dados transformados para evitar recalculos desnecessários
   const transformedData = useMemo(() => {
@@ -159,9 +184,6 @@ const Dashboard = () => {
     <Flex direction="column" align="center" gap="4" m="9" mt="0">
       <Header />
       <Breadcrumb />
-      <Heading as="h1" size="8" color="jade" align={"left"}>
-        {formatMessage({ id: "dashboard.title" })}
-      </Heading>
 
       <Flex
         direction="column"
@@ -173,16 +195,12 @@ const Dashboard = () => {
           <Heading as="h2" size="6" color="jade">
             {formatMessage({ id: "dashboard.yourTransactions" })}
           </Heading>
-          <Button
-            disabled={isDisabled}
-            style={{ cursor: "pointer" }}
-            size={"3"}
-            radius="full"
-            onClick={() => navigate("/transactions")}
-          >
-            <PlusCircle size={24} />
-            {formatMessage({ id: "createTransactionModal.addTransaction" })}
-          </Button>
+          {userRole === "ADMIN" && (
+            <CreateTransactionModal
+              onTransactionCreated={handleTransactionChange}
+              userId={selectedUserId}
+            />
+          )}
         </Styled.TableHeaderContainer>
 
         {loading && (
@@ -206,17 +224,23 @@ const Dashboard = () => {
           onPageSizeChange={handlePageSizeChange}
         />
 
-        <PieChart
-          transactions={allTransactions
-            ?.filter((t) => t.type === "EXPENSE")
-            .map((t) => ({
-              ...t,
-              type: t.type === "EXPENSE" ? "EXPENSE" : "INCOME",
-            }))}
+        {showToast && (
+          <Toast
+            type="success"
+            message={formatMessage({ id: "dashboard.transactionDeleted" })}
+            duration={2000}
+          />
+        )}
+
+        <DeleteDialog
+          deleteDialogOpen={deleteDialogOpen}
+          setDeleteDialogOpen={setDeleteDialogOpen}
+          handleDeleteCancel={handleDeleteCancel}
+          handleDeleteConfirm={handleDeleteWithToast}
         />
       </Flex>
     </Flex>
   );
 };
 
-export default Dashboard;
+export default Transactions;
