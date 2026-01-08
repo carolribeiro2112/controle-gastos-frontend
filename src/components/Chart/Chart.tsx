@@ -66,8 +66,9 @@ const PieChart = ({ transactions }: PieChartProps) => {
               data,
               backgroundColor,
               hoverBackgroundColor: backgroundColor,
-              borderWidth: 2,
+              borderWidth: 1,
               borderColor: "#fff",
+              // borderRadius: 50,
             },
           ],
         }}
