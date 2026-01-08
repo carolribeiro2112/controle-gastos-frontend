@@ -165,12 +165,10 @@ export const useTransactions = ({
 
   // Efeito separado para mudanças de filtro
   useEffect(() => {
-    if (type || category) {
       setPagination(prev => ({ ...prev, currentPage: 0 }));
       setTimeout(() => {
         fetchTransactions(0, paginationRef.current.pageSize);
       }, 0);
-    }
   }, [type, category, fetchTransactions]);
 
   return {
