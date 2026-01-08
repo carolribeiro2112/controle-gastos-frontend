@@ -19,6 +19,10 @@ export const ROUTE_CONFIG: Record<string, RouteConfig> = {
     label: "Configurações", 
     parent: "/dashboard" 
   },
+  "/transactions": { 
+    label: "Transações", 
+    parent: "/dashboard" 
+  },
 };
 
 /**
