@@ -128,30 +128,37 @@ export const useTransactions = ({
     setDeleteDialogOpen(true);
   };
 
-    const handleDeleteConfirm = async () => {
-    if (!transactionToDelete) return;
+const handleDeleteConfirm = async () => {
+  if (!transactionToDelete) return;
 
-    try {
-      setError(null);
-      
-      await TransactionService.deleteTransaction(transactionToDelete);
+  try {
+    setError(null);
+    
+    await TransactionService.deleteTransaction(transactionToDelete);
 
-      setTransactions((prevTransactions) =>
-        prevTransactions.filter(
-          (transaction) => transaction.id !== transactionToDelete
-        )
-      );
+    // Calcula se precisamos voltar uma página após a deleção
+    const currentPage = paginationRef.current.currentPage || 0;
+    const pageSize = paginationRef.current.pageSize || 5;
+    const totalElements = paginationRef.current.totalElements || 0;
+    
+    // Se após deletar, a página atual ficará vazia e não é a primeira página
+    const remainingItems = totalElements - 1; // -1 porque deletamos um item
+    const newTotalPages = Math.ceil(remainingItems / pageSize);
+    const targetPage = currentPage >= newTotalPages ? Math.max(0, newTotalPages - 1) : currentPage;
 
-      return { success: true };
-    } catch (err) {
-      console.error("Error deleting transaction:", err);
-      setError("Failed to delete transaction");
-      return { success: false };
-    } finally {
-      setDeleteDialogOpen(false);
-      setTransactionToDelete(null);
-    }
-  };
+    // Refaz a requisição na página apropriada
+    await fetchTransactions(targetPage, pageSize);
+
+    return { success: true };
+  } catch (err) {
+    console.error("Error deleting transaction:", err);
+    setError("Failed to delete transaction");
+    return { success: false };
+  } finally {
+    setDeleteDialogOpen(false);
+    setTransactionToDelete(null);
+  }
+};
 
   const handleDeleteCancel = () => {
     setDeleteDialogOpen(false);
