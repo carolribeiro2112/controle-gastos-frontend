@@ -1,24 +1,18 @@
-import { Flex, Heading, Text, IconButton, Button } from "@radix-ui/themes";
-import CustomTable from "../../components/CustomTable/Table";
-import { ArrowDownLeft, ArrowUpRight, PlusCircle, Trash2 } from "lucide-react";
+import { Flex, Heading, Text, Button } from "@radix-ui/themes";
+import { PlusCircle } from "lucide-react";
 import Header from "../../components/Header/Header";
 import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { useAuth } from "../../hooks/useAuth";
 import { useTransactions } from "../../hooks/useTransactions";
-import { useRelations } from "../../hooks/useRelations";
 import Styled from "./Dashboard.style";
-import { useEffect, useState, useMemo } from "react";
-import Categories from "../../components/Categories/Categories";
+import { useEffect } from "react";
 import { useIntl } from "react-intl";
 import PieChart from "../../components/Chart/Chart";
 import { useNavigate } from "react-router";
+import LastTransactionsCard from "../../components/LastTransactionsCard/LastTransactionsCard";
 
 const Dashboard = () => {
   const { formatMessage } = useIntl();
-  const [filters, setFilters] = useState<{
-    types?: string[];
-    categories?: string[];
-  }>({});
 
   const {
     isAuthenticated,
@@ -29,20 +23,10 @@ const Dashboard = () => {
   } = useAuth();
 
   // MANTÉM APENAS UM HOOK useTransactions
-  const {
-    transactions,
-    pagination,
-    loading,
-    error,
-    handleDeleteClick,
-    handlePageChange,
-    handlePageSizeChange,
-  } = useTransactions({
+  const { transactions, loading, error } = useTransactions({
     isAuthenticated,
     selectedUserId,
     userRole,
-    type: filters.types,
-    category: filters.categories,
     initialPage: 0,
     initialPageSize: 5,
   });
@@ -56,36 +40,6 @@ const Dashboard = () => {
 
   const navigate = useNavigate();
 
-  const { relations } = useRelations({ adminId, userRole });
-
-  const handleFiltersChange = (newFilters: {
-    types?: string[];
-    categories?: string[];
-  }) => {
-    setFilters(newFilters);
-  };
-
-  const columns = useMemo(
-    () => [
-      {
-        id: "description",
-        label: formatMessage({ id: "dashboard.description" }),
-        justify: "start" as const,
-      },
-      {
-        id: "value",
-        label: formatMessage({ id: "dashboard.value" }),
-        justify: "start" as const,
-      },
-      {
-        id: "transactionDate",
-        label: formatMessage({ id: "dashboard.date" }),
-        justify: "start" as const,
-      },
-    ],
-    [formatMessage]
-  );
-
   useEffect(() => {
     if (userRole === "ADMIN" && adminId && !selectedUserId) {
       handleUserSelection(adminId);
@@ -93,59 +47,6 @@ const Dashboard = () => {
   }, [userRole, adminId, selectedUserId, handleUserSelection]);
 
   const isDisabled = userRole === "USER";
-
-  // MEMOIZAR os dados transformados para evitar recalculos desnecessários
-  const transformedData = useMemo(() => {
-    // Adiciona timestamp para garantir que seja único
-    const timestamp = Date.now();
-
-    return transactions.map((transaction, index) => ({
-      id: index + 1,
-      originalId: transaction.id,
-      uniqueKey: `${transaction.id}-${pagination.currentPage}-${timestamp}`, // Chave única
-      description: (
-        <Flex align="center" gap="2">
-          <Categories category={transaction.category} />
-          <Text>{transaction.description}</Text>
-        </Flex>
-      ),
-      value: (
-        <Text
-          color={transaction.type === "INCOME" ? "green" : "red"}
-          weight="bold"
-          style={{ display: "flex", alignItems: "center", gap: "4px" }}
-        >
-          {transaction.type === "EXPENSE" ? (
-            <ArrowDownLeft size={16} />
-          ) : (
-            <ArrowUpRight size={16} />
-          )}
-          R${transaction.value.toFixed(2)}
-        </Text>
-      ),
-      type: transaction.type,
-      category: transaction.category,
-      transactionDate: new Date(transaction.transactionDate).toLocaleDateString(
-        "pt-BR"
-      ),
-      actions: (
-        <IconButton
-          onClick={() => handleDeleteClick(transaction.id)}
-          disabled={userRole === "USER"}
-          radius="full"
-          style={{ cursor: "pointer" }}
-        >
-          <Trash2 size={16} />
-        </IconButton>
-      ),
-    }));
-  }, [
-    transactions,
-    userRole,
-    handleDeleteClick,
-    pagination.currentPage,
-    pagination.pageSize,
-  ]);
 
   if (!isAuthenticated) {
     return (
@@ -191,20 +92,7 @@ const Dashboard = () => {
 
         {error && <Text color="red">{error}</Text>}
 
-        <CustomTable
-          columns={columns}
-          data={transformedData}
-          relations={relations}
-          handleUserSelection={handleUserSelection}
-          userRole={userRole}
-          selectedUserId={selectedUserId ?? undefined}
-          onFiltersChange={handleFiltersChange}
-          showFilters
-          originalTransactions={allTransactions}
-          pagination={pagination}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
-        />
+        <LastTransactionsCard data={transactions} />
 
         <PieChart
           transactions={allTransactions
