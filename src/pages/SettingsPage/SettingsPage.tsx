@@ -11,7 +11,6 @@ import UserService from "../../services/UserService/UserService";
 import RelationService from "../../services/RelationService/RelationService";
 import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
-import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { getUserIdFromToken } from "../../utils/getUserData";
 import { useIntl } from "react-intl";
 
@@ -46,7 +45,7 @@ const SettingsPage = () => {
     } catch (error: unknown) {
       console.error(
         formatMessage({ id: "settings.fetchUserErrorPrefix" }),
-        error
+        error,
       );
 
       const errorMessage = formatMessage({ id: "settings.fetchUserError" });
@@ -74,7 +73,7 @@ const SettingsPage = () => {
     } catch (error: unknown) {
       console.error(
         formatMessage({ id: "settings.bindUserErrorPrefix" }),
-        error
+        error,
       );
       const errorMessage = formatMessage({ id: "settings.bindUserError" });
       setError(errorMessage);
@@ -86,7 +85,6 @@ const SettingsPage = () => {
   return (
     <Flex direction="column" align="center" gap="4" m="9" mt="0">
       <Header />
-      <Breadcrumb />
       <Heading as="h1" size="8" color="jade">
         {formatMessage({ id: "settings.title" })}
       </Heading>

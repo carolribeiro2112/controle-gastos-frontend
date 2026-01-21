@@ -5,6 +5,7 @@ import { Settings } from "lucide-react";
 import { LogoHeader } from "../Logo/Logo";
 import { getUserRoleFromToken } from "../../utils/getUserData";
 import { useIntl } from "react-intl";
+import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -27,13 +28,14 @@ const Header = () => {
       pb="4"
     >
       <LogoHeader />
+      <Breadcrumb />
       <Flex justify="between" width="140px">
         {userRole === "ADMIN" && (
           <IconButton
             size="3"
             onClick={() => navigate("/settings")}
             variant="outline"
-            style={{ cursor: "pointer" }}
+            style={{ cursor: "pointer", margin: "0 16px" }}
             radius="full"
           >
             <Settings size={24} />
@@ -44,7 +46,7 @@ const Header = () => {
           color="red"
           variant="outline"
           onClick={handleLogout}
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer", margin: "0 16px" }}
           radius="full"
         >
           {formatMessage({ id: "logoutButton" })}

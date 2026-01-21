@@ -25,15 +25,12 @@ const Breadcrumb = ({ items, showHomeIcon = true }: BreadcrumbProps) => {
 
   return (
     <Flex
-      align="center"
       gap="2"
       style={{
-        padding: "8px 16px",
-        backgroundColor: "var(--gray-2)",
-        borderRadius: "6px",
-        border: "1px solid var(--gray-6)",
+        padding: "8px 48px",
         width: "100%",
-        maxWidth: "1000px",
+        alignItems: "center",
+        justifyContent: "flex-start",
       }}
     >
       {showHomeIcon && <Home size={16} style={{ color: homeIconColor }} />}

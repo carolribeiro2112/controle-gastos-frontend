@@ -1,14 +1,10 @@
-import { Flex, Heading, Text, Button } from "@radix-ui/themes";
-import { PlusCircle } from "lucide-react";
+import { Flex, Heading, Text } from "@radix-ui/themes";
 import Header from "../../components/Header/Header";
-import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { useAuth } from "../../hooks/useAuth";
 import { useTransactions } from "../../hooks/useTransactions";
-import Styled from "./Dashboard.style";
 import { useEffect } from "react";
 import { useIntl } from "react-intl";
 import PieChart from "../../components/Chart/Chart";
-import { useNavigate } from "react-router";
 import LastTransactionsCard from "../../components/LastTransactionsCard/LastTransactionsCard";
 
 const Dashboard = () => {
@@ -38,15 +34,11 @@ const Dashboard = () => {
     userRole,
   });
 
-  const navigate = useNavigate();
-
   useEffect(() => {
     if (userRole === "ADMIN" && adminId && !selectedUserId) {
       handleUserSelection(adminId);
     }
   }, [userRole, adminId, selectedUserId, handleUserSelection]);
-
-  const isDisabled = userRole === "USER";
 
   if (!isAuthenticated) {
     return (
@@ -57,35 +49,13 @@ const Dashboard = () => {
   }
 
   return (
-    <Flex direction="column" align="center" gap="4" m="9" mt="0">
+    <Flex direction="column" gap="4" m="9" mt="0">
       <Header />
-      <Breadcrumb />
       <Heading as="h1" size="8" color="jade" align={"left"}>
         {formatMessage({ id: "dashboard.title" })}
       </Heading>
 
-      <Flex
-        direction="column"
-        align="center"
-        gap="3"
-        style={{ width: "100%", maxWidth: "1000px" }}
-      >
-        <Styled.TableHeaderContainer>
-          <Heading as="h2" size="6" color="jade">
-            {formatMessage({ id: "dashboard.yourTransactions" })}
-          </Heading>
-          <Button
-            disabled={isDisabled}
-            style={{ cursor: "pointer" }}
-            size={"3"}
-            radius="full"
-            onClick={() => navigate("/transactions")}
-          >
-            <PlusCircle size={24} />
-            {formatMessage({ id: "createTransactionModal.addTransaction" })}
-          </Button>
-        </Styled.TableHeaderContainer>
-
+      <Flex direction="column" gap="3" style={{ width: "100%" }}>
         {loading && (
           <Text>{formatMessage({ id: "dashboard.loadingTransactions" })}</Text>
         )}

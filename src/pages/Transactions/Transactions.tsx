@@ -5,7 +5,6 @@ import CreateTransactionModal from "../../components/CreateTransactionModal/Crea
 import Toast from "../../components/Toast/Toast";
 import Header from "../../components/Header/Header";
 import DeleteDialog from "../../components/DeleteDialog/DeleteDialog";
-import Breadcrumb from "../../components/Breadcrumb/Breadcrumb";
 import { useAuth } from "../../hooks/useAuth";
 import { useTransactions } from "../../hooks/useTransactions";
 import { useRelations } from "../../hooks/useRelations";
@@ -102,7 +101,7 @@ const Transactions = () => {
         justify: "center" as const,
       },
     ],
-    [formatMessage]
+    [formatMessage],
   );
 
   useEffect(() => {
@@ -151,7 +150,7 @@ const Transactions = () => {
       type: transaction.type,
       category: transaction.category,
       transactionDate: new Date(transaction.transactionDate).toLocaleDateString(
-        "pt-BR"
+        "pt-BR",
       ),
       actions: (
         <IconButton
@@ -183,7 +182,6 @@ const Transactions = () => {
   return (
     <Flex direction="column" align="center" gap="4" m="9" mt="0">
       <Header />
-      <Breadcrumb />
 
       <Flex
         direction="column"
