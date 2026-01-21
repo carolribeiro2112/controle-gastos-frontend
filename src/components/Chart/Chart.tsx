@@ -26,11 +26,14 @@ const PieChart = ({ transactions }: PieChartProps) => {
     );
   }
 
-  const categoryData = transactions.reduce((acc, transaction) => {
-    const { category, value } = transaction;
-    acc[category] = (acc[category] || 0) + Math.abs(value);
-    return acc;
-  }, {} as Record<string, number>);
+  const categoryData = transactions.reduce(
+    (acc, transaction) => {
+      const { category, value } = transaction;
+      acc[category] = (acc[category] || 0) + Math.abs(value);
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
 
   const labels = Object.keys(categoryData);
   const data = Object.values(categoryData);
@@ -54,7 +57,7 @@ const PieChart = ({ transactions }: PieChartProps) => {
   const backgroundColor = generateColors(labels.length);
 
   return (
-    <div style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}>
+    <div style={{ width: "100%", maxWidth: "400px" }}>
       <Heading style={{ textAlign: "center", marginBottom: "10px" }}>
         Distribuição de Despesas por Categoria
       </Heading>
@@ -86,7 +89,7 @@ const PieChart = ({ transactions }: PieChartProps) => {
                   const value = context.parsed;
                   const total = context.dataset.data.reduce(
                     (a: number, b: number) => a + b,
-                    0
+                    0,
                   );
                   const percentage = ((value / total) * 100).toFixed(1);
                   return `${label}: R$ ${value.toFixed(2)} (${percentage}%)`;
