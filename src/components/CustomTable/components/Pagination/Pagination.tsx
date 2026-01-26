@@ -55,7 +55,10 @@ const Pagination = ({
           value={pageSize.toString()}
           onValueChange={handlePageSizeChange}
         >
-          <Select.Trigger style={{ width: "70px" }} />
+          <Select.Trigger
+            style={{ width: "70px", cursor: "pointer" }}
+            radius="large"
+          />
           <Select.Content>
             <Select.Item value="5">5</Select.Item>
             <Select.Item value="10">10</Select.Item>
@@ -78,6 +81,8 @@ const Pagination = ({
           size="2"
           onClick={handlePreviousPage}
           disabled={!canGoPrevious}
+          radius="large"
+          style={{ cursor: "pointer" }}
         >
           <ChevronLeftIcon />
         </Button>
@@ -91,6 +96,8 @@ const Pagination = ({
           size="2"
           onClick={handleNextPage}
           disabled={!canGoNext}
+          radius="large"
+          style={{ cursor: "pointer" }}
         >
           <ChevronRightIcon />
         </Button>

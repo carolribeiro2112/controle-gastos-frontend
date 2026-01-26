@@ -116,7 +116,7 @@ const SettingsPage = () => {
             disabled={loading || !userName.trim()}
             style={{ cursor: "pointer" }}
             size={"3"}
-            radius="full"
+            radius="large"
           >
             {loading
               ? formatMessage({ id: "settings.searching" })
@@ -127,7 +127,7 @@ const SettingsPage = () => {
             disabled={!userData}
             style={{ cursor: "pointer" }}
             size={"3"}
-            radius="full"
+            radius="large"
           >
             {formatMessage({ id: "settings.bindUserButton" })}
           </Button>

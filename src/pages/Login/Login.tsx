@@ -74,7 +74,7 @@ const Login = () => {
         setError(
           error instanceof Error
             ? error.message
-            : formatMessage({ id: "login.loginError" })
+            : formatMessage({ id: "login.loginError" }),
         );
       }
     } finally {
@@ -144,7 +144,7 @@ const Login = () => {
         color="jade"
         onClick={handleLogin}
         disabled={isLoading}
-        radius="full"
+        radius="large"
       >
         {isLoading
           ? formatMessage({ id: "login.loggingIn" })
@@ -158,7 +158,7 @@ const Login = () => {
         style={{ width: "275px", cursor: "pointer" }}
         onClick={handleRegister}
         disabled={isLoading}
-        radius="full"
+        radius="large"
       >
         {formatMessage({ id: "login.signUp" })}
       </Button>

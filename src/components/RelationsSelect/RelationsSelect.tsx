@@ -50,7 +50,8 @@ function RelationsSelect({
           >
             <Select.Trigger
               placeholder={formatMessage({ id: "relationsSelect.selectUser" })}
-              radius="full"
+              radius="large"
+              style={{ cursor: "pointer" }}
             />
             <Select.Content style={{ overflowY: "auto" }} position="popper">
               <Select.Item key={userData.id} value={userData.id}>

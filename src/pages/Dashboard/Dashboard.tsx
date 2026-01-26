@@ -55,7 +55,7 @@ const Dashboard = () => {
         {formatMessage({ id: "dashboard.title" })}
       </Heading>
 
-      <Flex direction="column" gap="3" style={{ width: "100%" }}>
+      <Flex gap="3" style={{ width: "100%" }}>
         {loading && (
           <Text>{formatMessage({ id: "dashboard.loadingTransactions" })}</Text>
         )}

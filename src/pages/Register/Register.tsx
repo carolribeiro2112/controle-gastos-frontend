@@ -95,12 +95,12 @@ const Register = () => {
     } catch (error) {
       console.error(
         formatMessage({ id: "register.registrationFailedPrefix" }),
-        error
+        error,
       );
       setError(
         error instanceof Error
           ? error.message
-          : formatMessage({ id: "register.registrationError" })
+          : formatMessage({ id: "register.registrationError" }),
       );
     } finally {
       setIsLoading(false);
@@ -191,7 +191,7 @@ const Register = () => {
           color="jade"
           onClick={handleRegister}
           disabled={isLoading}
-          radius="full"
+          radius="large"
         >
           {isLoading
             ? formatMessage({ id: "register.loading" })
@@ -205,7 +205,7 @@ const Register = () => {
           style={{ width: "275px", cursor: "pointer" }}
           onClick={handleGoToLogin}
           disabled={isLoading}
-          radius="full"
+          radius="large"
         >
           {formatMessage({ id: "register.alreadyHaveAccount" })}
         </Button>

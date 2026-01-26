@@ -54,7 +54,7 @@ const LastTransactionsCard = ({ data }: LastTransactionsCardProps) => {
         <Flex justify="center" mt="4">
           <Button
             style={{ width: "100%", cursor: "pointer" }}
-            radius="full"
+            radius="large"
             onClick={() => navigate("/transactions")}
           >
             View All Transactions
