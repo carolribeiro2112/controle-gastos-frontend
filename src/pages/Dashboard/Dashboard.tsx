@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useIntl } from "react-intl";
 import PieChart from "../../components/Chart/Chart";
 import LastTransactionsCard from "../../components/LastTransactionsCard/LastTransactionsCard";
+import TotalCards from "../../components/TotalCards/TotalCards";
 
 const Dashboard = () => {
   const { formatMessage } = useIntl();
@@ -54,6 +55,11 @@ const Dashboard = () => {
       <Heading as="h1" size="8" color="jade" align={"left"}>
         {formatMessage({ id: "dashboard.title" })}
       </Heading>
+      <Flex gap="3" style={{ width: "100%" }}>
+        <TotalCards />
+        <TotalCards />
+        <TotalCards />
+      </Flex>
 
       <Flex gap="3" style={{ width: "100%" }}>
         {loading && (
