@@ -7,6 +7,7 @@ import { useIntl } from "react-intl";
 import PieChart from "../../components/Chart/Chart";
 import LastTransactionsCard from "../../components/LastTransactionsCard/LastTransactionsCard";
 import TotalCards from "../../components/TotalCards/TotalCards";
+import { BanknoteArrowDown, BanknoteArrowUp, Wallet } from "lucide-react";
 
 const Dashboard = () => {
   const { formatMessage } = useIntl();
@@ -56,9 +57,21 @@ const Dashboard = () => {
         {formatMessage({ id: "dashboard.title" })}
       </Heading>
       <Flex gap="3" style={{ width: "100%" }}>
-        <TotalCards />
-        <TotalCards />
-        <TotalCards />
+        <TotalCards
+          icon={<BanknoteArrowUp />}
+          title="Total Income" //Renda total
+          amount={0}
+        />
+        <TotalCards
+          icon={<BanknoteArrowDown />}
+          title="Total Expenses" //Despesas totais
+          amount={0}
+        />
+        <TotalCards
+          icon={<Wallet />}
+          title="Net Balance" //Saldo disponível
+          amount={0}
+        />
       </Flex>
 
       <Flex gap="3" style={{ width: "100%" }}>
