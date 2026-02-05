@@ -27,7 +27,7 @@ const Breadcrumb = ({ items, showHomeIcon = true }: BreadcrumbProps) => {
     <Flex
       gap="2"
       style={{
-        padding: "8px 48px",
+        padding: "8px 0px",
         width: "100%",
         alignItems: "center",
         justifyContent: "flex-start",

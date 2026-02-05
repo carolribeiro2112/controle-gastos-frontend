@@ -2,7 +2,7 @@ import { Button, Flex, IconButton } from "@radix-ui/themes";
 import LoginService from "../../services/LoginService/LoginService";
 import { useNavigate } from "react-router";
 import { Settings } from "lucide-react";
-import { LogoHeader } from "../Logo/Logo";
+// import { LogoHeader } from "../Logo/Logo";
 import { getUserRoleFromToken } from "../../utils/getUserData";
 import { useIntl } from "react-intl";
 import Breadcrumb from "../Breadcrumb/Breadcrumb";
@@ -27,7 +27,7 @@ const Header = () => {
       pt="6"
       pb="4"
     >
-      <LogoHeader />
+      {/* <LogoHeader /> */}
       <Breadcrumb />
       <Flex justify="between" width="140px">
         {userRole === "ADMIN" && (
