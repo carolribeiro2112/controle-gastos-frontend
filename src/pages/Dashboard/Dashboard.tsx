@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { useIntl } from "react-intl";
 import PieChart from "../../components/Chart/Chart";
 import LastTransactionsCard from "../../components/LastTransactionsCard/LastTransactionsCard";
+import TotalCards from "../../components/TotalCards/TotalCards";
+import { BanknoteArrowDown, BanknoteArrowUp, Wallet } from "lucide-react";
 
 const Dashboard = () => {
   const { formatMessage } = useIntl();
@@ -48,14 +50,47 @@ const Dashboard = () => {
     );
   }
 
+  const totalIncome = allTransactions
+    .filter((item) => item && item.type === "INCOME")
+    .reduce((sum, item) => {
+      const value = Number(item.value) || 0;
+      return sum + value;
+    }, 0);
+
+  const totalExpenses = allTransactions
+    .filter((item) => item && item.type === "EXPENSE")
+    .reduce((sum, item) => {
+      const value = Number(item.value) || 0;
+      return sum + Math.abs(value);
+    }, 0);
+
+  const balance = totalIncome - totalExpenses;
+
   return (
     <Flex direction="column" gap="4" m="9" mt="0">
       <Header />
       <Heading as="h1" size="8" color="jade" align={"left"}>
         {formatMessage({ id: "dashboard.title" })}
       </Heading>
+      <Flex gap="3" style={{ width: "100%" }}>
+        <TotalCards
+          icon={<BanknoteArrowUp color="#299764" size={35} />}
+          title="Total Income" //Renda total
+          amount={totalIncome}
+        />
+        <TotalCards
+          icon={<BanknoteArrowDown color="#c45050" size={35} />}
+          title="Total Expenses" //Despesas totais
+          amount={totalExpenses}
+        />
+        <TotalCards
+          icon={<Wallet color="#3a5ccc" size={35} />}
+          title="Net Balance" //Saldo disponível
+          amount={balance}
+        />
+      </Flex>
 
-      <Flex direction="column" gap="3" style={{ width: "100%" }}>
+      <Flex gap="3" style={{ width: "100%" }}>
         {loading && (
           <Text>{formatMessage({ id: "dashboard.loadingTransactions" })}</Text>
         )}

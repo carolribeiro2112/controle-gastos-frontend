@@ -1,5 +1,5 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { Heading } from "@radix-ui/themes";
+import { Heading, Box, Card } from "@radix-ui/themes";
 import { Doughnut } from "react-chartjs-2";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -57,49 +57,55 @@ const PieChart = ({ transactions }: PieChartProps) => {
   const backgroundColor = generateColors(labels.length);
 
   return (
-    <div style={{ width: "100%", maxWidth: "400px" }}>
-      <Heading style={{ textAlign: "center", marginBottom: "10px" }}>
-        Distribuição de Despesas por Categoria
-      </Heading>
-      <Doughnut
-        data={{
-          labels,
-          datasets: [
-            {
-              data,
-              backgroundColor,
-              hoverBackgroundColor: backgroundColor,
-              borderWidth: 1,
-              borderColor: "#fff",
-              // borderRadius: 50,
-            },
-          ],
-        }}
-        options={{
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: {
-              position: "top" as const,
-            },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  const label = context.label || "";
-                  const value = context.parsed;
-                  const total = context.dataset.data.reduce(
-                    (a: number, b: number) => a + b,
-                    0,
-                  );
-                  const percentage = ((value / total) * 100).toFixed(1);
-                  return `${label}: R$ ${value.toFixed(2)} (${percentage}%)`;
+    <Box maxWidth="400px" width="100%">
+      <Card size="3" style={{ maxHeight: "395px" }}>
+        <Heading style={{ textAlign: "center", marginBottom: "10px" }}>
+          Distribuição de Despesas por Categoria
+        </Heading>
+        <Doughnut
+          style={{
+            maxHeight: "250px",
+            marginBottom: "27px",
+          }}
+          data={{
+            labels,
+            datasets: [
+              {
+                data,
+                backgroundColor,
+                hoverBackgroundColor: backgroundColor,
+                borderWidth: 1,
+                borderColor: "#fff",
+                // borderRadius: 50,
+              },
+            ],
+          }}
+          options={{
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+              legend: {
+                position: "top" as const,
+              },
+              tooltip: {
+                callbacks: {
+                  label: function (context) {
+                    const label = context.label || "";
+                    const value = context.parsed;
+                    const total = context.dataset.data.reduce(
+                      (a: number, b: number) => a + b,
+                      0,
+                    );
+                    const percentage = ((value / total) * 100).toFixed(1);
+                    return `${label}: R$ ${value.toFixed(2)} (${percentage}%)`;
+                  },
                 },
               },
             },
-          },
-        }}
-      />
-    </div>
+          }}
+        />
+      </Card>
+    </Box>
   );
 };
 

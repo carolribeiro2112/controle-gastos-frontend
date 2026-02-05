@@ -20,10 +20,10 @@ const TransactionFilters = ({
 }: TransactionFiltersProps) => {
   const { formatMessage } = useIntl();
   const [selectedTypes, setSelectedTypes] = useState<string[]>(
-    initialFilters?.types || []
+    initialFilters?.types || [],
   );
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    initialFilters?.categories || []
+    initialFilters?.categories || [],
   );
 
   const categories = [
@@ -93,9 +93,9 @@ const TransactionFilters = ({
       <Popover.Trigger>
         <Button
           variant="outline"
-          style={{ position: "relative", marginTop: "26px" }}
+          style={{ position: "relative", marginTop: "26px", cursor: "pointer" }}
           size="3"
-          radius="full"
+          radius="large"
         >
           <Filter size={16} />
           {formatMessage({ id: "filters.title" })}

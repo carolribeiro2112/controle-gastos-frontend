@@ -67,7 +67,7 @@ const CreateTransactionModal = ({
       // Form validation
       if (!description.trim()) {
         setError(
-          formatMessage({ id: "createTransactionModal.descriptionRequired" })
+          formatMessage({ id: "createTransactionModal.descriptionRequired" }),
         );
         return;
       }
@@ -82,7 +82,7 @@ const CreateTransactionModal = ({
 
       if (!category) {
         setError(
-          formatMessage({ id: "createTransactionModal.categoryRequired" })
+          formatMessage({ id: "createTransactionModal.categoryRequired" }),
         );
         return;
       }
@@ -90,14 +90,14 @@ const CreateTransactionModal = ({
       const numericValue = parseFloat(value);
       if (isNaN(numericValue) || numericValue <= 0) {
         setError(
-          formatMessage({ id: "createTransactionModal.valueValidation" })
+          formatMessage({ id: "createTransactionModal.valueValidation" }),
         );
         return;
       }
 
       if (!userId) {
         setError(
-          formatMessage({ id: "createTransactionModal.userNotAuthenticated" })
+          formatMessage({ id: "createTransactionModal.userNotAuthenticated" }),
         );
         setLoading(false);
         return;
@@ -123,7 +123,7 @@ const CreateTransactionModal = ({
     } catch (err) {
       console.error(
         formatMessage({ id: "createTransactionModal.createErrorPrefix" }),
-        err
+        err,
       );
       setError(formatMessage({ id: "createTransactionModal.createError" }));
       setToastType("error");
@@ -155,7 +155,7 @@ const CreateTransactionModal = ({
             disabled={isDisabled}
             style={{ cursor: "pointer" }}
             size={"3"}
-            radius="full"
+            radius="large"
           >
             <PlusCircle size={24} />
             {formatMessage({ id: "createTransactionModal.addTransaction" })}
