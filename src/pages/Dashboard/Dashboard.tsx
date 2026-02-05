@@ -50,6 +50,22 @@ const Dashboard = () => {
     );
   }
 
+  const totalIncome = allTransactions
+    .filter((item) => item && item.type === "INCOME")
+    .reduce((sum, item) => {
+      const value = Number(item.value) || 0;
+      return sum + value;
+    }, 0);
+
+  const totalExpenses = allTransactions
+    .filter((item) => item && item.type === "EXPENSE")
+    .reduce((sum, item) => {
+      const value = Number(item.value) || 0;
+      return sum + Math.abs(value);
+    }, 0);
+
+  const balance = totalIncome - totalExpenses;
+
   return (
     <Flex direction="column" gap="4" m="9" mt="0">
       <Header />
@@ -58,19 +74,19 @@ const Dashboard = () => {
       </Heading>
       <Flex gap="3" style={{ width: "100%" }}>
         <TotalCards
-          icon={<BanknoteArrowUp />}
+          icon={<BanknoteArrowUp color="#299764" size={35} />}
           title="Total Income" //Renda total
-          amount={0}
+          amount={totalIncome}
         />
         <TotalCards
-          icon={<BanknoteArrowDown />}
+          icon={<BanknoteArrowDown color="#c45050" size={35} />}
           title="Total Expenses" //Despesas totais
-          amount={0}
+          amount={totalExpenses}
         />
         <TotalCards
-          icon={<Wallet />}
+          icon={<Wallet color="#3a5ccc" size={35} />}
           title="Net Balance" //Saldo disponível
-          amount={0}
+          amount={balance}
         />
       </Flex>
 

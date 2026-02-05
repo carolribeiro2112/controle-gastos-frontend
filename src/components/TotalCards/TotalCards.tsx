@@ -17,11 +17,6 @@ const TotalCards = ({ icon, title, amount }: TotalCardsProps) => {
             <Text as="p" size="6">
               R$ {amount?.toFixed(2)}
             </Text>
-            {(title === "Net Balance" || title === "Total Expenses") && (
-              <Text as="p" size="2" color="gray">
-                vs last month
-              </Text>
-            )}
           </Flex>
         </Flex>
       </Card>
