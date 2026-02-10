@@ -180,15 +180,17 @@ const Transactions = () => {
   }
 
   return (
-    <Flex direction="column" align="center" gap="4" m="9" mt="0">
+    <Flex
+      direction="column"
+      align="center"
+      gap="4"
+      m="9"
+      mt="0"
+      style={{ width: "100%" }}
+    >
       <Header />
 
-      <Flex
-        direction="column"
-        align="center"
-        gap="3"
-        style={{ width: "100%", maxWidth: "1000px" }}
-      >
+      <Flex direction="column" align="center" gap="3" style={{ width: "100%" }}>
         <Styled.TableHeaderContainer>
           <Heading as="h2" size="6" color="jade">
             {formatMessage({ id: "dashboard.yourTransactions" })}

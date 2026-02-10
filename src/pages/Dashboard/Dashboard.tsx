@@ -8,7 +8,6 @@ import PieChart from "../../components/Chart/Chart";
 import LastTransactionsCard from "../../components/LastTransactionsCard/LastTransactionsCard";
 import TotalCards from "../../components/TotalCards/TotalCards";
 import { BanknoteArrowDown, BanknoteArrowUp, Wallet } from "lucide-react";
-import Sidebar from "../../components/Sidebar/Sidebar";
 
 const Dashboard = () => {
   const { formatMessage } = useIntl();
@@ -68,51 +67,46 @@ const Dashboard = () => {
   const balance = totalIncome - totalExpenses;
 
   return (
-    <Flex>
-      <Sidebar />
-      <Flex direction="column" gap="4" m="9" mt="0" width="100%">
-        <Header />
-        <Heading as="h1" size="8" color="jade" align={"left"}>
-          {formatMessage({ id: "dashboard.title" })}
-        </Heading>
-        <Flex gap="3" style={{ width: "100%" }}>
-          <TotalCards
-            icon={<BanknoteArrowUp color="#299764" size={35} />}
-            title="Total Income" //Renda total
-            amount={totalIncome}
-          />
-          <TotalCards
-            icon={<BanknoteArrowDown color="#c45050" size={35} />}
-            title="Total Expenses" //Despesas totais
-            amount={totalExpenses}
-          />
-          <TotalCards
-            icon={<Wallet color="#3a5ccc" size={35} />}
-            title="Net Balance" //Saldo disponível
-            amount={balance}
-          />
-        </Flex>
+    <Flex direction="column" gap="4" m="9" mt="0" width="100%">
+      <Header />
+      <Heading as="h1" size="8" color="jade" align={"left"}>
+        {formatMessage({ id: "dashboard.title" })}
+      </Heading>
+      <Flex gap="3" style={{ width: "100%" }}>
+        <TotalCards
+          icon={<BanknoteArrowUp color="#299764" size={35} />}
+          title="Total Income" //Renda total
+          amount={totalIncome}
+        />
+        <TotalCards
+          icon={<BanknoteArrowDown color="#c45050" size={35} />}
+          title="Total Expenses" //Despesas totais
+          amount={totalExpenses}
+        />
+        <TotalCards
+          icon={<Wallet color="#3a5ccc" size={35} />}
+          title="Net Balance" //Saldo disponível
+          amount={balance}
+        />
+      </Flex>
 
-        <Flex gap="3" style={{ width: "100%" }}>
-          {loading && (
-            <Text>
-              {formatMessage({ id: "dashboard.loadingTransactions" })}
-            </Text>
-          )}
+      <Flex gap="3" style={{ width: "100%" }}>
+        {loading && (
+          <Text>{formatMessage({ id: "dashboard.loadingTransactions" })}</Text>
+        )}
 
-          {error && <Text color="red">{error}</Text>}
+        {error && <Text color="red">{error}</Text>}
 
-          <LastTransactionsCard data={transactions} />
+        <LastTransactionsCard data={transactions} />
 
-          <PieChart
-            transactions={allTransactions
-              ?.filter((t) => t.type === "EXPENSE")
-              .map((t) => ({
-                ...t,
-                type: t.type === "EXPENSE" ? "EXPENSE" : "INCOME",
-              }))}
-          />
-        </Flex>
+        <PieChart
+          transactions={allTransactions
+            ?.filter((t) => t.type === "EXPENSE")
+            .map((t) => ({
+              ...t,
+              type: t.type === "EXPENSE" ? "EXPENSE" : "INCOME",
+            }))}
+        />
       </Flex>
     </Flex>
   );
