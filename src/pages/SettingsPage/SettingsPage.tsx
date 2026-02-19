@@ -90,7 +90,7 @@ const SettingsPage = () => {
       m="9"
       mt="0"
       ml="6"
-      style={{ width: "100%" }}
+      style={{ width: "100%", height: "100vh" }}
     >
       <Header />
       <Heading as="h1" size="8" color="jade">

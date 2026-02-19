@@ -16,6 +16,7 @@ export const CustomUl = styled("ul", {
 export const CustomListItem = styled("li", {
   display: "flex",
   padding: "12px 16px",
+  marginBottom: "8px",
   borderRadius: "8px",
   alignItems: "center",
   listStyle: "none",
@@ -26,5 +27,13 @@ export const CustomListItem = styled("li", {
   color: "#fff",
   "&:hover": {
     backgroundColor: "#1dd8a646",
+  },
+
+  variants: {
+    isActive: {
+      true: {
+        backgroundColor: "#676c6a4f",
+      },
+    },
   },
 });
