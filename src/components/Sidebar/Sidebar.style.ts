@@ -4,8 +4,7 @@ export const SidebarContainer = styled("aside", {
   padding: "32px",
   backgroundColor: "rgb(33,34,33)",
   borderRight: "1px solid #676c6a",
-  height: "100vh", // Ocupa toda a altura da tela
-  boxSizing: "border-box", // Garante que o padding seja incluído na largura total
+  boxSizing: "border-box",
 });
 
 export const CustomUl = styled("ul", {
@@ -17,6 +16,7 @@ export const CustomUl = styled("ul", {
 export const CustomListItem = styled("li", {
   display: "flex",
   padding: "12px 16px",
+  marginBottom: "8px",
   borderRadius: "8px",
   alignItems: "center",
   listStyle: "none",
@@ -27,5 +27,13 @@ export const CustomListItem = styled("li", {
   color: "#fff",
   "&:hover": {
     backgroundColor: "#1dd8a646",
+  },
+
+  variants: {
+    isActive: {
+      true: {
+        backgroundColor: "#676c6a4f",
+      },
+    },
   },
 });
