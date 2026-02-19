@@ -4,10 +4,12 @@ import { SidebarContainer, CustomListItem, CustomUl } from "./Sidebar.style";
 import LoginService from "../../services/LoginService/LoginService";
 import { Settings, ChartPie, LogOutIcon, Wallet } from "lucide-react";
 import { useIntl } from "react-intl";
+import { getUserRoleFromToken } from "../../utils/getUserData";
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { formatMessage } = useIntl();
+  const userRole = getUserRoleFromToken();
 
   const handleLogout = () => {
     LoginService.logout();
@@ -30,12 +32,14 @@ const Sidebar = () => {
             Transactions
           </CustomListItem>
         </a>
-        <a onClick={() => navigate("/settings")}>
-          <CustomListItem isActive={location.pathname === "/settings"}>
-            <Settings size={18} style={{ marginRight: "8px" }} />
-            Settings
-          </CustomListItem>
-        </a>
+        {userRole === "ADMIN" && (
+          <a onClick={() => navigate("/settings")}>
+            <CustomListItem isActive={location.pathname === "/settings"}>
+              <Settings size={18} style={{ marginRight: "8px" }} />
+              Settings
+            </CustomListItem>
+          </a>
+        )}
         <a onClick={handleLogout}>
           <CustomListItem>
             <LogOutIcon size={18} style={{ marginRight: "8px" }} />
