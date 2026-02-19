@@ -3,7 +3,7 @@ import { CircleDollarSign } from "lucide-react";
 
 const LogoHeader = () => {
   return (
-    <Flex align="center">
+    <Flex align="center" mb="4">
       <Heading
         as="h2"
         size="8"

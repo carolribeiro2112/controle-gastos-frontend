@@ -67,7 +67,7 @@ const Dashboard = () => {
   const balance = totalIncome - totalExpenses;
 
   return (
-    <Flex direction="column" gap="4" m="9" mt="0" width="100%">
+    <Flex direction="column" gap="4" m="9" mt="0" ml="6" width="100%">
       <Header />
       <Heading as="h1" size="8" color="jade" align={"left"}>
         {formatMessage({ id: "dashboard.title" })}

@@ -186,6 +186,7 @@ const Transactions = () => {
       gap="4"
       m="9"
       mt="0"
+      ml="6"
       style={{ width: "100%" }}
     >
       <Header />
