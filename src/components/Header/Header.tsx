@@ -1,22 +1,7 @@
-import { Button, Flex, IconButton } from "@radix-ui/themes";
-import LoginService from "../../services/LoginService/LoginService";
-import { useNavigate } from "react-router";
-import { Settings } from "lucide-react";
-import { getUserRoleFromToken } from "../../utils/getUserData";
-import { useIntl } from "react-intl";
+import { Flex } from "@radix-ui/themes";
 import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 const Header = () => {
-  const navigate = useNavigate();
-  const { formatMessage } = useIntl();
-
-  const handleLogout = () => {
-    LoginService.logout();
-    navigate("/");
-  };
-
-  const userRole = getUserRoleFromToken();
-
   return (
     <Flex
       direction="row"
@@ -27,29 +12,6 @@ const Header = () => {
       pb="4"
     >
       <Breadcrumb />
-      <Flex justify="between" width="140px">
-        {userRole === "ADMIN" && (
-          <IconButton
-            size="3"
-            onClick={() => navigate("/settings")}
-            variant="outline"
-            style={{ cursor: "pointer", margin: "0 16px" }}
-            radius="full"
-          >
-            <Settings size={24} />
-          </IconButton>
-        )}
-        <Button
-          size="3"
-          color="red"
-          variant="outline"
-          onClick={handleLogout}
-          style={{ cursor: "pointer", margin: "0 16px" }}
-          radius="full"
-        >
-          {formatMessage({ id: "logoutButton" })}
-        </Button>
-      </Flex>
     </Flex>
   );
 };

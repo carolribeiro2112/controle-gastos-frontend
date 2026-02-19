@@ -4,8 +4,7 @@ export const SidebarContainer = styled("aside", {
   padding: "32px",
   backgroundColor: "rgb(33,34,33)",
   borderRight: "1px solid #676c6a",
-  height: "100vh", // Ocupa toda a altura da tela
-  boxSizing: "border-box", // Garante que o padding seja incluído na largura total
+  boxSizing: "border-box",
 });
 
 export const CustomUl = styled("ul", {
