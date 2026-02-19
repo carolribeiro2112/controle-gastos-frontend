@@ -7,6 +7,8 @@ import AdminProtectedRoute from "./components/AdminProtectedRoute/AdminProtected
 import PublicRoute from "./components/PublicRoute/PublicRoute";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import Transactions from "./pages/Transactions/Transactions";
+import { Flex } from "@radix-ui/themes";
+import Sidebar from "./components/Sidebar/Sidebar";
 
 const Router = () => {
   return (
@@ -32,7 +34,10 @@ const Router = () => {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Dashboard />
+              <Flex>
+                <Sidebar />
+                <Dashboard />
+              </Flex>
             </ProtectedRoute>
           }
         />
@@ -40,7 +45,10 @@ const Router = () => {
           path="/transactions"
           element={
             <ProtectedRoute>
-              <Transactions />
+              <Flex>
+                <Sidebar />
+                <Transactions />
+              </Flex>
             </ProtectedRoute>
           }
         />
@@ -48,7 +56,10 @@ const Router = () => {
           path="/settings"
           element={
             <AdminProtectedRoute>
-              <SettingsPage />
+              <Flex>
+                <Sidebar />
+                <SettingsPage />
+              </Flex>
             </AdminProtectedRoute>
           }
         />
