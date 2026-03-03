@@ -8,6 +8,7 @@ import { format } from "date-fns";
 
 const DatePicker = () => {
   const [selected, setSelected] = useState<Date>();
+  console.log(selected);
   return (
     <div className="custom-datepicker">
       <Popover.Root>

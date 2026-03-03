@@ -20,17 +20,11 @@ const Dashboard = () => {
     handleUserSelection,
   } = useAuth();
 
-  // MANTÉM APENAS UM HOOK useTransactions
-  const { transactions, loading, error } = useTransactions({
-    isAuthenticated,
-    selectedUserId,
-    userRole,
-    initialPage: 0,
-    initialPageSize: 5,
-  });
-
-  // HOOK separado para dados SEM FILTROS (para gráfico e summary)
-  const { transactions: allTransactions } = useTransactions({
+  const {
+    transactions: allTransactions,
+    loading,
+    error,
+  } = useTransactions({
     isAuthenticated,
     selectedUserId,
     userRole,
@@ -65,6 +59,7 @@ const Dashboard = () => {
     }, 0);
 
   const balance = totalIncome - totalExpenses;
+  const recentTransactions = allTransactions.slice(0, 5);
 
   return (
     <Flex direction="column" gap="4" p="9" width="100%">
@@ -97,7 +92,7 @@ const Dashboard = () => {
 
         {error && <Text color="red">{error}</Text>}
 
-        <LastTransactionsCard data={transactions} />
+        <LastTransactionsCard data={recentTransactions} />
 
         <PieChart
           transactions={allTransactions
