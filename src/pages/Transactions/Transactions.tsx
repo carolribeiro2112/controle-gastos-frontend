@@ -120,10 +120,16 @@ const Transactions = () => {
 
   // MEMOIZAR os dados transformados para evitar recalculos desnecessários
   const transformedData = useMemo(() => {
+    console.log("Transactions data:", transactions);
+    console.log("Pagination:", pagination);
+
+    if (!transactions || transactions.length === 0) {
+      return [];
+    }
     // Adiciona timestamp para garantir que seja único
     const timestamp = Date.now();
 
-    return transactions.map((transaction, index) => ({
+    return transactions?.map((transaction, index) => ({
       id: index + 1,
       originalId: transaction.id,
       uniqueKey: `${transaction.id}-${pagination.currentPage}-${timestamp}`, // Chave única

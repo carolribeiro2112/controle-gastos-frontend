@@ -1,6 +1,8 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
-import TransactionService, { type TransactionResponse } from '../services/TransactionService/TransactionService';
-import { getUserIdFromToken } from '../utils/getUserData';
+import { useState, useEffect, useCallback, useRef } from "react";
+import TransactionService, {
+  type TransactionResponse,
+} from "../services/TransactionService/TransactionService";
+import { getUserIdFromToken } from "../utils/getUserData";
 
 interface UseTransactionsProps {
   isAuthenticated: boolean;
@@ -8,6 +10,8 @@ interface UseTransactionsProps {
   userRole: string;
   type?: string[];
   category?: string[];
+  startDate?: string; // NOVO
+  endDate?: string; // NOVO
   initialPage?: number;
   initialPageSize?: number;
 }
@@ -19,146 +23,175 @@ export interface PaginationData {
   pageSize?: number;
 }
 
-export const useTransactions = ({ 
-  isAuthenticated, 
-  selectedUserId, 
-  userRole, 
-  type, 
-  category, 
+export const useTransactions = ({
+  isAuthenticated,
+  selectedUserId,
+  userRole,
+  type,
+  category,
+  startDate, // NOVO
+  endDate, // NOVO
   initialPageSize,
-  initialPage, 
+  initialPage,
 }: UseTransactionsProps) => {
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationData>({ 
-    totalElements: 0, 
-    totalPages: 0, 
-    currentPage: initialPage, 
-    pageSize: initialPageSize
+  const [transactionToDelete, setTransactionToDelete] = useState<string | null>(
+    null,
+  );
+  const [pagination, setPagination] = useState<PaginationData>({
+    totalElements: 0,
+    totalPages: 0,
+    currentPage: initialPage,
+    pageSize: initialPageSize,
   });
 
   // useRef para evitar dependências circulares
   const paginationRef = useRef(pagination);
   paginationRef.current = pagination;
 
-  const fetchTransactions = useCallback(async (page?: number, pageSize?: number) => {
-    if (!isAuthenticated) return;
+  const fetchTransactions = useCallback(
+    async (page?: number, pageSize?: number) => {
+      if (!isAuthenticated) return;
 
-    try {
-      setLoading(true);
-      setError(null);
+      try {
+        setLoading(true);
+        setError(null);
 
-      let userIdToFetch: string;
+        let userIdToFetch: string;
 
-      if (userRole === "USER") {
-        userIdToFetch = await getUserIdFromToken();
-      } else {
-        if (!selectedUserId) {
-          setTransactions([]);
-          setLoading(false);
-          setPagination(prev => ({ 
-            ...prev, 
-            totalElements: 0, 
-            totalPages: 0, 
-            currentPage: page !== undefined ? page : prev.currentPage
-          }));
-          return;
+        if (userRole === "USER") {
+          userIdToFetch = await getUserIdFromToken();
+        } else {
+          if (!selectedUserId) {
+            setTransactions([]);
+            setLoading(false);
+            setPagination((prev) => ({
+              ...prev,
+              totalElements: 0,
+              totalPages: 0,
+              currentPage: page !== undefined ? page : prev.currentPage,
+            }));
+            return;
+          }
+          userIdToFetch = selectedUserId;
         }
-        userIdToFetch = selectedUserId;
+
+        // Use valores do ref para evitar dependências circulares
+        const currentPage =
+          page !== undefined ? page : paginationRef.current.currentPage;
+        const currentPageSize =
+          pageSize !== undefined ? pageSize : paginationRef.current.pageSize;
+
+        const data = await TransactionService.getTransactions(
+          userIdToFetch,
+          type,
+          category,
+          currentPage,
+          currentPageSize,
+          startDate,
+          endDate,
+        );
+        const dataToSet =
+          currentPage !== undefined && currentPageSize !== undefined
+            ? data.content
+            : data;
+        setTransactions(dataToSet);
+        setPagination({
+          totalElements: data.totalElements,
+          totalPages: data.totalPages,
+          currentPage: currentPage,
+          pageSize: currentPageSize,
+        });
+      } catch (err) {
+        console.error("Error fetching transactions:", err);
+        setError("Failed to load transactions");
+      } finally {
+        setLoading(false);
       }
+    },
+    [
+      isAuthenticated,
+      userRole,
+      type,
+      category,
+      startDate,
+      endDate,
+      selectedUserId,
+    ],
+  ); // Removidas as dependências do pagination
 
-      // Use valores do ref para evitar dependências circulares
-      const currentPage = page !== undefined ? page : paginationRef.current.currentPage;
-      const currentPageSize = pageSize !== undefined ? pageSize : paginationRef.current.pageSize;
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      // Atualizar o estado imediatamente
+      setPagination((prev) => ({
+        ...prev,
+        currentPage: newPage,
+      }));
 
-      const data = await TransactionService.getTransactions(
-        userIdToFetch, 
-        type, 
-        category, 
-        currentPage, 
-        currentPageSize
-      );
-      const dataToSet = currentPage !== undefined && currentPageSize !== undefined
-        ? data.content
-        : data;
-      setTransactions(dataToSet);
-      setPagination({
-        totalElements: data.totalElements,
-        totalPages: data.totalPages,
-        currentPage: currentPage,
-        pageSize: currentPageSize,
-      });
-    } catch (err) {
-      console.error("Error fetching transactions:", err);
-      setError("Failed to load transactions");
-    } finally {
-      setLoading(false);
-    }
-  }, [isAuthenticated, userRole, selectedUserId, type, category]); // Removidas as dependências do pagination
+      // Fazer a requisição com o novo valor
+      fetchTransactions(newPage, paginationRef.current.pageSize);
+    },
+    [fetchTransactions],
+  );
 
-  const handlePageChange = useCallback((newPage: number) => {
-    // Atualizar o estado imediatamente
-    setPagination(prev => ({
-      ...prev,
-      currentPage: newPage
-    }));
-    
-    // Fazer a requisição com o novo valor
-    fetchTransactions(newPage, paginationRef.current.pageSize);
-  }, [fetchTransactions]);
+  const handlePageSizeChange = useCallback(
+    (newPageSize: number) => {
+      setPagination((prev) => ({
+        ...prev,
+        pageSize: newPageSize,
+        currentPage: 0,
+      }));
 
-  const handlePageSizeChange = useCallback((newPageSize: number) => {
-    setPagination(prev => ({ 
-      ...prev, 
-      pageSize: newPageSize, 
-      currentPage: 0 
-    }));
-    
-    // Usar setTimeout para garantir que o estado foi atualizado
-    setTimeout(() => {
-      fetchTransactions(0, newPageSize);
-    }, 0);
-  }, [fetchTransactions]);
+      // Usar setTimeout para garantir que o estado foi atualizado
+      setTimeout(() => {
+        fetchTransactions(0, newPageSize);
+      }, 0);
+    },
+    [fetchTransactions],
+  );
 
   const handleDeleteClick = (transactionId: string) => {
     setTransactionToDelete(transactionId);
     setDeleteDialogOpen(true);
   };
 
-const handleDeleteConfirm = async () => {
-  if (!transactionToDelete) return;
+  const handleDeleteConfirm = async () => {
+    if (!transactionToDelete) return;
 
-  try {
-    setError(null);
-    
-    await TransactionService.deleteTransaction(transactionToDelete);
+    try {
+      setError(null);
 
-    // Calcula se precisamos voltar uma página após a deleção
-    const currentPage = paginationRef.current.currentPage || 0;
-    const pageSize = paginationRef.current.pageSize || 5;
-    const totalElements = paginationRef.current.totalElements || 0;
-    
-    // Se após deletar, a página atual ficará vazia e não é a primeira página
-    const remainingItems = totalElements - 1; // -1 porque deletamos um item
-    const newTotalPages = Math.ceil(remainingItems / pageSize);
-    const targetPage = currentPage >= newTotalPages ? Math.max(0, newTotalPages - 1) : currentPage;
+      await TransactionService.deleteTransaction(transactionToDelete);
 
-    // Refaz a requisição na página apropriada
-    await fetchTransactions(targetPage, pageSize);
+      // Calcula se precisamos voltar uma página após a deleção
+      const currentPage = paginationRef.current.currentPage || 0;
+      const pageSize = paginationRef.current.pageSize || 5;
+      const totalElements = paginationRef.current.totalElements || 0;
 
-    return { success: true };
-  } catch (err) {
-    console.error("Error deleting transaction:", err);
-    setError("Failed to delete transaction");
-    return { success: false };
-  } finally {
-    setDeleteDialogOpen(false);
-    setTransactionToDelete(null);
-  }
-};
+      // Se após deletar, a página atual ficará vazia e não é a primeira página
+      const remainingItems = totalElements - 1; // -1 porque deletamos um item
+      const newTotalPages = Math.ceil(remainingItems / pageSize);
+      const targetPage =
+        currentPage >= newTotalPages
+          ? Math.max(0, newTotalPages - 1)
+          : currentPage;
+
+      // Refaz a requisição na página apropriada
+      await fetchTransactions(targetPage, pageSize);
+
+      return { success: true };
+    } catch (err) {
+      console.error("Error deleting transaction:", err);
+      setError("Failed to delete transaction");
+      return { success: false };
+    } finally {
+      setDeleteDialogOpen(false);
+      setTransactionToDelete(null);
+    }
+  };
 
   const handleDeleteCancel = () => {
     setDeleteDialogOpen(false);
@@ -172,10 +205,10 @@ const handleDeleteConfirm = async () => {
 
   // Efeito separado para mudanças de filtro
   useEffect(() => {
-      setPagination(prev => ({ ...prev, currentPage: 0 }));
-      setTimeout(() => {
-        fetchTransactions(0, paginationRef.current.pageSize);
-      }, 0);
+    setPagination((prev) => ({ ...prev, currentPage: 0 }));
+    setTimeout(() => {
+      fetchTransactions(0, paginationRef.current.pageSize);
+    }, 0);
   }, [type, category, fetchTransactions]);
 
   return {

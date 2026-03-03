@@ -16,16 +16,16 @@ export type TransactionResponse = Transaction & {
 
 const getAuthHeaders = async (): Promise<Record<string, string>> => {
   const adminId = await getAdminId();
-  const token = localStorage.getItem('authToken'); 
+  const token = localStorage.getItem("authToken");
 
   const headers: Record<string, string> = {};
 
   if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
+    headers["Authorization"] = `Bearer ${token}`;
   }
 
   if (adminId) {
-    headers['adminId'] = adminId;
+    headers["adminId"] = adminId;
   }
 
   return headers;
@@ -34,38 +34,54 @@ const getAuthHeaders = async (): Promise<Record<string, string>> => {
 const TransactionService = {
   createTransaction: async (transactionData: Transaction) => {
     const headers = await getAuthHeaders();
-    const response = await Api.post("/transaction", transactionData, { headers });
+    const response = await Api.post("/transaction", transactionData, {
+      headers,
+    });
     return response.data;
   },
 
-getTransactions: async (userId: string, type?: string[], category?: string[], page?: number, size?: number) => {
-  const headers = await getAuthHeaders();
-  const params: Record<string, string> = { userId };
-  
-  if (page !== undefined) {
-    params.page = page.toString();
-  }
-  if (size !== undefined) {
-    params.size = size.toString();
-  }
-  if (type && type.length > 0) {
-    params.type = type.join(', ');
-  }
-  if (category && category.length > 0) {
-    params.category = category.join(', ');
-  }
-  
-  const response = await Api.get("/transaction", {
-    params,
-    headers
-  });
-  
-  return response.data;
-},
+  getTransactions: async (
+    userId: string,
+    type?: string[],
+    category?: string[],
+    page?: number,
+    size?: number,
+    startDate?: string,
+    endDate?: string,
+  ) => {
+    const headers = await getAuthHeaders();
+    const params: Record<string, string> = { userId };
+
+    if (page !== undefined) {
+      params.page = page.toString();
+    }
+    if (size !== undefined) {
+      params.size = size.toString();
+    }
+    if (type && type.length > 0) {
+      params.type = type.join(", ");
+    }
+    if (category && category.length > 0) {
+      params.category = category.join(", ");
+    }
+
+    if (startDate) params.startDate = startDate;
+
+    if (endDate) params.endDate = endDate;
+
+    const response = await Api.get(`/transaction`, {
+      params,
+      headers,
+    });
+
+    return response.data;
+  },
 
   deleteTransaction: async (transactionId: string) => {
     const headers = await getAuthHeaders();
-    const response = await Api.delete(`/transaction/${transactionId}`, { headers });
+    const response = await Api.delete(`/transaction/${transactionId}`, {
+      headers,
+    });
     return response.data;
   },
 };
