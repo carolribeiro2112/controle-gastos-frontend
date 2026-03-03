@@ -6,6 +6,7 @@ import Toast from "../../components/Toast/Toast";
 import { AxiosError } from "axios";
 import { LogoLandingPage } from "../../components/Logo/Logo";
 import { useIntl } from "react-intl";
+import DatePicker from "../../components/DatePicker/DatePicker";
 
 interface ApiErrorResponse {
   message?: string;
@@ -162,6 +163,7 @@ const Login = () => {
       >
         {formatMessage({ id: "login.signUp" })}
       </Button>
+      <DatePicker />
     </Flex>
   );
 };

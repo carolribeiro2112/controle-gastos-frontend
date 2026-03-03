@@ -1,0 +1,7 @@
+/* Resetar estilos padrão e aplicar os seus */
+.rdp-root {
+  --rdp-accent-color: #27b08b;
+  --rdp-today-color: #228f72;
+  --rdp-accent-background-color: #27b08b;
+  --rdp-day_button-border-radius: 0.5rem;
+}
