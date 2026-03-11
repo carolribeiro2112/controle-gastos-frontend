@@ -1,4 +1,12 @@
-import { Flex, Tabs, Checkbox, Button, Text, Popover } from "@radix-ui/themes";
+import {
+  Flex,
+  Tabs,
+  Checkbox,
+  Button,
+  Text,
+  Popover,
+  Separator,
+} from "@radix-ui/themes";
 import { Filter, X } from "lucide-react";
 import { useState } from "react";
 import { useIntl } from "react-intl";
@@ -8,10 +16,14 @@ interface TransactionFiltersProps {
   onFiltersChange: (filters: {
     types?: string[];
     categories?: string[];
+    startDate?: string;
+    endDate?: string;
   }) => void;
   initialFilters?: {
     types?: string[];
     categories?: string[];
+    startDate?: string;
+    endDate?: string;
   };
 }
 
@@ -58,11 +70,6 @@ const TransactionFilters = ({
     }
 
     setSelectedTypes(newTypes);
-    onFiltersChange({
-      types: newTypes.length > 0 ? newTypes : undefined,
-      categories:
-        selectedCategories.length > 0 ? selectedCategories : undefined,
-    });
   };
 
   const handleCategoryChange = (category: string, checked: boolean) => {
@@ -75,16 +82,24 @@ const TransactionFilters = ({
     }
 
     setSelectedCategories(newCategories);
-    onFiltersChange({
-      types: selectedTypes.length > 0 ? selectedTypes : undefined,
-      categories: newCategories.length > 0 ? newCategories : undefined,
-    });
   };
 
   const clearFilters = () => {
     setSelectedTypes([]);
     setSelectedCategories([]);
+    setStartDate(undefined);
+    setEndDate(undefined);
     onFiltersChange({});
+  };
+
+  const handleApplyFilters = () => {
+    onFiltersChange({
+      types: selectedTypes.length > 0 ? selectedTypes : undefined,
+      categories:
+        selectedCategories.length > 0 ? selectedCategories : undefined,
+      startDate: startDate ? startDate.toISOString() : undefined,
+      endDate: endDate ? endDate.toISOString() : undefined,
+    });
   };
 
   const hasActiveFilters =
@@ -322,6 +337,8 @@ const TransactionFilters = ({
               </Flex>
             </Tabs.Content>
           </Tabs.Root>
+          <Separator my="3" size="4" />
+          <Button onClick={handleApplyFilters}>Apply</Button>
         </Flex>
       </Popover.Content>
     </Popover.Root>
