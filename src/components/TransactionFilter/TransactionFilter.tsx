@@ -93,6 +93,12 @@ const TransactionFilters = ({
   };
 
   const handleApplyFilters = () => {
+    console.log("Apply clicked", {
+      startDate,
+      endDate,
+      selectedTypes,
+      selectedCategories,
+    });
     onFiltersChange({
       types: selectedTypes.length > 0 ? selectedTypes : undefined,
       categories:
@@ -103,9 +109,16 @@ const TransactionFilters = ({
   };
 
   const hasActiveFilters =
-    selectedTypes.length > 0 || selectedCategories.length > 0;
+    selectedTypes.length > 0 ||
+    selectedCategories.length > 0 ||
+    !!startDate ||
+    !!endDate;
 
-  const activeFiltersCount = selectedTypes.length + selectedCategories.length;
+  const activeFiltersCount =
+    selectedTypes.length +
+    selectedCategories.length +
+    (startDate ? 1 : 0) +
+    (endDate ? 1 : 0);
 
   return (
     <Popover.Root>
