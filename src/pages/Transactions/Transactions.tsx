@@ -120,9 +120,6 @@ const Transactions = () => {
 
   // MEMOIZAR os dados transformados para evitar recalculos desnecessários
   const transformedData = useMemo(() => {
-    console.log("Transactions data:", transactions);
-    console.log("Pagination:", pagination);
-
     if (!transactions || transactions.length === 0) {
       return [];
     }

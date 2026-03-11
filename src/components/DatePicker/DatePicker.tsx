@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import "./DatePicker.css";
@@ -6,8 +5,13 @@ import { Popover, Button } from "@radix-ui/themes";
 import { ChevronDownIcon } from "lucide-react";
 import { format } from "date-fns";
 
-const DatePicker = () => {
-  const [selected, setSelected] = useState<Date>();
+interface DatePickerProps {
+  selected?: Date;
+  onSelect?: (date: Date) => void;
+}
+
+const DatePicker = ({ selected, onSelect }: DatePickerProps) => {
+  // const [selected, setSelected] = useState<Date>();
   console.log(selected);
   return (
     <div className="custom-datepicker">
@@ -26,8 +30,9 @@ const DatePicker = () => {
           <DayPicker
             animate
             mode="single"
+            required={true}
             selected={selected}
-            onSelect={setSelected}
+            onSelect={onSelect}
             footer={
               selected
                 ? `Selected: ${selected.toLocaleDateString()}`

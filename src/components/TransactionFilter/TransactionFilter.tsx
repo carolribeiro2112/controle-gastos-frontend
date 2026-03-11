@@ -2,6 +2,7 @@ import { Flex, Tabs, Checkbox, Button, Text, Popover } from "@radix-ui/themes";
 import { Filter, X } from "lucide-react";
 import { useState } from "react";
 import { useIntl } from "react-intl";
+import DatePicker from "../DatePicker/DatePicker";
 
 interface TransactionFiltersProps {
   onFiltersChange: (filters: {
@@ -25,6 +26,9 @@ const TransactionFilters = ({
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     initialFilters?.categories || [],
   );
+
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
 
   const categories = [
     "FOOD",
@@ -171,6 +175,21 @@ const TransactionFilters = ({
                   </Text>
                 )}
               </Tabs.Trigger>
+              <Tabs.Trigger value="date">
+                {formatMessage({
+                  id: "filters.dateTab",
+                  defaultMessage: "Date",
+                })}
+                {startDate && (
+                  <Text
+                    size="1"
+                    style={{ marginLeft: "4px", color: "var(--accent-9)" }}
+                  >
+                    {/* Exibe a data selecionada */}
+                    {startDate.toLocaleDateString()}
+                  </Text>
+                )}
+              </Tabs.Trigger>
             </Tabs.List>
 
             <Tabs.Content value="type" style={{ paddingTop: "16px" }}>
@@ -279,6 +298,27 @@ const TransactionFilters = ({
                     ))}
                   </Flex>
                 )}
+              </Flex>
+            </Tabs.Content>
+            <Tabs.Content value="date" style={{ paddingTop: "16px" }}>
+              <Flex direction="column" gap="3">
+                <Text size="2" weight="medium" color="gray">
+                  {formatMessage({
+                    id: "filters.selectDate",
+                    defaultMessage: "Select a date",
+                  })}
+                </Text>
+                <DatePicker
+                  // Adapte o DatePicker para aceitar props se quiser controlar a data aqui
+                  selected={startDate}
+                  onSelect={setStartDate}
+                />
+
+                <DatePicker
+                  // Adapte o DatePicker para aceitar props se quiser controlar a data aqui
+                  selected={endDate}
+                  onSelect={setEndDate}
+                />
               </Flex>
             </Tabs.Content>
           </Tabs.Root>

@@ -98,6 +98,7 @@ export const useTransactions = ({
           currentPage !== undefined && currentPageSize !== undefined
             ? data.content
             : data;
+        console.log("Fetched transactions:", dataToSet);
         setTransactions(dataToSet);
         setPagination({
           totalElements: data.totalElements,
