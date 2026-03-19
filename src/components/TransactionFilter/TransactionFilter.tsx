@@ -93,12 +93,6 @@ const TransactionFilters = ({
   };
 
   const handleApplyFilters = () => {
-    console.log("Apply clicked", {
-      startDate,
-      endDate,
-      selectedTypes,
-      selectedCategories,
-    });
     onFiltersChange({
       types: selectedTypes.length > 0 ? selectedTypes : undefined,
       categories:

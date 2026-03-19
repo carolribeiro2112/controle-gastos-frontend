@@ -11,8 +11,6 @@ interface DatePickerProps {
 }
 
 const DatePicker = ({ selected, onSelect }: DatePickerProps) => {
-  // const [selected, setSelected] = useState<Date>();
-  console.log(selected);
   return (
     <div className="custom-datepicker">
       <Popover.Root>

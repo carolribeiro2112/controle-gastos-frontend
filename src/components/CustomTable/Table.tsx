@@ -60,7 +60,6 @@ const CustomTable = ({
           {showFilters && onFiltersChange && (
             <TransactionFilters
               onFiltersChange={(filters) => {
-                console.log("Filters sent to API:", filters);
                 onFiltersChange(filters);
               }}
             />

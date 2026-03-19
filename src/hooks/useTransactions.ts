@@ -10,8 +10,8 @@ interface UseTransactionsProps {
   userRole: string;
   type?: string[];
   category?: string[];
-  startDate?: string; // NOVO
-  endDate?: string; // NOVO
+  startDate?: string;
+  endDate?: string;
   initialPage?: number;
   initialPageSize?: number;
 }
@@ -29,8 +29,8 @@ export const useTransactions = ({
   userRole,
   type,
   category,
-  startDate, // NOVO
-  endDate, // NOVO
+  startDate,
+  endDate,
   initialPageSize,
   initialPage,
 }: UseTransactionsProps) => {
@@ -98,7 +98,6 @@ export const useTransactions = ({
           currentPage !== undefined && currentPageSize !== undefined
             ? data.content
             : data;
-        console.log("Fetched transactions:", dataToSet);
         setTransactions(dataToSet);
         setPagination({
           totalElements: data.totalElements,
