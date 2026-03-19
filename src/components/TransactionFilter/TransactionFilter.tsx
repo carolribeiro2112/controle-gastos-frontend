@@ -336,17 +336,24 @@ const TransactionFilters = ({
                     defaultMessage: "Select a date",
                   })}
                 </Text>
-                <DatePicker
-                  // Adapte o DatePicker para aceitar props se quiser controlar a data aqui
-                  selected={startDate}
-                  onSelect={setStartDate}
-                />
-
-                <DatePicker
-                  // Adapte o DatePicker para aceitar props se quiser controlar a data aqui
-                  selected={endDate}
-                  onSelect={setEndDate}
-                />
+                <Flex align="center">
+                  <Text size="1" color="gray" style={{ marginRight: "8px" }}>
+                    {formatMessage({
+                      id: "filters.startDate",
+                      defaultMessage: "Start Date",
+                    })}
+                  </Text>
+                  <DatePicker selected={startDate} onSelect={setStartDate} />
+                </Flex>
+                <Flex align="center">
+                  <Text size="1" color="gray" style={{ marginRight: "8px" }}>
+                    {formatMessage({
+                      id: "filters.endDate",
+                      defaultMessage: "End Date",
+                    })}
+                  </Text>
+                  <DatePicker selected={endDate} onSelect={setEndDate} />
+                </Flex>
               </Flex>
             </Tabs.Content>
           </Tabs.Root>
