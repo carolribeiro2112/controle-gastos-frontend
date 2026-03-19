@@ -1,16 +1,29 @@
-import { Flex, Tabs, Checkbox, Button, Text, Popover } from "@radix-ui/themes";
+import {
+  Flex,
+  Tabs,
+  Checkbox,
+  Button,
+  Text,
+  Popover,
+  Separator,
+} from "@radix-ui/themes";
 import { Filter, X } from "lucide-react";
 import { useState } from "react";
 import { useIntl } from "react-intl";
+import DatePicker from "../DatePicker/DatePicker";
 
 interface TransactionFiltersProps {
   onFiltersChange: (filters: {
     types?: string[];
     categories?: string[];
+    startDate?: string;
+    endDate?: string;
   }) => void;
   initialFilters?: {
     types?: string[];
     categories?: string[];
+    startDate?: string;
+    endDate?: string;
   };
 }
 
@@ -25,6 +38,9 @@ const TransactionFilters = ({
   const [selectedCategories, setSelectedCategories] = useState<string[]>(
     initialFilters?.categories || [],
   );
+
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
 
   const categories = [
     "FOOD",
@@ -54,11 +70,6 @@ const TransactionFilters = ({
     }
 
     setSelectedTypes(newTypes);
-    onFiltersChange({
-      types: newTypes.length > 0 ? newTypes : undefined,
-      categories:
-        selectedCategories.length > 0 ? selectedCategories : undefined,
-    });
   };
 
   const handleCategoryChange = (category: string, checked: boolean) => {
@@ -71,22 +82,37 @@ const TransactionFilters = ({
     }
 
     setSelectedCategories(newCategories);
-    onFiltersChange({
-      types: selectedTypes.length > 0 ? selectedTypes : undefined,
-      categories: newCategories.length > 0 ? newCategories : undefined,
-    });
   };
 
   const clearFilters = () => {
     setSelectedTypes([]);
     setSelectedCategories([]);
+    setStartDate(undefined);
+    setEndDate(undefined);
     onFiltersChange({});
   };
 
-  const hasActiveFilters =
-    selectedTypes.length > 0 || selectedCategories.length > 0;
+  const handleApplyFilters = () => {
+    onFiltersChange({
+      types: selectedTypes.length > 0 ? selectedTypes : undefined,
+      categories:
+        selectedCategories.length > 0 ? selectedCategories : undefined,
+      startDate: startDate ? startDate.toISOString() : undefined,
+      endDate: endDate ? endDate.toISOString() : undefined,
+    });
+  };
 
-  const activeFiltersCount = selectedTypes.length + selectedCategories.length;
+  const hasActiveFilters =
+    selectedTypes.length > 0 ||
+    selectedCategories.length > 0 ||
+    !!startDate ||
+    !!endDate;
+
+  const activeFiltersCount =
+    selectedTypes.length +
+    selectedCategories.length +
+    (startDate ? 1 : 0) +
+    (endDate ? 1 : 0);
 
   return (
     <Popover.Root>
@@ -168,6 +194,21 @@ const TransactionFilters = ({
                     style={{ marginLeft: "4px", color: "var(--accent-9)" }}
                   >
                     ({selectedCategories.length})
+                  </Text>
+                )}
+              </Tabs.Trigger>
+              <Tabs.Trigger value="date">
+                {formatMessage({
+                  id: "filters.dateTab",
+                  defaultMessage: "Date",
+                })}
+                {startDate && (
+                  <Text
+                    size="1"
+                    style={{ marginLeft: "4px", color: "var(--accent-9)" }}
+                  >
+                    {/* Exibe a data selecionada */}
+                    {startDate.toLocaleDateString()}
                   </Text>
                 )}
               </Tabs.Trigger>
@@ -281,7 +322,37 @@ const TransactionFilters = ({
                 )}
               </Flex>
             </Tabs.Content>
+            <Tabs.Content value="date" style={{ paddingTop: "16px" }}>
+              <Flex direction="column" gap="3">
+                <Text size="2" weight="medium" color="gray">
+                  {formatMessage({
+                    id: "filters.selectDate",
+                    defaultMessage: "Select a date",
+                  })}
+                </Text>
+                <Flex align="center">
+                  <Text size="1" color="gray" style={{ marginRight: "8px" }}>
+                    {formatMessage({
+                      id: "filters.startDate",
+                      defaultMessage: "Start Date",
+                    })}
+                  </Text>
+                  <DatePicker selected={startDate} onSelect={setStartDate} />
+                </Flex>
+                <Flex align="center">
+                  <Text size="1" color="gray" style={{ marginRight: "8px" }}>
+                    {formatMessage({
+                      id: "filters.endDate",
+                      defaultMessage: "End Date",
+                    })}
+                  </Text>
+                  <DatePicker selected={endDate} onSelect={setEndDate} />
+                </Flex>
+              </Flex>
+            </Tabs.Content>
           </Tabs.Root>
+          <Separator my="3" size="4" />
+          <Button onClick={handleApplyFilters}>Apply</Button>
         </Flex>
       </Popover.Content>
     </Popover.Root>

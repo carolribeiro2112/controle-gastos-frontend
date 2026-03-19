@@ -5,6 +5,13 @@ export const SidebarContainer = styled("aside", {
   backgroundColor: "rgb(33,34,33)",
   borderRight: "1px solid #676c6a",
   boxSizing: "border-box",
+  position: "fixed",
+  top: 0,
+  left: 0,
+  bottom: 0,
+  width: "280px",
+  height: "100vh",
+  zIndex: 50,
 });
 
 export const CustomUl = styled("ul", {

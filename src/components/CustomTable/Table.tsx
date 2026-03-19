@@ -58,7 +58,11 @@ const CustomTable = ({
             />
           )}
           {showFilters && onFiltersChange && (
-            <TransactionFilters onFiltersChange={onFiltersChange} />
+            <TransactionFilters
+              onFiltersChange={(filters) => {
+                onFiltersChange(filters);
+              }}
+            />
           )}
         </FiltersContainer>
         <Summary data={originalTransactions ?? []} />

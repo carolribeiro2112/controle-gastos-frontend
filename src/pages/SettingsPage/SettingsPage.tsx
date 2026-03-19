@@ -87,9 +87,8 @@ const SettingsPage = () => {
       direction="column"
       align="center"
       gap="4"
-      m="9"
+      p="9"
       mt="0"
-      ml="6"
       style={{ width: "100%", height: "100vh" }}
     >
       <Header />

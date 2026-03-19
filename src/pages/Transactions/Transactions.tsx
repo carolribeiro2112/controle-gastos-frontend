@@ -17,9 +17,16 @@ import { useIntl } from "react-intl";
 const Transactions = () => {
   const { formatMessage } = useIntl();
   const [filters, setFilters] = useState<{
+    endDate: string | undefined;
+    startDate: string | undefined;
     types?: string[];
     categories?: string[];
-  }>({});
+  }>({
+    endDate: undefined,
+    startDate: undefined,
+    types: undefined,
+    categories: undefined,
+  });
 
   const {
     isAuthenticated,
@@ -49,6 +56,8 @@ const Transactions = () => {
     userRole,
     type: filters.types,
     category: filters.categories,
+    startDate: filters.startDate,
+    endDate: filters.endDate,
     initialPage: 0,
     initialPageSize: 5,
   });
@@ -69,8 +78,15 @@ const Transactions = () => {
   const handleFiltersChange = (newFilters: {
     types?: string[];
     categories?: string[];
+    endDate?: string;
+    startDate?: string;
   }) => {
-    setFilters(newFilters);
+    setFilters({
+      endDate: newFilters.endDate ?? undefined,
+      startDate: newFilters.startDate ?? undefined,
+      types: newFilters.types,
+      categories: newFilters.categories,
+    });
   };
 
   const handleTransactionChange = async () => {
@@ -120,10 +136,13 @@ const Transactions = () => {
 
   // MEMOIZAR os dados transformados para evitar recalculos desnecessários
   const transformedData = useMemo(() => {
+    if (!transactions || transactions.length === 0) {
+      return [];
+    }
     // Adiciona timestamp para garantir que seja único
     const timestamp = Date.now();
 
-    return transactions.map((transaction, index) => ({
+    return transactions?.map((transaction, index) => ({
       id: index + 1,
       originalId: transaction.id,
       uniqueKey: `${transaction.id}-${pagination.currentPage}-${timestamp}`, // Chave única
@@ -184,9 +203,8 @@ const Transactions = () => {
       direction="column"
       align="center"
       gap="4"
-      m="9"
+      p="9"
       mt="0"
-      ml="6"
       style={{ width: "100%" }}
     >
       <Header />

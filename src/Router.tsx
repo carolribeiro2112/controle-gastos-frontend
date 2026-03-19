@@ -7,8 +7,19 @@ import AdminProtectedRoute from "./components/AdminProtectedRoute/AdminProtected
 import PublicRoute from "./components/PublicRoute/PublicRoute";
 import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import Transactions from "./pages/Transactions/Transactions";
-import { Flex } from "@radix-ui/themes";
 import Sidebar from "./components/Sidebar/Sidebar";
+
+const MainContentContainer = ({ children }: { children: React.ReactNode }) => (
+  <div
+    style={{
+      marginLeft: "280px",
+      width: "calc(100% - 280px)",
+      minHeight: "100vh",
+    }}
+  >
+    {children}
+  </div>
+);
 
 const Router = () => {
   return (
@@ -34,10 +45,12 @@ const Router = () => {
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <Flex>
+              <>
                 <Sidebar />
-                <Dashboard />
-              </Flex>
+                <MainContentContainer>
+                  <Dashboard />
+                </MainContentContainer>
+              </>
             </ProtectedRoute>
           }
         />
@@ -45,10 +58,12 @@ const Router = () => {
           path="/transactions"
           element={
             <ProtectedRoute>
-              <Flex>
+              <>
                 <Sidebar />
-                <Transactions />
-              </Flex>
+                <MainContentContainer>
+                  <Transactions />
+                </MainContentContainer>
+              </>
             </ProtectedRoute>
           }
         />
@@ -56,10 +71,12 @@ const Router = () => {
           path="/settings"
           element={
             <AdminProtectedRoute>
-              <Flex>
+              <>
                 <Sidebar />
-                <SettingsPage />
-              </Flex>
+                <MainContentContainer>
+                  <SettingsPage />
+                </MainContentContainer>
+              </>
             </AdminProtectedRoute>
           }
         />
